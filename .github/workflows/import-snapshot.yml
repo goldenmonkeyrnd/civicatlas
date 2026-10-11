@@ -32,4 +32,25 @@ jobs:
       - run: bun run db:import
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_D1_TOKEN }}
-      - run: curl --fail --retry 3 https://atlas.goldenmonkey.dev/api/health
+      - name: Verify imported snapshot revision
+        run: |
+          python - <<'PYTHON'
+          import json
+          import subprocess
+          from pathlib import Path
+          snapshot = json.loads(Path("data/processed/snapshot.json").read_text())
+          actual = json.loads(subprocess.check_output([
+              "curl", "--fail", "--silent", "--show-error", "--retry", "3",
+              "https://atlas.goldenmonkey.dev/api/health",
+          ], text=True))
+          expected = {
+              "status": "ok",
+              "revision": snapshot["dataset_revision"],
+              "year": int(snapshot["year"]),
+              "ownership": "private",
+              "countyCount": int(snapshot["jurisdiction_count"]),
+          }
+          if actual != expected:
+              raise SystemExit(f"Production snapshot mismatch: expected {expected}, received {actual}")
+          print(f"Verified {actual['revision']} across {actual['countyCount']} jurisdictions.")
+          PYTHON
