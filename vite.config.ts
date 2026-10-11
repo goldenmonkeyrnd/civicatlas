@@ -5,5 +5,5 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 export default defineConfig({
   plugins: [react(), cloudflare()],
   server: { port: 5173 },
-  build: { target: 'es2022' },
+  build: { target: 'es2022', license: { fileName: 'third-party-licenses.txt' } },
 });
