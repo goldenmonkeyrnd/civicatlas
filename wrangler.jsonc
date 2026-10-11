@@ -1,0 +1,43 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "civicatlas",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-11",
+  "account_id": "6ca2bbb1784ac84cded3bc1e4857a45b",
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*"
+    ]
+  },
+  "routes": [
+    {
+      "pattern": "atlas.goldenmonkey.dev",
+      "custom_domain": true
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "civicatlas-prod",
+      "database_id": "6e7b5643-28e7-4577-8b78-34d6ac4ac30b",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "analytics_engine_datasets": [
+    {
+      "binding": "ENGAGEMENT",
+      "dataset": "goldenmonkey_engagement"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": false
+    },
+    "redact_query_string": true
+  }
+}

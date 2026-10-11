@@ -1,0 +1,36 @@
+{
+  "artifacts": {
+    "maryland-counties.geojson": {
+      "bytes": 74822,
+      "sha256": "4bf3f92845c6d9f4f0972dbc92e21cec47d335c2cffbed4f581a74b57adac0e7"
+    },
+    "observations.parquet": {
+      "bytes": 6761,
+      "sha256": "0f9bdd9cfd17ae52a113664029b2dfc70844e4e8f0ffc9a5cf2fe8305d1750a3"
+    },
+    "seed.sql": {
+      "bytes": 988480,
+      "sha256": "5760a12e54dd61ede83eda4b3ca6e7147471f69d6146a02d2be0638cb950ff0e"
+    }
+  },
+  "dataset_revision": "qcew-2024-md-private-cef931031ae7f224",
+  "geometry_scale": "1:5,000,000",
+  "geometry_year": "2024",
+  "jurisdiction_count": "24",
+  "metric_definitions": {
+    "annual_pay": "Average annual pay based on employment and total annual wages; USD, not a median",
+    "employment": "Annual average of monthly covered workplace employment levels; not resident workers",
+    "establishments": "Annual average of quarterly establishment counts",
+    "sector_share": "Sector annual average employment divided by the same county/private-ownership total; unavailable when numerator or denominator is unavailable"
+  },
+  "observation_count": "504",
+  "ownership": "5",
+  "retrieved_at": "2026-10-11T19:17:08+00:00",
+  "source_count": "26",
+  "status_counts": {
+    "available": 418,
+    "missing": 12,
+    "suppressed": 74
+  },
+  "year": "2024"
+}

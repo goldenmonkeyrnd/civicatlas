@@ -1,0 +1,14 @@
+[tools]
+bun = "1.3.4"
+
+[tasks.dev]
+run = "bun run dev"
+
+[tasks.build]
+run = "bun run build"
+
+[tasks.check]
+run = "bun run check"
+
+[tasks.deploy]
+run = "bun run deploy"

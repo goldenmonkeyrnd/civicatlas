@@ -1,0 +1,35 @@
+{
+  "name": "civicatlas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && vite build",
+    "check": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && bun test tests/worker",
+    "deploy": "bun run build && wrangler deploy",
+    "preview": "vite preview",
+    "data:build": "uv run python -m pipeline.build",
+    "data:check": "uv run python -m pipeline.build --check",
+    "db:local": "wrangler d1 execute civicatlas-prod --local --file=data/processed/seed.sql",
+    "db:import": "wrangler d1 execute civicatlas-prod --remote --file=data/processed/seed.sql"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "d3-geo": "3.1.1"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.63.1",
+    "@cloudflare/workers-types": "5.20261011.1",
+    "@types/bun": "1.4.2",
+    "@types/d3-geo": "3.1.1",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "wrangler": "4.149.0"
+  }
+}

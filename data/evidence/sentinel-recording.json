@@ -1,0 +1,74 @@
+{
+  "capture": "Actual bash commands captured through a PTY, with deliberate pauses for reading. Video is rendered from this recording.",
+  "checker_sha256": "aeee05bbac5f8b56ac1dbc2790eeec95dc53a543cb8d34b3ae0983f0b0db7f03",
+  "dataset_revision": "qcew-2024-md-private-cef931031ae7f224",
+  "duration_seconds": 85.125,
+  "format_version": 1,
+  "pipeline_sha256": "b6e4a4bb343846c6cb170b1900906276800b21920e99bae8394a8e88135a0e23",
+  "recorded_at": "2026-10-11T19:30:45+00:00",
+  "scenes": [
+    {
+      "duration": 8,
+      "note": "Static reachability is evidence about code structure, not runtime correctness.",
+      "output": "CivicAtlas / bounded static-analysis demonstration\n\nActual Python commands, captured in a terminal.\nTwo checks: local function references and required-validator reachability.\n\nThe examples below are deliberate failures in temporary fixture copies.\nThe production pipeline stays unchanged.",
+      "start": 0.0,
+      "title": "I use AI. I check its work."
+    },
+    {
+      "duration": 10,
+      "note": "validateRecords was imported; the module actually defines validate_records.",
+      "output": "$ python tools/sentinel.py --root \"$DEMO\" --entry app:main --required checks:validate_records\nFAIL: local function references and required-validator reachability\n  app.py:1 [missing-import] checks.validateRecords does not exist in the inspected module\n  <configuration>:0 [required-path-unresolved] Unsupported constructs prevent establishing a static call path from app:main to checks:validate_records\n  app.py:4 [local-reexport-or-alias] checks.validateRecords is not a directly declared function or class\n  Scope: direct local functions; no runtime or third-party correctness claim.\n\n[exit 1]",
+      "start": 8.067,
+      "title": "1 / A malformed function reference fails"
+    },
+    {
+      "duration": 10,
+      "note": "The repaired local import and direct call now agree.",
+      "output": "--- app.py (before)\n+++ app.py (after)\n@@ -1,4 +1,4 @@\n-from checks import validateRecords\n+from checks import validate_records\n \n def main():\n-    validateRecords()\n+    validate_records()\n\n$ python tools/sentinel.py --root \"$DEMO\" --entry app:main --required checks:validate_records\nPASS: local function references and required-validator reachability\n  app:main \u2192 checks:validate_records\n  Scope: direct local functions; no runtime or third-party correctness claim.\n\n[exit 0]",
+      "start": 18.123,
+      "title": "2 / Fix the binding, then run the same check"
+    },
+    {
+      "duration": 9,
+      "note": "An import is not a production call path; test-only references do not count.",
+      "output": "$ python tools/sentinel.py --root \"$DEMO\" --entry app:main --required checks:validate\nFAIL: local function references and required-validator reachability\n  <configuration>:0 [disconnected-validator] No supported static call path from app:main to checks:validate\n  Scope: direct local functions; no runtime or third-party correctness claim.\n\n[exit 1]",
+      "start": 28.177,
+      "title": "3 / A defined validator can still be disconnected"
+    },
+    {
+      "duration": 8,
+      "note": "This establishes a supported static call path. It does not prove every branch runs.",
+      "output": "$ python tools/sentinel.py --root \"$DEMO\" --entry app:main --required checks:validate\nPASS: local function references and required-validator reachability\n  app:main \u2192 checks:validate\n  Scope: direct local functions; no runtime or third-party correctness claim.\n\n[exit 0]",
+      "start": 37.237,
+      "title": "4 / Connect the production path"
+    },
+    {
+      "duration": 10,
+      "note": "Unknown constructs never receive a reassuring PASS.",
+      "output": "$ python tools/sentinel.py --root \"$DEMO\" --entry app:main --required checks:validate\nUNRESOLVED: local function references and required-validator reachability\n  <configuration>:0 [required-path-unresolved] Unsupported constructs prevent establishing a static call path from app:main to checks:validate\n  app.py:4 [computed-call] Computed call targets are outside the supported graph\n  app.py:4 [dynamic-call] Dynamic lookup, code execution or import cannot be resolved statically\n  Scope: direct local functions; no runtime or third-party correctness claim.\n\n[exit 2]",
+      "start": 45.293,
+      "title": "5 / Dynamic lookup is unresolved"
+    },
+    {
+      "duration": 10,
+      "note": "The offline rebuild verifies source hashes and reproduces the published artifacts.",
+      "output": "$ python tools/sentinel.py\nPASS: local function references and required-validator reachability\n  pipeline.build:main \u2192 pipeline.validate:validate_snapshot\n  Scope: direct local functions; no runtime or third-party correctness claim.\n\n[exit 0]\n$ python -m pipeline.build --check\nPASS: verified 26 source hashes, 24 jurisdictions, 504 observations and byte-identical outputs.\n\n[exit 0]",
+      "start": 57.308,
+      "title": "6 / Check the real CivicAtlas pipeline"
+    },
+    {
+      "duration": 9,
+      "note": "Suppression, missing values, tampering, geometry and deliberate AST failures are covered.",
+      "output": "$ python -m unittest discover -s tests/python -q\n----------------------------------------------------------------------\nRan 16 tests in 0.551s\n\nOK\n\n[exit 0]",
+      "start": 68.057,
+      "title": "7 / Run the acceptance controls"
+    },
+    {
+      "duration": 8,
+      "note": "Pauline identified the engineering problem and directed agent-assisted investigation.",
+      "output": "PASS means the supported local-function graph resolves\nand reaches the declared required validator.\n\nThird-party libraries and object methods are outside this checker.\nRuntime execution and data invariants are verified separately.\n\nPython + DuckDB \u2192 Parquet + D1 import artifacts\n24 Maryland jurisdictions / official 2024 sources",
+      "start": 77.058,
+      "title": "Keep the claim as precise as the check."
+    }
+  ]
+}

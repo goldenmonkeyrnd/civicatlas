@@ -1,0 +1,28 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:08.000
+I use AI. I check its work.. Static reachability is evidence about code structure, not runtime correctness.
+
+00:00:08.000 --> 00:00:18.000
+1 / A malformed function reference fails. validateRecords was imported; the module actually defines validate_records.
+
+00:00:18.000 --> 00:00:28.000
+2 / Fix the binding, then run the same check. The repaired local import and direct call now agree.
+
+00:00:28.000 --> 00:00:37.000
+3 / A defined validator can still be disconnected. An import is not a production call path; test-only references do not count.
+
+00:00:37.000 --> 00:00:45.000
+4 / Connect the production path. This establishes a supported static call path. It does not prove every branch runs.
+
+00:00:45.000 --> 00:00:55.000
+5 / Dynamic lookup is unresolved. Unknown constructs never receive a reassuring PASS.
+
+00:00:55.000 --> 00:01:05.000
+6 / Check the real CivicAtlas pipeline. The offline rebuild verifies source hashes and reproduces the published artifacts.
+
+00:01:05.000 --> 00:01:14.000
+7 / Run the acceptance controls. Suppression, missing values, tampering, geometry and deliberate AST failures are covered.
+
+00:01:14.000 --> 00:01:22.000
+Keep the claim as precise as the check.. Pauline identified the engineering problem and directed agent-assisted investigation.

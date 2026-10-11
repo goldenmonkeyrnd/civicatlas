@@ -1,0 +1,290 @@
+{
+  "manifest_version": 1,
+  "ownership": "5",
+  "retrieved_at": "2026-10-11T19:17:08+00:00",
+  "sources": [
+    {
+      "bytes": 157550,
+      "file": "qcew-2024-24001.csv.gz",
+      "fips": "24001",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1155,
+      "sha256": "b261d3e997e95e2b5f5fadcfeb727f25d378b1dbab432c0f4f1f0586dee1d667",
+      "stored_sha256": "c7ccf8468274ec5964a7005038193b22d2f86dc839ec021bd6f9f6775ca7ee59",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24001.csv"
+    },
+    {
+      "bytes": 299928,
+      "file": "qcew-2024-24003.csv.gz",
+      "fips": "24003",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1889,
+      "sha256": "f6531acbefbd0fa9519c42962b35eaf32ab82be261a345c7f7124e9e8326f523",
+      "stored_sha256": "18b08e4756591fac53fe63fb27e66cfdfd95a7e2b4b31b7ed6b54058cdb6e440",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24003.csv"
+    },
+    {
+      "bytes": 306848,
+      "file": "qcew-2024-24005.csv.gz",
+      "fips": "24005",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1918,
+      "sha256": "e8011acd5861c5c54be8a1efc0055c929a0ff110642f8f6368166d733e36bc15",
+      "stored_sha256": "7f509d1437ececf5e7cf8f17e34c7dc696e6ecc9b43be35ee820a50d492a4d09",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24005.csv"
+    },
+    {
+      "bytes": 157379,
+      "file": "qcew-2024-24009.csv.gz",
+      "fips": "24009",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1147,
+      "sha256": "96ce47543239b0ee3125f82b735110145b77955c012f47d0bb9bd82d929326ff",
+      "stored_sha256": "1690e0a24ef4e39cb2d6fce470a4f9d3af039e44eadaecf6ae56d964874bf292",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24009.csv"
+    },
+    {
+      "bytes": 109040,
+      "file": "qcew-2024-24011.csv.gz",
+      "fips": "24011",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 825,
+      "sha256": "008e5c2aabccd9baf76ccb1975677b12a2e30aca673031648b30203fcd9d4f18",
+      "stored_sha256": "cf747d7f4ef9b94f7fb8b485f41cec325b3eba8f5d2573a59b17de2df35d9ca3",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24011.csv"
+    },
+    {
+      "bytes": 206683,
+      "file": "qcew-2024-24013.csv.gz",
+      "fips": "24013",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1408,
+      "sha256": "aa46e50ae9176cc4e6089d412d909c9b2763e5c2400c0f75d5257ad76449d84c",
+      "stored_sha256": "7a4251a36385640e57a87e6e2e789d2b15a1cd2cc06586864c03e2a5bddb7e54",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24013.csv"
+    },
+    {
+      "bytes": 171200,
+      "file": "qcew-2024-24015.csv.gz",
+      "fips": "24015",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1223,
+      "sha256": "b8b83f313a9f8b76db6e5b9c366a76587cdacce389c7a9ee342a2feada82dc53",
+      "stored_sha256": "57383ab0a0c5018c1f131a8827c277d6fbabe9bd58642787e5b6ce38621c0139",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24015.csv"
+    },
+    {
+      "bytes": 182457,
+      "file": "qcew-2024-24017.csv.gz",
+      "fips": "24017",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1253,
+      "sha256": "31100e31f975c4f0a12351ee58adb90df5f2791dd49879fb0cefb25ff567e73a",
+      "stored_sha256": "5f6143d76bae5a954ac51f0a93471987aaf4dfb168f9860966e218a54eef4e26",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24017.csv"
+    },
+    {
+      "bytes": 119504,
+      "file": "qcew-2024-24019.csv.gz",
+      "fips": "24019",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 897,
+      "sha256": "05a7db7514c74d81de4f747348549e401eabf7344469ec53423bf88dea732217",
+      "stored_sha256": "c6fbdbb68a987362a83c04a68f937b7de50a191d64e6500d79850b82b25304a3",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24019.csv"
+    },
+    {
+      "bytes": 247386,
+      "file": "qcew-2024-24021.csv.gz",
+      "fips": "24021",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1632,
+      "sha256": "ebcc38fe9109cff934b6fad98d1f985ac2f73eba139f2bd23873343be3da5969",
+      "stored_sha256": "3c5f3cbe4883edb454de0452eabbfa2aecb9aca216da45c4a2515f8bde3c88d5",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24021.csv"
+    },
+    {
+      "bytes": 133036,
+      "file": "qcew-2024-24023.csv.gz",
+      "fips": "24023",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1004,
+      "sha256": "d94fd329eeab4e8b3250c9e1d363200301b68ea60f2af7ac9f7cd8c19468c495",
+      "stored_sha256": "911300596d27c7e64b130a01de0a2bf2ed41eb25bd055c1445b0b51e7ef5fd9e",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24023.csv"
+    },
+    {
+      "bytes": 236855,
+      "file": "qcew-2024-24025.csv.gz",
+      "fips": "24025",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1574,
+      "sha256": "bb99bce689f2d1808c5beee34ff01059b0c2665ac02b84ae3d9bad004daec282",
+      "stored_sha256": "b558f95d890e2f6c7e55cb1dc8a9176e3ebf543720cf91d17ccaa9824dfa1aff",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24025.csv"
+    },
+    {
+      "bytes": 260442,
+      "file": "qcew-2024-24027.csv.gz",
+      "fips": "24027",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1693,
+      "sha256": "8a32135836a447e926c5b3c996ed704f1849a338acbab60da09ba1e1813fca61",
+      "stored_sha256": "c1dcb5ae36f7001afb98b9891cbde5053a021d6d5d15c8088d88dae81030e6de",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24027.csv"
+    },
+    {
+      "bytes": 118530,
+      "file": "qcew-2024-24029.csv.gz",
+      "fips": "24029",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 909,
+      "sha256": "f6541020599dc9dfba7f25d7aa0218e5dc8cfb2d23082a1d7328e3ea4c0fc632",
+      "stored_sha256": "c9fc66bee03d04f21be5e35ae4a0a28c90f029eb5c79e4cf13e1bee59a1f0ea1",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24029.csv"
+    },
+    {
+      "bytes": 301567,
+      "file": "qcew-2024-24031.csv.gz",
+      "fips": "24031",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1856,
+      "sha256": "dc60ac0a7e9a87f4c5f58e51f2361933e51601112086eab606d39326ab39da77",
+      "stored_sha256": "c6fb4e9bb3c425eff9f4ed239f3bd9c9b3184bfb89de97e6dfd529fb20a42595",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24031.csv"
+    },
+    {
+      "bytes": 291941,
+      "file": "qcew-2024-24033.csv.gz",
+      "fips": "24033",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1857,
+      "sha256": "4cfe8f69d6938b43464ff0c774b099ecbdee123daf09bff47fefd1c262c5db81",
+      "stored_sha256": "174d99a550b657b1ed30abd1c2b4f45153b37b75f997529696373b5f7af077a3",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24033.csv"
+    },
+    {
+      "bytes": 152798,
+      "file": "qcew-2024-24035.csv.gz",
+      "fips": "24035",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1107,
+      "sha256": "9da3a348c6e14cf84ce95eff422bec7192a5b61b7576c3f71ed6ba5d370c1cde",
+      "stored_sha256": "ae154ea3355f95a327a326a19f68ba8cf4470cadc56a2058261c18885d9e64a5",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24035.csv"
+    },
+    {
+      "bytes": 159845,
+      "file": "qcew-2024-24037.csv.gz",
+      "fips": "24037",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1141,
+      "sha256": "29fef64ac8e4b50461d411b52226ca7d605363fccbcb86686ee41591a01a5f5f",
+      "stored_sha256": "263c7e70a684f46d212c8ec95847ea2e524f581e29c9ffbbd0ea1e4377e983a7",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24037.csv"
+    },
+    {
+      "bytes": 84745,
+      "file": "qcew-2024-24039.csv.gz",
+      "fips": "24039",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 660,
+      "sha256": "ba67abeca7b2fa76662fc7659ffed6c09bf9fd568522a356f31a142200205b07",
+      "stored_sha256": "abdfda21f51e86aaef9fbaf3fa0d9799611d230911c16eddcff403a8eaf609f5",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24039.csv"
+    },
+    {
+      "bytes": 154932,
+      "file": "qcew-2024-24041.csv.gz",
+      "fips": "24041",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1134,
+      "sha256": "5ae3f925f066e3ab08ddcb2f9a1e76e085d5ad0661321313f087294fe627c539",
+      "stored_sha256": "2057d0d6732d15eaaae491dbfc1d05ae5de309bc5d6be6c4acaa0ef2f2e8fcf6",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24041.csv"
+    },
+    {
+      "bytes": 210311,
+      "file": "qcew-2024-24043.csv.gz",
+      "fips": "24043",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1466,
+      "sha256": "29ccd15cb4b4fd1a25fecafca4e1d578003a8128e606f4435aad1987540a1a46",
+      "stored_sha256": "cee1ebb514e72cbe121109840b1e397ab389f73a5d15d2b697be9b45ea72d856",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24043.csv"
+    },
+    {
+      "bytes": 180118,
+      "file": "qcew-2024-24045.csv.gz",
+      "fips": "24045",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1279,
+      "sha256": "8ab62744857072207461400e2e69a34b1d421108ac210b07d4a01e4a3cf315eb",
+      "stored_sha256": "8b723181769a0b1b51d122734cb42a2b81a4e11d15273231ebf9ac821455e947",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24045.csv"
+    },
+    {
+      "bytes": 167353,
+      "file": "qcew-2024-24047.csv.gz",
+      "fips": "24047",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1206,
+      "sha256": "bb0a0e41ff3dfa29f06b2b17bb5db7c9e9749f3fa88360a1701437fcc415d332",
+      "stored_sha256": "b022a9a2fab86fb51885a100513b7d566c8c2a60d16717bf3e9e0522e7216422",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24047.csv"
+    },
+    {
+      "bytes": 300314,
+      "file": "qcew-2024-24510.csv.gz",
+      "fips": "24510",
+      "kind": "qcew",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "rows": 1937,
+      "sha256": "6a1068d11ad8c0204e97aa1c3ae2edaf56afd1d24ff4edbe279f2a911b640ba7",
+      "stored_sha256": "2f1bd399b020b950ddae0275718b30a72c3e415889adec9dcceb7f531374b429",
+      "url": "https://data.bls.gov/cew/data/api/2024/a/area/24510.csv"
+    },
+    {
+      "bytes": 2982952,
+      "file": "cb_2024_us_county_5m.zip",
+      "kind": "geometry",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "sha256": "a867f8734059b45d1d54a0ba56189dd7e73c42eb451418fa56de44c35232614b",
+      "stored_sha256": "a867f8734059b45d1d54a0ba56189dd7e73c42eb451418fa56de44c35232614b",
+      "url": "https://www2.census.gov/geo/tiger/GENZ2024/shp/cb_2024_us_county_5m.zip"
+    },
+    {
+      "bytes": 164248,
+      "file": "industry_titles.csv.gz",
+      "kind": "industry_titles",
+      "retrieved_at": "2026-10-11T19:17:08+00:00",
+      "sha256": "facc122ef582f3efdbb5294f103331894d8fdab694de38e4ee7bff1b941ab8e1",
+      "stored_sha256": "4ff48e3b16641566764017caf72f129ac58d4204fbc6d57297e80484c02b22b4",
+      "url": "https://data.bls.gov/cew/doc/titles/industry/industry_titles.csv"
+    }
+  ],
+  "year": "2024"
+}

@@ -1,0 +1,62 @@
+{
+  "checker_version": "1.0.0",
+  "edges": {
+    "pipeline.acquire:acquire": [],
+    "pipeline.acquire:download": [],
+    "pipeline.acquire:main": [
+      "pipeline.acquire:acquire"
+    ],
+    "pipeline.build:build": [
+      "pipeline.build:build_geometry",
+      "pipeline.build:build_observations",
+      "pipeline.build:load_manifest",
+      "pipeline.build:write_outputs",
+      "pipeline.validate:validate_snapshot"
+    ],
+    "pipeline.build:build_geometry": [
+      "pipeline.build:transform_coordinates"
+    ],
+    "pipeline.build:build_observations": [
+      "pipeline.build:canonical_json"
+    ],
+    "pipeline.build:canonical_json": [],
+    "pipeline.build:load_manifest": [],
+    "pipeline.build:main": [
+      "pipeline.build:build"
+    ],
+    "pipeline.build:sql_value": [],
+    "pipeline.build:transform_coordinates": [
+      "pipeline.build:transform_coordinates"
+    ],
+    "pipeline.build:write_outputs": [
+      "pipeline.build:canonical_json",
+      "pipeline.build:sql_value"
+    ],
+    "pipeline.validate:validate_snapshot": []
+  },
+  "entry": "pipeline.build:main",
+  "findings": [],
+  "limits": "Local function imports and direct call reachability only. External libraries and object methods are not analyzed. Static reachability does not prove branch execution, successful validation, or runtime correctness.",
+  "reachable": [
+    "pipeline.build:build",
+    "pipeline.build:build_geometry",
+    "pipeline.build:build_observations",
+    "pipeline.build:canonical_json",
+    "pipeline.build:load_manifest",
+    "pipeline.build:main",
+    "pipeline.build:sql_value",
+    "pipeline.build:transform_coordinates",
+    "pipeline.build:write_outputs",
+    "pipeline.validate:validate_snapshot"
+  ],
+  "required": "pipeline.validate:validate_snapshot",
+  "scope": [
+    "pipeline",
+    "pipeline.acquire",
+    "pipeline.build",
+    "pipeline.constants",
+    "pipeline.validate"
+  ],
+  "status": "PASS",
+  "unresolved": []
+}
