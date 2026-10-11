@@ -2,6 +2,10 @@
 
 An observable Maryland public-data application by Pauline Yeary: React, TypeScript, Vite, Bun, Cloudflare Workers/D1, Python and DuckDB. Production: https://atlas.goldenmonkey.dev. Portfolio: https://goldenmonkey.dev/work/civicatlas/.
 
+## Launch status — October 11, 2026
+
+The application is live against Cloudflare D1. Production verification checked all 24 county responses and all 504 source observations against the validated snapshot: 530 requests and 9,736 assertions, with no mismatch. Hosted validation passes. Automatic deployment awaits the scoped Cloudflare CI secret; the checked data-import workflow needs its separate D1 secret. Analytics Engine is not yet activated on the account, so aggregate application events are accepted best-effort but discarded until the production binding is enabled.
+
 ## The snapshot
 
 2024 BLS QCEW annual data for all 24 Maryland jurisdictions, private ownership code 5. Employment measures covered workplace jobs. Average pay is nominal annual pay per job, not household income. NAICS sectors divide by the same county private-sector total. BLS disclosure code N is withheld; a missing observation is unavailable; a disclosed zero stays zero.
@@ -56,4 +60,4 @@ WHERE timestamp >= NOW() - INTERVAL '7' DAY AND blob3 = 'nava-2026'
 GROUP BY event, surface ORDER BY actions DESC
 ```
 
-New code is MIT licensed; fonts keep their SIL Open Font Licenses. Official public data is attributed in its manifest and source inspector. No private client or pseudonymous project code is included.
+New code is MIT licensed; fonts keep their SIL Open Font Licenses. Official public data is attributed in its manifest and source inspector.
