@@ -4,7 +4,7 @@ An observable Maryland public-data application by Pauline Yeary: React, TypeScri
 
 ## Launch status — October 11, 2026
 
-The application is live against Cloudflare D1. Production verification checked all 24 county responses and all 504 source observations against the validated snapshot: 530 requests and 9,736 assertions, with no mismatch. Hosted validation passes. Automatic deployment awaits the scoped Cloudflare CI secret; the checked data-import workflow needs its separate D1 secret. Analytics Engine is not yet activated on the account, so aggregate application events are accepted best-effort but discarded until the production binding is enabled.
+The application is live against Cloudflare D1. Production verification checked all 24 county responses and all 504 source observations against the validated snapshot: 530 requests and 9,736 assertions, with no mismatch. GitHub Actions validation, automatic deployment and the separately checked snapshot import have passed against production. The import saved a recovery export before updating D1 and verified the exact deployed revision afterward. Analytics Engine capture has been verified for real conference-page, comparison and source-inspector interactions using a sampling-aware query. Verification traffic is not recruiter engagement.
 
 ## The snapshot
 
@@ -43,7 +43,7 @@ The fresh AST checker verifies supported local imported function references and 
 bun run deploy
 ```
 
-Main-branch GitHub Actions validates before deployment. Configure `CLOUDFLARE_API_TOKEN` in the production environment with Workers Scripts Edit, Workers Routes Edit, Account Settings Read and Zone Read scoped to the configured account and goldenmonkey.dev zone. Deploy does not import or replace data. The manually dispatched import-snapshot workflow checks the pinned artifacts, exports a recovery backup and imports data with a separate `CLOUDFLARE_D1_TOKEN` (D1 Edit). Ordinary deployments retain the snapshot.
+Main-branch GitHub Actions validates before deployment. Configure `CLOUDFLARE_API_TOKEN` in the production environment with Workers Scripts Edit, Workers Routes Edit, Account Settings Read, Account Analytics Read and Zone Read scoped to the configured account and goldenmonkey.dev zone. Deploy does not import or replace data. The manually dispatched import-snapshot workflow checks the pinned artifacts, exports a recovery backup and imports data with a separate `CLOUDFLARE_D1_TOKEN` (D1 Edit). Ordinary deployments retain the snapshot.
 
 To roll back code, use `bunx wrangler deployments list` and `bunx wrangler rollback <version-id>`. A code rollback does not restore D1; keep the exported snapshot and use D1 Time Travel or the verified backup for data recovery.
 
@@ -57,7 +57,7 @@ Private Analytics Engine report (Account Analytics Read token required):
 SELECT blob1 AS event, blob2 AS surface, SUM(_sample_interval) AS actions
 FROM goldenmonkey_engagement
 WHERE timestamp >= NOW() - INTERVAL '7' DAY AND blob3 = 'nava-2026'
-GROUP BY event, surface ORDER BY actions DESC
+GROUP BY event, surface ORDER BY actions DESC FORMAT JSON
 ```
 
 New code is MIT licensed; fonts keep their SIL Open Font Licenses. Official public data is attributed in its manifest and source inspector.
