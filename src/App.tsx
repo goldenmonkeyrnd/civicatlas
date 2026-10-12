@@ -37,7 +37,7 @@ function Header() {
     <a className="skip-link" href="#explorer">Skip to county explorer</a>
     <header className="site-header">
       <a className="wordmark" href={portfolioUrl} aria-label="GoldenMonkey.dev — Pauline Yeary’s portfolio">
-        <img src="/favicon.svg?v=monkey-20261012" alt="" width="34" height="34" />
+        <img src="/android-chrome-192x192.png?v=monkey-20261012" alt="" width="34" height="34" />
         <span>GoldenMonkey<span className="wordmark-dot">.dev</span></span>
       </a>
       <nav aria-label="Professional links">
