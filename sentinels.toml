@@ -1,0 +1,84 @@
+version = 1
+source_roots = ["."]
+excludes = ["tests/**", "tools/**", ".venv/**", "node_modules/**"]
+
+[[contracts]]
+kind = "connection"
+id = "production-validation"
+entry = "pipeline.build:main"
+target = "pipeline.validate:validate_snapshot"
+
+[[contracts]]
+kind = "handoff"
+id = "pinned-manifest-handoff"
+entry = "pipeline.build:main"
+producer = "pipeline.build:load_manifest"
+consumer = "pipeline.build:build_observations"
+argument = "manifest"
+
+[[contracts]]
+kind = "shape"
+id = "published-snapshot-shape"
+source = "data/processed/snapshot.json"
+mode = "artifact"
+allow_extra = false
+
+[contracts.fields.artifacts]
+type = "object"
+required = true
+nullable = false
+
+[contracts.fields.dataset_revision]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.geometry_scale]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.geometry_year]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.jurisdiction_count]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.metric_definitions]
+type = "object"
+required = true
+nullable = false
+
+[contracts.fields.observation_count]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.ownership]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.retrieved_at]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.source_count]
+type = "string"
+required = true
+nullable = false
+
+[contracts.fields.status_counts]
+type = "object"
+required = true
+nullable = false
+
+[contracts.fields.year]
+type = "string"
+required = true
+nullable = false

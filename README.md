@@ -17,11 +17,11 @@ The application is live against Cloudflare D1. Production verification checked a
 Use Python 3.12, uv and Bun 1.3.4. The raw public snapshot is included; routine builds require no source API key or network fetch.
 
 ```sh
-uv sync --frozen
+uv sync --locked
 bun install --frozen-lockfile
-uv run python -m pipeline.build --check
-uv run python -m unittest discover -s tests/python -v
-uv run python tools/sentinel.py --root . --entry pipeline.build:main --required pipeline.validate:validate_snapshot
+uv run --locked python -m pipeline.build --check
+uv run --locked python -m unittest discover -s tests/python -v
+uv run --locked sentinels check --root . --config sentinels.toml --json
 bun run check
 bun run db:local
 bun run dev
@@ -33,9 +33,15 @@ The Cloudflare Vite plugin serves the frontend and Worker together at localhost:
 
 GET /api/v1/counties returns all county totals; GET /api/v1/counties/{fips} returns a county and its NAICS sectors; GET /api/v1/sources/{id} returns provenance; GET /api/health checks D1 and the data revision. Identifiers stay strings, queries are parameterized, public SQL submission is unavailable, and API faults return explicit JSON errors. The UI provides retry and retains ordinary portfolio/contact navigation.
 
-## Bounded Sentinel
+## Released Sentinels contracts
 
-The fresh AST checker verifies supported local imported function references and static reachability to the required production validator. It does not prove branch execution, runtime behavior or general correctness. Dynamic constructs it cannot resolve are reported unresolved. The malformed-reference, disconnected-validator, test-only-reference, valid and dynamic fixtures make these boundaries reproducible. The recording and transcript are in data/evidence; fixture and production commands are shown without private source or identifiers.
+The pipeline consumes [Sentinels v0.1.0](https://github.com/goldenmonkeyrnd/sentinels/releases/tag/v0.1.0) through an exact GitHub wheel URL and SHA-256 in `pyproject.toml`, with its dependency closure recorded in `uv.lock`. `uv sync --locked` verifies that the manifest and lock agree. Sentinels is AGPL-3.0-only; its release includes corresponding source and notices. CivicAtlas remains a separate application with its existing license and data attribution.
+
+`sentinels.toml` declares three real integration requirements: production `main` connects to `validate_snapshot`; the return from `load_manifest` reaches `build_observations`'s `manifest` argument; and the committed snapshot has the declared top-level JSON fields and types. Existing count and year fields deliberately remain strings. A PASS describes supported structural evidence, not successful execution on every branch. The source-only analyzer does not import or run the pipeline, and relevant ambiguity is reported as UNRESOLVED.
+
+Data validation and byte-reproducibility remain independent gates. The adoption tests invoke the installed CLI against this configuration and inject defects into temporary copies of the real pipeline and artifact; reusable analyzer fixtures belong upstream. A fresh report can be saved with `uv run --locked sentinels check --root . --config sentinels.toml --json > artifacts/sentinels-report.json` after creating `artifacts/`.
+
+The captured recording, transcript, cast, captions and hashes under `data/evidence/` are preserved historical evidence of the original local checker. Its generator and duplicate checker have been retired. Their source remains recoverable from [the original launch commit](https://github.com/goldenmonkeyrnd/civicatlas/tree/8522b545c2d8819e559ae421738d5cdc9d73797c). The current [editable lab](https://goldenmonkey.dev/labs/sentinels/v0.1.0/) produces new reports from visitor edits.
 
 ## Deploy and import
 
@@ -60,4 +66,4 @@ WHERE timestamp >= NOW() - INTERVAL '7' DAY AND blob3 = 'nava-2026'
 GROUP BY event, surface ORDER BY actions DESC FORMAT JSON
 ```
 
-New code is MIT licensed; fonts keep their SIL Open Font Licenses. Official public data is attributed in its manifest and source inspector.
+CivicAtlas code is MIT licensed; the separately consumed Sentinels tool is AGPL-3.0-only; fonts keep their SIL Open Font Licenses. Official public data is attributed in its manifest and source inspector.
