@@ -195,8 +195,8 @@ function Comparison({ overview, geometry, geometryRetry }: { overview: CountyOve
     </section>
     {source && <SourceInspector request={source} onClose={() => setSource(null)} />}
     <section className="project-evidence" aria-labelledby="evidence-title">
-      <div><p className="eyebrow">I use AI. I check its work.</p><h2 id="evidence-title">Follow the evidence.</h2><p>Trace an observation to its source, inspect the pipeline, or watch a deliberately broken reference get caught before it reaches the data build.</p></div>
-      <div className="evidence-links"><a className="button button-primary" href={`${portfolioUrl}/work/civicatlas/`}>Read the engineering story <span aria-hidden="true">↗</span></a><a className="button button-secondary" href={`${portfolioUrl}/work/agentic-engineering/`}>Try the Sentinels lab <span aria-hidden="true">↗</span></a><a className="text-button" href="https://github.com/goldenmonkeyrnd/civicatlas" onClick={() => track('github_clicked')}>Open the source on GitHub <span aria-hidden="true">↗</span></a></div>
+      <div><p className="eyebrow">I use AI. I check its work.</p><h2 id="evidence-title">Follow the evidence.</h2><p>Trace an observation to its source, inspect the pipeline, or edit a declared requirement in the Sentinels lab and inspect a fresh source-linked result.</p></div>
+      <div className="evidence-links"><a className="button button-primary" href={`${portfolioUrl}/work/civicatlas/`}>Read the engineering story <span aria-hidden="true">↗</span></a><a className="button button-secondary" href={`${portfolioUrl}/labs/sentinels/`}>Try the Sentinels lab <span aria-hidden="true">↗</span></a><a className="text-button" href="https://github.com/goldenmonkeyrnd/civicatlas" onClick={() => track('github_clicked')}>Open the source on GitHub <span aria-hidden="true">↗</span></a></div>
     </section>
   </>;
 }

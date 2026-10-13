@@ -1,4 +1,4 @@
-version = 1
+version = 2
 source_roots = ["."]
 excludes = ["tests/**", "tools/**", ".venv/**", "node_modules/**"]
 
@@ -82,3 +82,85 @@ nullable = false
 type = "string"
 required = true
 nullable = false
+
+# Explicit policy for every discovered declaration in the Python pipeline.
+# Internal reasons record scope decisions; they do not establish correctness.
+[[contracts]]
+kind = "coverage"
+id = "pipeline-coverage"
+roots = ["pipeline"]
+
+[[contracts.ledger]]
+kind = "contract"
+surface = "pipeline.build:main"
+contracts = ["production-validation", "pinned-manifest-handoff"]
+
+[[contracts.ledger]]
+kind = "contract"
+surface = "pipeline.build:load_manifest"
+contracts = ["pinned-manifest-handoff"]
+
+[[contracts.ledger]]
+kind = "contract"
+surface = "pipeline.build:build_observations"
+contracts = ["pinned-manifest-handoff"]
+
+[[contracts.ledger]]
+kind = "contract"
+surface = "pipeline.validate:validate_snapshot"
+contracts = ["production-validation"]
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.acquire:download"
+reason = "Explicit source-acquisition network boundary; offline publication contracts do not assert fetching. HTTP status, payload limits and source formats are checked by acquisition code."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.acquire:acquire"
+reason = "Deliberate raw-source refresh and staging; kept outside the offline publication entry. The existing pinned-manifest and data-reproduction gates validate acquired inputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.acquire:main"
+reason = "Separate opt-in acquisition CLI; requires explicit refresh and does not establish an offline publication connection."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:SourceIntegrityError"
+reason = "Exception type for rejected pinned input; no connection, handoff or shape requirement is declared for exception construction."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:canonical_json"
+reason = "Internal deterministic serialization helper; byte-reproducibility checks validate its resulting artifacts."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:transform_coordinates"
+reason = "Recursive geometry conversion through pyproj; geometry/data invariants and byte-reproduction are execution gates rather than a static shape claim."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:build_geometry"
+reason = "External shapefile and coordinate-library processing; the data validator checks the actual county geometry join."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:sql_value"
+reason = "Internal SQL escaping and scalar formatting; output SQL is executed twice with foreign-key/count checks in the existing build gate."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:write_outputs"
+reason = "Artifact serialization and database writes rely on dynamic data and external libraries. The artifact-shape contract and byte-reproduction/SQL/Parquet round-trip gates check the published outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.build:build"
+reason = "Internal publication orchestration; the declared main-entry validator and manifest-handoff witnesses traverse this body. It has no additional endpoint-specific contract."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.validate:SnapshotValidationError"
+reason = "Exception type for rejected data invariants; no connection, handoff or shape requirement is declared for exception construction."

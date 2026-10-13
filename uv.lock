@@ -34,7 +34,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "duckdb", specifier = ">=1.4.0,<2" },
-    { name = "goldenmonkey-sentinels", url = "https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.1.0/goldenmonkey_sentinels-0.1.0-py3-none-any.whl" },
+    { name = "goldenmonkey-sentinels", url = "https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.2.0/goldenmonkey_sentinels-0.2.0-py3-none-any.whl" },
     { name = "pyproj", specifier = ">=3.7.0,<4" },
     { name = "pyshp", specifier = ">=2.3.1,<3" },
 ]
@@ -70,8 +70,8 @@ wheels = [
 
 [[package]]
 name = "goldenmonkey-sentinels"
-version = "0.1.0"
-source = { url = "https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.1.0/goldenmonkey_sentinels-0.1.0-py3-none-any.whl" }
+version = "0.2.0"
+source = { url = "https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.2.0/goldenmonkey_sentinels-0.2.0-py3-none-any.whl" }
 dependencies = [
     { name = "annotated-types" },
     { name = "pydantic" },
@@ -80,7 +80,7 @@ dependencies = [
     { name = "typing-inspection" },
 ]
 wheels = [
-    { url = "https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.1.0/goldenmonkey_sentinels-0.1.0-py3-none-any.whl", hash = "sha256:b1e1ea848f400500d3db3f404f8f7f1e5220693ac042a44c59ecca7b29bac774" },
+    { url = "https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.2.0/goldenmonkey_sentinels-0.2.0-py3-none-any.whl", hash = "sha256:32c601e4efded91cf1d36dddc5a9734e4bc8dc5704df073fbb9f87a38f7ba7c3" },
 ]
 
 [package.metadata]
