@@ -42,6 +42,8 @@ def stage(check: bool = False) -> dict[str, object]:
             if not path.exists() or path.read_bytes() != packed:
                 raise ValueError(f'Publication asset differs from reproducible output: {path}')
         else:
+            if path.exists() and path.read_bytes() != packed:
+                raise ValueError(f'Immutable release asset already has different bytes: {path}. Build a new release revision.')
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(packed)
         manifest.append({'path':str(path.relative_to(destination)),'bytes':len(packed),'sha256':hashlib.sha256(packed).hexdigest(),'decodedSha256':hashlib.sha256(content).hexdigest()})

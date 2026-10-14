@@ -60,6 +60,8 @@ Python gates verify raw hashes, coverage, joins, statistical transformations, ex
 
 Graph preparation requires the six pinned Geofabrik extracts in `data/outreach/roads-manifest.json` under `artifacts/roads/`, plus the original county shape source in the read-only corpus. Run `uv run --locked python tools/build_roads.py`, then `uv run --locked python tools/stage_outreach.py`. Raw PBFs and uncompressed graphs are ignored; bounded gzip graphs and compressed/decoded hashes are committed. Source updates require acquisition, a new revision, graph regeneration, reconciliation, and verification before publication.
 
+Publication rejects changed bytes at an existing release asset path. A published namespace stays immutable; changed data or graph transformations require a new release revision.
+
 ## What the model calculates
 
 Each block group uses its Census internal representative point snapped to an existing motor-road node within 500 meters. Shared OSM nodes establish junctions, preserving grade separation, recorded motor access, and one-way direction. County graphs include 17 km of surrounding roads, beyond the supported ten-mile threshold. Degree-two corridors and branches without attached neighborhoods/facilities are reduced while preserving distance/connectivity. Hypothetical locations snap to a retained node within 500 meters.
