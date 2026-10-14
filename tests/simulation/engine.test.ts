@@ -142,3 +142,26 @@ describe('route alternatives and known zero observations',()=>{
     }
   });
 });
+
+
+describe('geographic baseline across administrative boundaries',()=>{
+  test('nearby verified out-of-county assistance counts, while candidates stay in the study county',()=>{
+    const outside={...facility('outside',true),county:'24005'};
+    const outsideCandidate={...facility('outside-candidate'),county:'24005'};
+    const localGraph={...graph,facilityNodes:{...graph.facilityNodes,outside:0,'outside-candidate':4}};
+    const allFacilities=[...facilities,outside,outsideCandidate];
+    const input={graph:localGraph,areas,facilities:allFacilities,scenario:scenario(),suggest:true};
+    const result=runSimulation(input);
+    expect(result.baseline.covered).toBe(150);
+    expect(result.areas.find(area=>area.geoid==='a')?.baselineMiles).toBe(0);
+    expect(result.suggested).toEqual([{id:'alpha',incremental:40}]);
+    expect(result.proposed.covered).toBe(190);
+    expect(()=>runSimulation({...input,scenario:scenario({hubIds:['outside-candidate']})})).toThrow('verified candidate');
+  });
+  test('closed, unresolved and unmapped out-of-county sites do not create baseline access',()=>{
+    const external=[{...facility('outside',true),county:'24005',status:'closed' as const},{...facility('unresolved',true),county:'24005',status:'unresolved' as const},{...facility('unmapped',true),county:'24005'}];
+    const localGraph={...graph,facilityNodes:{...graph.facilityNodes,outside:0,unresolved:0,unmapped:null}};
+    const result=runSimulation({graph:localGraph,areas,facilities:[...facilities,...external],scenario:scenario(),suggest:false});
+    expect(result.baseline.covered).toBe(50);
+  });
+});

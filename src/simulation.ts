@@ -294,7 +294,10 @@ export function runSimulation(input: SimulationInput): SimulationResult {
   if (!demands.length) throw new ScenarioError('No block-group observations are available for this county.');
   if (!demands.some((area) => Object.hasOwn(area.area.values, scenario.measure))) throw new ScenarioError(`Household measure ${scenario.measure} is not available in this county.`);
   const closures = new Set(scenario.closedEdgeIds);
-  const baselineHubs: Hub[] = facilities.filter((facility) => facility.county === scenario.county && facility.status === 'verified' && facility.baseline && graph.facilityNodes[facility.id] != null).map((facility) => ({ id: facility.id, node: graph.facilityNodes[facility.id]! }));
+  // Geographic access includes verified assistance sites across county borders
+  // wherever the county-buffered graph can reach them. Candidate additions
+  // remain part of the selected study county.
+  const baselineHubs: Hub[] = facilities.filter((facility) => facility.status === 'verified' && facility.baseline && graph.facilityNodes[facility.id] != null).map((facility) => ({ id: facility.id, node: graph.facilityNodes[facility.id]! }));
   const selectedHubs: Hub[] = scenario.hubIds.map((id) => ({ id, node: graph.facilityNodes[id]! }));
   for (const site of scenario.hypotheticalSites) selectedHubs.push({ id: site.id, node: snapHypotheticalSite(site, graph) });
   const baselineRoutes = routesToHubs(graph, index, baselineHubs, closures);
