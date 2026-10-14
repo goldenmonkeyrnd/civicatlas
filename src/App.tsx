@@ -1,252 +1,247 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { geoMercator, geoPath } from 'd3-geo';
-import { parseDetail, parseGeometry, parseOverview, parseSource, useResource } from './api';
-import type { CountyGeometry } from './api';
+import { getJson, useResource } from './api';
+import type { Resource } from './types';
+import type { Area, AreaResponse, Catalog, CountyHistory, DataSource, Facility, Indicator, RoadGraph, Scenario, SimulationReply, SimulationRequest, SimulationResult, SourceResponse } from './outreach';
+import { assetForCounty, parseAreas, parseCatalog, parseCommutes, parseFacilities, parseGraph, parseHistory, parseSourceResponse } from './outreach-api';
+import { createDefaultScenario, decodeScenario, encodeScenario, parseScenario, serializeScenario } from './simulation';
+import OutreachMap, { useReducedMotion } from './outreach-map';
+import CountyEmployment from './CountyEmployment';
 import { track } from './analytics';
-import type { CountyDetail, CountyOverview, CountySummary, Observation, Resource } from './types';
 
-const portfolioUrl = 'https://goldenmonkey.dev';
-const emailUrl = 'mailto:goldenmonkeyrnd@gmail.com?subject=GoldenMonkey.dev%20%E2%80%94%2030-minute%20conversation';
 const integer = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
-const definitionLabels: Record<string, string> = { employment: 'Annual average jobs', establishments: 'Annual average establishments', annualPay: 'Average annual pay', employmentShare: 'Industry employment share', suppression: 'Disclosure rules' };
-const dollars = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-const percent = new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 });
-
-type SourceRequest = { id: string; title: string };
-type MetricKey = 'employment' | 'establishments' | 'annualPay';
-
-function industryName(value: string): string {
-  return value.replace(/^NAICS\s+[0-9-]+\s+/, '');
+const decimal = new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 });
+const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const portfolio = 'https://goldenmonkey.dev';
+const email = 'mailto:goldenmonkeyrnd@gmail.com?subject=CivicAtlas%20%E2%80%94%20let%E2%80%99s%20talk';
+type View = 'explore' | 'plan' | 'evidence';
+type Inspector = { sourceId: string; geoid?: string };
+const loaded = <T,>(resource: Resource<T>): T | null => resource.state === 'loaded' ? resource.data : null;
+const errorText = (error: unknown) => error instanceof Error ? error.message : 'The data could not be loaded.';
+function valueText(area: Area, indicator: Indicator, withMoe = false) {
+  const observation = area.values[indicator.id];
+  if (!observation || observation.value === null || observation.status !== 'available') return observation?.status === 'suppressed' ? 'Suppressed' : 'Not reported';
+  const format = (n: number) => indicator.unit === 'dollars' ? money.format(n) : indicator.unit === 'percent' ? `${decimal.format(n)}%` : integer.format(n);
+  return `${format(observation.value)}${withMoe && observation.moe !== null ? ` ± ${format(observation.moe)}` : ''}`;
 }
-
-function employmentShare(value: number): string {
-  return value > 0 && value < .001 ? '<0.1%' : percent.format(value);
+function download(name: string, content: string, type = 'application/json') {
+  const url = URL.createObjectURL(new Blob([content], { type })); const anchor = document.createElement('a'); anchor.href = url; anchor.download = name; anchor.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-
-function unavailable(observation: Observation | undefined): string {
-  return observation?.status === 'suppressed' ? 'Suppressed by BLS' : 'Not reported';
+const csvCell = (value: unknown) => `"${String(value ?? '').replaceAll('"', '""')}"`;
+function Notice({ children, retry }: { children: React.ReactNode; retry?: () => void }) {
+  return <div className="notice" role="alert"><span aria-hidden="true">!</span><div>{children}{retry && <button className="text-button" onClick={retry}>Try again</button>}</div></div>;
 }
-
-function metric(observation: Observation | undefined, key: MetricKey): string {
-  if (!observation || observation.status !== 'available' || observation[key] === null) return unavailable(observation);
-  return key === 'annualPay' ? dollars.format(observation[key]) : integer.format(observation[key]);
-}
-
 function Header() {
-  return <>
-    <a className="skip-link" href="#explorer">Skip to county explorer</a>
-    <header className="site-header">
-      <a className="wordmark" href={portfolioUrl} aria-label="GoldenMonkey.dev — Pauline Yeary’s portfolio">
-        <img src="/favicon.svg?v=monkey-20261012" alt="" width="34" height="34" />
-        <span>GoldenMonkey<span className="wordmark-dot">.dev</span></span>
-      </a>
-      <nav aria-label="Professional links">
-        <a href={`${portfolioUrl}/resume/`}>Résumé</a>
-        <a href="https://github.com/goldenmonkeyrnd/civicatlas" onClick={() => track('github_clicked')}>Source <span aria-hidden="true">↗</span></a>
-        <a className="header-contact" href={emailUrl} onClick={() => track('email_clicked')}>Email Pauline <span aria-hidden="true">↗</span></a>
-      </nav>
-    </header>
-  </>;
+  return <><a className="skip-link" href="#workspace">Skip to outreach workspace</a><header className="lab-header"><a className="wordmark" href={portfolio}><img src="/favicon.svg?v=monkey-20261012" alt="" width="34" height="34" /><span>GoldenMonkey<span className="wordmark-dot">.dev</span></span></a><span className="product-name">CivicAtlas<span>Maryland Outreach Lab</span></span><nav aria-label="Professional links"><a href={`${portfolio}/work/civicatlas/`}>The engineering</a><a href="https://github.com/goldenmonkeyrnd/civicatlas" onClick={() => track('github_clicked')}>Source ↗</a><a className="contact-link" href={email} onClick={() => track('email_clicked')}>Work with Pauline ↗</a></nav></header></>;
 }
-
-function ErrorNotice({ message, retry, heading = 'The data could not be loaded' }: { message: string; retry: () => void; heading?: string }) {
-  return <div className="error-notice" role="alert">
-    <strong>{heading}</strong>
-    <p>{message}</p>
-    <button className="button button-secondary" onClick={retry}>Try again</button>
-  </div>;
+function Footer() {
+  return <footer className="lab-footer"><div><a href={portfolio}>Built by Pauline Yeary</a><span>Data & AI Engineer · Golden Monkey R&D</span></div><p>Public data, useful decisions, inspectable evidence.</p><a href={`${portfolio}/resume/`}>Résumé ↗</a><a href={`${portfolio}/privacy/`}>Privacy & analytics</a></footer>;
 }
-
-function CountyMap({ geometry, retry, counties, selectedA, selectedB, activeSelection, onActiveSelection, onSelect }: {
-  geometry: Resource<CountyGeometry>; retry: () => void; counties: CountySummary[]; selectedA: string; selectedB: string;
-  activeSelection: 'a' | 'b'; onActiveSelection: (selection: 'a' | 'b') => void; onSelect: (fips: string) => void;
-}) {
-  const [highlighted, setHighlighted] = useState<string | null>(null);
-  const byFips = useMemo(() => new Map(counties.map((county) => [county.fips, county])), [counties]);
-  const largest = Math.max(...counties.map((county) => county.total.employment ?? 0));
-  const path = useMemo(() => {
-    if (geometry.state !== 'loaded') return null;
-    const projection = geoMercator().fitExtent([[16, 16], [704, 384]], geometry.data);
-    return geoPath(projection);
-  }, [geometry]);
-  const hovered = highlighted ? byFips.get(highlighted) : undefined;
-  const selected = byFips.get(activeSelection === 'a' ? selectedA : selectedB);
-  const color = (county: CountySummary | undefined): string => {
-    if (!county || county.total.status !== 'available' || county.total.employment === null) return 'url(#unavailable-pattern)';
-    const fraction = largest > 0 ? county.total.employment / largest : 0;
-    const from = [218, 236, 244];
-    const to = [36, 82, 189];
-    return `rgb(${from.map((channel, index) => Math.round(channel + (to[index] - channel) * fraction)).join(',')})`;
+export default function App() {
+  const catalog = useResource('/api/v2/catalog', parseCatalog);
+  return <><Header /><main className="lab-main"><div className="lab-intro"><div><p className="eyebrow">Public data → neighborhood decisions</p><h1>Bring assistance <span>closer.</span></h1></div><p>Where could three additional outreach sites improve access to benefits assistance? Explore Maryland, test a location, and follow every number back to its source.</p></div>{catalog.resource.state === 'loading' && <div className="release-loading" role="status"><div className="loading-monkey"><img src="/favicon.svg" alt="" /></div><h2>Opening Maryland’s data atlas</h2><p>Loading the published release and its source catalog…</p></div>}{catalog.resource.state === 'error' && <div className="release-loading"><Notice retry={catalog.retry}><strong>The Maryland release could not be loaded.</strong><p>{catalog.resource.message}</p></Notice><a href={email}>Contact Pauline ↗</a></div>}{catalog.resource.state === 'loaded' && <Lab catalog={catalog.resource.data} />}</main><Footer /></>;
+}
+function Lab({ catalog }: { catalog: Catalog }) {
+  const [view, setView] = useState<View>(() => { const requested = new URLSearchParams(window.location.search).get('view'); return requested === 'explore' || requested === 'evidence' ? requested : 'plan'; });
+  const [county, setCounty] = useState('24510');
+  const [indicatorId, setIndicatorId] = useState('incomeUnder35k');
+  const [level, setLevel] = useState<'blockGroup' | 'tract'>('blockGroup');
+  const [query, setQuery] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
+  const [scenario, setScenario] = useState<Scenario | null>(null);
+  const [result, setResult] = useState<SimulationResult | null>(null);
+  const [job, setJob] = useState({ id: 0, suggest: true });
+  const [calculating, setCalculating] = useState(false);
+  const [simulationError, setSimulationError] = useState<string | null>(null);
+  const [mapWarning, setMapWarning] = useState<string | null>(null);
+  const [addingSite, setAddingSite] = useState(false);
+  const [closingRoad, setClosingRoad] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [animationEpoch, setAnimationEpoch] = useState(0);
+  const [inspector, setInspector] = useState<Inspector | null>(null);
+  const [showCommutes, setShowCommutes] = useState(false);
+  const [status, setStatus] = useState('');
+  const [showAllAreas, setShowAllAreas] = useState(false);
+  const [tablePage, setTablePage] = useState(0);
+  const [shareUrl, setShareUrl] = useState('');
+  const importInput = useRef<HTMLInputElement>(null);
+  const requestId = useRef(0);
+  const imported = useRef<Scenario | null>(null);
+  const reduced = useReducedMotion();
+  const areasParser = useMemo(() => (v: unknown) => parseAreas(v, catalog.revision), [catalog.revision]);
+  const facilitiesParser = useMemo(() => (v: unknown) => parseFacilities(v, catalog.revision), [catalog.revision]);
+  const graphParser = useMemo(() => (v: unknown) => parseGraph(v, catalog.revision, county), [catalog.revision, county]);
+  const tractParser = useMemo(() => (v: unknown) => parseAreas(v, catalog.revision), [catalog.revision]);
+  const historyParser = useMemo(() => (v: unknown) => parseHistory(v, catalog.revision, county), [catalog.revision, county]);
+  const commuteParser = useMemo(() => (v: unknown) => parseCommutes(v, catalog.revision, county), [catalog.revision, county]);
+  const areasResource = useResource('/api/v2/areas?level=blockGroup', areasParser);
+  const facilitiesResource = useResource('/api/v2/facilities', facilitiesParser);
+  const graphResource = useResource(assetForCounty(catalog.assets.graphPattern, county), graphParser);
+  const tractResource = useResource(`/api/v2/areas?county=${county}&level=tract`, tractParser);
+  const historyResource = useResource(`/api/v2/history/${county}`, historyParser);
+  const [commutesResource, setCommutesResource] = useState<Resource<ReturnType<typeof parseCommutes>>>({ state: 'loading' });
+  const allAreas = loaded(areasResource.resource)?.areas ?? [];
+  const allFacilities = loaded(facilitiesResource.resource)?.facilities ?? [];
+  const graph = loaded(graphResource.resource);
+  const studyAreas = useMemo(() => allAreas.filter((a) => a.county === county), [allAreas, county]);
+  const facilities = useMemo(() => allFacilities.filter((f) => f.county === county || f.baseline && graph?.facilityNodes[f.id] != null), [allFacilities, county, graph]);
+  const displayedAreas = level === 'tract' ? loaded(tractResource.resource)?.areas ?? [] : allAreas;
+  const indicator = catalog.indicators.find((i) => i.id === indicatorId) ?? catalog.indicators[0];
+  const demandIndicators = catalog.indicators.filter((i) => i.demandEligible);
+  const scene = result?.scenario ?? scenario;
+  const countyName = catalog.counties.find((c) => c.geoid === county)?.name ?? county;
+  const demand = catalog.indicators.find((i) => i.id === scene?.measure) ?? demandIndicators[0];
+  const selected = displayedAreas.find((a) => a.geoid === selectedId) ?? studyAreas.find((a) => a.geoid === selectedId) ?? null;
+  const selectedAccess = result?.areas.find((a) => a.geoid === selected?.geoid);
+  const verifiedFacilities = facilities.filter((f) => f.status === 'verified');
+  const candidates = verifiedFacilities.filter((f) => f.candidate);
+  const baselines = verifiedFacilities.filter((f) => f.baseline);
+  const tableAreas = useMemo(() => displayedAreas.filter((a) => (showAllAreas || a.county === county) && (!query || `${a.name} ${a.geoid} ${catalog.counties.find((c) => c.geoid === a.county)?.name}`.toLowerCase().includes(query.toLowerCase()))).sort((a, b) => a.geoid.localeCompare(b.geoid)), [displayedAreas, showAllAreas, county, query, catalog.counties]);
+  useEffect(() => { setTablePage(0); }, [query, county, level, showAllAreas]);
+  useEffect(() => {
+    const encoded = new URLSearchParams(window.location.hash.slice(1)).get('scenario'); if (!encoded) return;
+    try { const value = decodeScenario(encoded); imported.current = value; setCounty(value.county); setStatus('Shared scenario loaded. Checking its data and road revisions…'); } catch (error) { setSimulationError(`The shared scenario could not be opened. ${errorText(error)}`); }
+  }, []);
+  useEffect(() => {
+    if (!graph || graph.county !== county) return;
+    if (scenario?.graphRevision === graph.revision && scenario.county === county) return;
+    const incoming = imported.current;
+    if (incoming) {
+      imported.current = null;
+      if (incoming.dataRevision !== catalog.revision || incoming.graphRevision !== graph.revision || incoming.county !== county) { setSimulationError('This scenario uses another release or road network. Use the matching release to replay it.'); setScenario(createDefaultScenario(graph, catalog.revision)); setJob((j) => ({ id: j.id + 1, suggest: true })); return; }
+      setScenario(incoming); setJob((j) => ({ id: j.id + 1, suggest: false }));
+    } else { setScenario(createDefaultScenario(graph, catalog.revision)); setJob((j) => ({ id: j.id + 1, suggest: true })); }
+    setResult(null);
+  }, [graph, county, catalog.revision, scenario?.graphRevision]);
+  useEffect(() => {
+    if (!showCommutes) return;
+    const controller = new AbortController(); setCommutesResource({ state: 'loading' });
+    getJson(assetForCounty(catalog.assets.commutePattern, county), commuteParser, controller.signal).then((data) => setCommutesResource({ state: 'loaded', data })).catch((error: unknown) => { if (!controller.signal.aborted) setCommutesResource({ state: 'error', message: errorText(error) }); });
+    return () => controller.abort();
+  }, [showCommutes, county, catalog.assets.commutePattern, commuteParser]);
+  useEffect(() => {
+    if (!graph || !scenario || graph.county !== county || scenario.graphRevision !== graph.revision || areasResource.resource.state !== 'loaded' || facilitiesResource.resource.state !== 'loaded') return;
+    const id = ++requestId.current; setCalculating(true); setResult(null); setSimulationError(null);
+    const worker = new Worker(new URL('./simulation.worker.ts', import.meta.url), { type: 'module' });
+    worker.onmessage = (event: MessageEvent<SimulationReply>) => {
+      if (event.data.requestId !== id || requestId.current !== id) return;
+      setCalculating(false);
+      if (event.data.type === 'error') setSimulationError(event.data.message); else setResult(event.data.result);
+    };
+    worker.onerror = (event) => { if (requestId.current !== id) return; setCalculating(false); setSimulationError(`The road calculation failed. ${event.message || 'Reload the page to retry.'}`); };
+    const request: SimulationRequest = { type: 'run', requestId: id, graph, areas: studyAreas, facilities, scenario, suggest: job.suggest };
+    worker.postMessage(request); return () => { worker.terminate(); if (requestId.current === id) ++requestId.current; };
+  }, [graph, scenario, county, studyAreas, facilities, areasResource.resource.state, facilitiesResource.resource.state, job]);
+  const changeScenario = (patch: Partial<Scenario>, suggest = false) => {
+    if (!scene) return; setScenario({ ...scene, ...patch }); setJob((j) => ({ id: j.id + 1, suggest })); setStatus('');
   };
-  const geometryMatches = geometry.state !== 'loaded' || geometry.data.features.every((feature) => byFips.has(feature.properties.GEOID));
-  return <section className="map-panel" aria-labelledby="map-title">
-    <div className="panel-heading">
-      <div><p className="eyebrow">24 jurisdictions · one state</p><h2 id="map-title">Explore Maryland</h2></div>
-      <span className="data-year">2024</span>
-    </div>
-    <fieldset className="map-choice">
-      <legend>Choose which county the map changes</legend>
-      <div className="segmented-control">
-        <button className={activeSelection === 'a' ? 'active selection-a' : 'selection-a'} aria-pressed={activeSelection === 'a'} onClick={() => onActiveSelection('a')}><span className="county-marker marker-a" aria-hidden="true" />County A</button>
-        <button className={activeSelection === 'b' ? 'active selection-b' : 'selection-b'} aria-pressed={activeSelection === 'b'} onClick={() => onActiveSelection('b')}><span className="county-marker marker-b" aria-hidden="true" />County B</button>
-      </div>
-    </fieldset>
-    <div className="map-canvas">
-      {geometry.state === 'loading' && <p className="loading-message" role="status">Loading county boundaries…</p>}
-      {geometry.state === 'error' && <div className="map-unavailable"><strong>The map could not be loaded.</strong><p>{geometry.message} You can still compare counties with the selectors.</p><button className="button button-secondary" onClick={retry}>Reload map</button></div>}
-      {geometry.state === 'loaded' && !geometryMatches && <p className="map-unavailable" role="alert">The map identifiers do not match the data. Use the county selectors to compare jurisdictions.</p>}
-      {geometry.state === 'loaded' && geometryMatches && path && <svg viewBox="0 0 720 400" role="group" aria-label="Maryland county selection map">
-        <defs><pattern id="unavailable-pattern" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="8" height="8" fill="#F5EBDD" /><path d="M-2 2L2-2M0 8L8 0M6 10L10 6" stroke="#687782" strokeWidth="1" /></pattern></defs>
-        {geometry.data.features.map((feature) => {
-          const county = byFips.get(feature.properties.GEOID);
-          const selection = feature.properties.GEOID === selectedA ? 'selected-a' : feature.properties.GEOID === selectedB ? 'selected-b' : '';
-          return <path key={feature.properties.GEOID} d={path(feature) ?? undefined} fill={color(county)}
-            className={`county-shape ${selection}`} role="button" tabIndex={0}
-            aria-label={`Select ${county?.name ?? feature.properties.NAME} as county ${activeSelection.toUpperCase()}; ${county ? metric(county.total, 'employment') : 'unavailable'} annual average jobs`}
-            onClick={() => onSelect(feature.properties.GEOID)}
-            onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onSelect(feature.properties.GEOID); } }}
-            onMouseEnter={() => setHighlighted(feature.properties.GEOID)} onMouseLeave={() => setHighlighted(null)}
-            onFocus={() => setHighlighted(feature.properties.GEOID)} onBlur={() => setHighlighted(null)}>
-            <title>{county?.name ?? feature.properties.NAME}</title>
-          </path>;
-        })}
-      </svg>}
-    </div>
-    <p className="map-readout" aria-live="polite"><strong>{hovered?.name ?? selected?.name}</strong><span>{hovered ? `${metric(hovered.total, 'employment')} annual average jobs` : `Select a county on the map for county ${activeSelection.toUpperCase()}.`}</span></p>
-    <div className="map-legend"><span>Annual average jobs</span><span className="color-scale" aria-hidden="true" /><span>0–{integer.format(largest)}</span></div>
-    <p className="map-note">Color shows covered private-sector employment. Outlines mark your selections. Baltimore city is a separate jurisdiction from Baltimore County.</p>
-    <details className="map-credit"><summary>About the boundaries</summary><p>2024 Census cartographic boundaries, 1:5 million scale. The map preserves county geometry and uses a geographic projection for display.</p><a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html">Census boundary source <span aria-hidden="true">↗</span></a></details>
+  const selectCounty = (value: string) => { setCounty(value); setSelectedId(null); setAddingSite(false); setClosingRoad(false); setResult(null); setShowCommutes(false); };
+  const selectArea = (id: string) => { setSelectedId(id); const found = displayedAreas.find((a) => a.geoid === id); if (found && found.county !== county) { setCounty(found.county); setResult(null); } if (view === 'evidence') setView('explore'); };
+  const toggleFacility = (id: string) => {
+    if (!scene) return; const f = facilities.find((f) => f.id === id);
+    if (f?.baseline) { setInspector({ sourceId: f.sourceId }); return; }
+    if (f?.candidate) changeScenario({ hubIds: scene.hubIds.includes(id) ? scene.hubIds.filter((v) => v !== id) : [...scene.hubIds, id], additions: Math.max(scene.additions, scene.hubIds.length + 1) });
+    else if (scene.hypotheticalSites.some((f) => f.id === id)) changeScenario({ hypotheticalSites: scene.hypotheticalSites.filter((f) => f.id !== id) });
+  };
+  const closeRoad = (id: number) => {
+    if (!scene || !graph || !graph.edges[id]) return;
+    const edge = graph.edges[id]; const ids = [id]; const shape = JSON.stringify(graph.shapes[id]); const reverseShape = JSON.stringify([...(graph.shapes[id] ?? [])].reverse());
+    graph.edges.forEach((e, i) => { if (i !== id && e[0] === edge[1] && e[1] === edge[0] && (JSON.stringify(graph.shapes[i]) === reverseShape || JSON.stringify(graph.shapes[i]) === shape)) ids.push(i); });
+    const reopening = scene.closedEdgeIds.includes(id); const next = new Set(scene.closedEdgeIds); for (const i of ids) reopening ? next.delete(i) : next.add(i);
+    changeScenario({ closedEdgeIds: [...next].sort((a, b) => a - b) }); setStatus(`${graph.names[id] || 'Road section'} ${reopening ? 'reopened' : 'closed'} in the scenario.`);
+  };
+  const addHypothetical = (lon: number, lat: number) => {
+    if (!scene) return; const id = `hypothetical-${Date.now()}`; changeScenario({ hypotheticalSites: [...scene.hypotheticalSites, { id, name: `Hypothetical site ${scene.hypotheticalSites.length + 1}`, lon, lat }] }); setAddingSite(false); setStatus('Hypothetical site added. Its location has no verified service or capacity.');
+  };
+  const share = async () => {
+    if (!scene) return; const url = new URL(window.location.href); url.hash = `scenario=${encodeScenario(scene)}`; window.history.replaceState(null, '', url); setShareUrl(url.href);
+    try { await navigator.clipboard.writeText(url.href); setStatus('Scenario link copied. It includes this release, sites, distance, and road closures.'); } catch { setStatus('Scenario link is ready in the field below. Copy it to share.'); }
+  };
+  const importScenario = async (file: File | undefined) => {
+    if (!file) return;
+    try { if (file.size > 1_000_000) throw new Error('Scenario files must be smaller than 1 MB.'); const next = parseScenario(await file.text()); if (next.dataRevision !== catalog.revision) throw new Error('The file uses another published data release.'); if (next.county === county && graph && next.graphRevision !== graph.revision) throw new Error('The file uses another road network revision.'); if (next.county !== county) { imported.current = next; selectCounty(next.county); } else { setScenario(next); setJob((j) => ({ id: j.id + 1, suggest: false })); } setStatus('Scenario imported. Replaying the saved choices.'); } catch (error) { setSimulationError(`Scenario import failed. ${errorText(error)}`); } if (importInput.current) importInput.current.value = '';
+  };
+  const exportCsv = () => {
+    const header = ['geoid', 'area_name', 'county', 'indicator', 'value', 'margin_of_error', 'status', 'period', 'source', 'baseline_road_miles', 'proposed_road_miles', 'access_state', 'data_revision'];
+    const rows = tableAreas.map((a) => { const v = a.values[indicator.id]; const access = result?.areas.find((r) => r.geoid === a.geoid); return [a.geoid, a.name, a.county, indicator.label, v?.value, v?.moe, v?.status ?? 'missing', indicator.period, v?.sourceId ?? indicator.sourceId, access?.baselineMiles, access?.proposedMiles, access?.state, catalog.revision]; });
+    download(`civicatlas-${county}-${indicator.id}.csv`, [header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n'), 'text/csv;charset=utf-8'); setStatus('Comparison CSV downloaded with source identifiers and release revision.');
+  };
+  return <section id="workspace" className="outreach-workspace" tabIndex={-1}>
+    <div className="workspace-bar"><nav className="workspace-tabs" aria-label="Workspace views">{([['explore', 'Explore'], ['plan', 'Plan outreach'], ['evidence', 'Evidence']] as [View, string][]).map(([id, title]) => <button key={id} onClick={() => setView(id)} aria-pressed={view === id} className={view === id ? 'active' : ''}>{title}{id === 'plan' && <span className="tab-badge">3 sites</span>}</button>)}</nav><span className="release-badge"><span className="live-dot" />Pinned public-data release</span></div>
+    {areasResource.resource.state === 'error' && <Notice retry={areasResource.retry}><strong>Neighborhood records could not be loaded.</strong><p>{areasResource.resource.message}</p></Notice>}
+    {facilitiesResource.resource.state === 'error' && <Notice retry={facilitiesResource.retry}><strong>Service locations could not be loaded.</strong><p>{facilitiesResource.resource.message}</p></Notice>}
+    {view !== 'evidence' ? <>
+      <div className="study-toolbar"><label>Study area<select value={county} onChange={(e) => selectCounty(e.target.value)}>{catalog.counties.map((c) => <option key={c.geoid} value={c.geoid}>{c.name}</option>)}</select></label><label>Neighborhood shading<select value={indicator.id} onChange={(e) => setIndicatorId(e.target.value)}>{catalog.indicators.map((i) => <option key={i.id} value={i.id}>{i.label}</option>)}</select></label><label>Map geography<select value={level} onChange={(e) => { setLevel(e.target.value as 'tract' | 'blockGroup'); setSelectedId(null); }}><option value="blockGroup">Block groups</option><option value="tract">Census tracts</option></select></label><button className="button button-secondary guided-button" onClick={() => { selectCounty('24510'); setIndicatorId('incomeUnder35k'); setLevel('blockGroup'); setView('plan'); if (county === '24510' && graph) { setScenario(createDefaultScenario(graph, catalog.revision)); setJob((j) => ({ id: j.id + 1, suggest: true })); } }}>↺ Baltimore demo</button></div>
+      <div className="map-workspace"><div className="map-column"><OutreachMap catalog={catalog} areas={displayedAreas} facilities={facilities} indicator={indicator} county={county} graph={graph} scenario={scene} result={result} selected={selectedId} geometryLevel={level} commutes={showCommutes ? loaded(commutesResource) : null} addingSite={addingSite} closingRoad={closingRoad} animationPaused={paused} animationEpoch={animationEpoch} onArea={selectArea} onFacility={toggleFacility} onLocation={addHypothetical} onRoad={closeRoad} onFailure={setMapWarning} />
+        <div className="map-bottom"><div className="location-legend"><span><i className="legend-dot baseline" />Verified assistance</span><span><i className="legend-dot candidate" />Candidate library</span><span><i className="legend-dot proposed" />Proposed site</span><span><i className="legend-road" />Modeled road flow</span></div><div className="animation-controls"><button onClick={() => setPaused((p) => !p)} disabled={reduced} aria-pressed={paused}>{reduced ? 'Motion reduced' : paused ? '▶ Resume' : 'Ⅱ Pause'}</button><button onClick={() => { setAnimationEpoch((e) => e + 1); setPaused(true); }} disabled={reduced}>Reset</button><button onClick={() => { setAnimationEpoch((e) => e + 1); setPaused(false); }} disabled={reduced}>↺ Replay flow</button></div></div>
+        <p className="map-model-note">Shading: {indicator.universe.toLowerCase()}. {indicator.period}. <button onClick={() => setInspector({ sourceId: indicator.sourceId, ...(selected ? { geoid: selected.geoid } : {}) })}>Definition & source ↗</button></p>
+        {showCommutes && <p className="commute-note">{commutesResource.state === 'loaded' ? `${commutesResource.data.year} home–work job relationships · ${integer.format(commutesResource.data.totalJobs)} records represented. ${commutesResource.data.limitation} Lines join home and workplace points; they are not observed routes.` : commutesResource.state === 'error' ? commutesResource.message : 'Loading historic home–work relationships…'}</p>}
+      </div><aside className="decision-panel">{view === 'plan' ? <><div className="panel-kicker">A question you can test</div><h2>Where would<br />you add outreach?</h2><p className="decision-intro">Start with documented assistance locations. Add libraries, then compare geographic reach.</p><label className="field-label" htmlFor="demand">Households to represent</label><select id="demand" className="wide-select" value={scene?.measure ?? 'households'} disabled={!scene} onChange={(e) => changeScenario({ measure: e.target.value })}>{demandIndicators.map((i) => <option key={i.id} value={i.id}>{i.label}</option>)}</select><div className="distance-label"><label htmlFor="radius">Modeled road distance</label><output htmlFor="radius">{scene?.radiusMiles ?? 3} miles</output></div><input id="radius" type="range" min="1" max="10" step=".5" value={scene?.radiusMiles ?? 3} disabled={!scene} onChange={(e) => changeScenario({ radiusMiles: Number(e.target.value) })} /><div className="range-extents"><span>1 mile</span><span>10 miles</span></div><button className="button button-primary suggest-button" disabled={!scene || calculating} onClick={() => changeScenario({ hubIds: [], hypotheticalSites: [], additions: 3 }, true)}><span aria-hidden="true">✦</span>{calculating ? 'Calculating road coverage…' : 'Suggest three library sites'}</button><div className="scenario-tools"><button aria-pressed={addingSite} onClick={() => { setAddingSite((p) => !p); setClosingRoad(false); }} disabled={!scene}>＋ Add a hypothetical site</button><button aria-pressed={closingRoad} onClick={() => { setClosingRoad((p) => !p); setAddingSite(false); }} disabled={!scene}>⌁ {closingRoad ? 'Finish road changes' : 'Close or reopen a road'}</button></div>{addingSite && <HypotheticalCoordinates onAdd={addHypothetical} />}{closingRoad && <p className="small-note">Zoom in, then select a road section. Matching reverse edges close together; crossings retain their own connections.</p>}{scene && scene.closedEdgeIds.length > 0 && <div className="closures-note"><span>{scene.closedEdgeIds.length} directed road segments closed</span><button onClick={() => changeScenario({ closedEdgeIds: [] })}>Reopen all</button></div>}<SelectedSites scenario={scene} result={result} facilities={facilities} onRemove={toggleFacility} /><div className="model-footnote"><strong>A geographic planning scenario</strong><p>{demand.universe}. Households are represented at one point per block group. Road distance measures a modeled geographic connection; it does not estimate eligibility, attendance, transit access, or service capacity.</p><button onClick={() => setView('evidence')}>Inspect the method ↗</button></div></> : <><div className="panel-kicker">A closer look</div><h2>{selected ? 'Meet this neighborhood.' : 'Every neighborhood has a story.'}</h2><p className="decision-intro">Select a map area or a table row. Inspect income, housing pressure, internet, transport, and work in the same geography.</p>{selected ? <AreaProfile area={selected} catalog={catalog} access={selectedAccess} onSource={(id) => setInspector({ sourceId: id, geoid: selected.geoid })} pinned={pinnedIds.includes(selected.geoid)} onPin={() => setPinnedIds((ids) => ids.includes(selected.geoid) ? ids.filter((id) => id !== selected.geoid) : [...ids.slice(-2), selected.geoid])} /> : <div className="profile-invitation"><span aria-hidden="true">↖</span><p>Select a shaded neighborhood to open its profile.</p><button onClick={() => studyAreas[0] && setSelectedId(studyAreas[0].geoid)}>Open first neighborhood</button></div>}<label className="commute-toggle"><input type="checkbox" checked={showCommutes} onChange={(e) => setShowCommutes(e.target.checked)} /><span>Historic home–work connections<small>LODES job relationships, within Maryland</small></span></label></> }</aside></div>
+      {mapWarning && <p className="small-note map-warning" role="status">{mapWarning}</p>}
+      {graphResource.resource.state === 'error' && <Notice retry={graphResource.retry}><strong>The study-area road network could not be loaded.</strong><p>{graphResource.resource.message} Explore the neighborhood records while the road network is unavailable.</p></Notice>}
+      {simulationError && <Notice><strong>The scenario could not be calculated.</strong><p>{simulationError}</p></Notice>}
+      <CoverageStrip result={result} calculating={calculating} demand={demand} radius={scene?.radiusMiles ?? 3} baselines={baselines.length} countyName={countyName} />
+      <div className="export-bar"><div><strong>Take the evidence with you.</strong><span>Replay the choices, compare the records, or print a briefing.</span></div><button onClick={share} disabled={!result}>Share scenario ↗</button><button onClick={() => scene && download(`civicatlas-${county}-scenario.json`, serializeScenario(scene))} disabled={!result}>Save scenario</button><button onClick={() => importInput.current?.click()}>Open scenario</button><input type="file" ref={importInput} accept="application/json,.json" hidden onChange={(e) => void importScenario(e.target.files?.[0])} /><button onClick={exportCsv} disabled={!tableAreas.length}>Export CSV</button><button onClick={() => window.print()} disabled={!result}>Print briefing</button></div>{shareUrl && <label className="share-field">Shareable scenario link<input value={shareUrl} readOnly onFocus={(e) => e.target.select()} /></label>}
+      {selected && view === 'plan' && <section className="selected-profile"><div><p className="eyebrow">Selected on the map</p><h2>{selected.name}</h2><p>GEOID {selected.geoid} · {selected.level === 'blockGroup' ? 'Block group' : 'Census tract'}</p></div><AreaProfile area={selected} catalog={catalog} access={selectedAccess} onSource={(id) => setInspector({ sourceId: id, geoid: selected.geoid })} pinned={pinnedIds.includes(selected.geoid)} onPin={() => setPinnedIds((ids) => ids.includes(selected.geoid) ? ids.filter((id) => id !== selected.geoid) : [...ids.slice(-2), selected.geoid])} /></section>}
+      {pinnedIds.length > 0 && <NeighborhoodComparison areas={allAreas.filter((a) => pinnedIds.includes(a.geoid))} catalog={catalog} onRemove={(id) => setPinnedIds((ids) => ids.filter((v) => v !== id))} onSource={(id, geoid) => setInspector({ sourceId: id, geoid })} />}
+      <section className="neighborhood-records" aria-labelledby="records-title"><div className="section-title"><div><p className="eyebrow">The map, in numbers</p><h2 id="records-title">Explore neighborhood records.</h2><p>{integer.format(tableAreas.length)} {level === 'tract' ? 'tracts' : 'block groups'} · {indicator.period} · {indicator.universe}</p></div><div className="table-filters"><label className="search-label">Search a place or GEOID<input type="search" placeholder="Baltimore, 24510…" value={query} onChange={(e) => setQuery(e.target.value)} /></label><label className="checkbox-label"><input type="checkbox" checked={showAllAreas} onChange={(e) => setShowAllAreas(e.target.checked)} />All Maryland block groups</label></div></div><div className="table-scroll"><table className="records-table"><caption className="sr-only">{indicator.label} by {level}; source inspection and geographic access results</caption><thead><tr><th scope="col">Neighborhood / GEOID</th><th scope="col">{indicator.label}</th><th scope="col">Margin of error</th><th scope="col">Road access</th><th scope="col">Evidence</th></tr></thead><tbody>{tableAreas.slice(tablePage * 25, (tablePage + 1) * 25).map((a) => { const observation = a.values[indicator.id]; const access = result?.areas.find((r) => r.geoid === a.geoid); return <tr key={a.geoid} className={selectedId === a.geoid ? 'selected-row' : ''}><th scope="row"><button onClick={() => selectArea(a.geoid)}>{a.name}<small>{a.geoid} · {catalog.counties.find((c) => c.geoid === a.county)?.name}</small></button></th><td>{valueText(a, indicator)}</td><td>{observation?.moe == null ? 'Not supplied' : `${indicator.unit === 'dollars' ? money.format(observation.moe) : decimal.format(observation.moe)}${indicator.unit === 'percent' ? ' percentage points' : ''}`}</td><td>{level === 'tract' ? 'Modeled at block group' : access ? access.state === 'covered' ? `${decimal.format(access.proposedMiles ?? 0)} mi` : access.state.replace('beyond', 'Beyond threshold') : 'Outside current scenario'}</td><td><button className="text-button" onClick={() => setInspector({ sourceId: observation?.sourceId ?? indicator.sourceId, geoid: a.geoid })}>Source ↗</button></td></tr>; })}</tbody></table></div>{tableAreas.length === 0 && <p className="empty-note">No places match this search. Try a county name or part of a Census GEOID.</p>}<div className="table-pagination"><span>Showing {tableAreas.length ? tablePage * 25 + 1 : 0}–{Math.min(tableAreas.length, (tablePage + 1) * 25)} of {integer.format(tableAreas.length)}</span><button disabled={tablePage === 0} onClick={() => setTablePage((p) => p - 1)}>← Previous</button><button disabled={(tablePage + 1) * 25 >= tableAreas.length} onClick={() => setTablePage((p) => p + 1)}>Next →</button></div><p className="small-note">Estimates and margins of error remain distinct. Missing and suppressed values are never counted as zero. Select a neighborhood to compare indicators in its own geography.</p></section>
+      <FacilityTable facilities={facilities} scenario={scene} result={result} onToggle={toggleFacility} onSource={(id) => setInspector({ sourceId: id })} />
+      {closingRoad && graph && scene && <RoadTable graph={graph} scenario={scene} onToggle={closeRoad} />}
+      <section className="economic-context"><div className="section-title"><div><p className="eyebrow">The wider economic setting</p><h2>Work, pay, and change.</h2><p>County workplace observations remain county observations.</p></div><span className="outline-label">County geography only</span></div><HistoryPanel history={loaded(historyResource.resource)} countyName={countyName} error={historyResource.resource.state === 'error' ? historyResource.resource.message : null} onSource={(id) => setInspector({ sourceId: id })} /><details className="employment-details"><summary>Compare county employment and industries <span>24 Maryland jurisdictions ↗</span></summary><CountyEmployment /></details></section>
+    </> : <Evidence catalog={catalog} graph={graph} facilities={allFacilities} onSource={(id) => setInspector({ sourceId: id })} onPlan={() => setView('plan')} />}
+    <div className="status-message" role="status" aria-live="polite">{status}</div>
+    {result && <PrintableBriefing catalog={catalog} result={result} facilities={facilities} demand={demand} countyName={countyName} />}
+    {inspector && <SourceInspector request={inspector} catalog={catalog} fallbackArea={allAreas.find((a) => a.geoid === inspector.geoid) ?? loaded(tractResource.resource)?.areas.find((a) => a.geoid === inspector.geoid)} onClose={() => setInspector(null)} />}
   </section>;
 }
-
-function CountySelect({ label, value, counties, onChange, marker }: { label: string; value: string; counties: CountySummary[]; onChange: (fips: string) => void; marker: 'a' | 'b' }) {
-  return <div className="county-select"><label htmlFor={`county-${marker}`}><span className={`county-marker marker-${marker}`} aria-hidden="true" />{label}</label><select id={`county-${marker}`} value={value} onChange={(event) => onChange(event.target.value)}>{counties.map((county) => <option key={county.fips} value={county.fips}>{county.name}</option>)}</select></div>;
+function CoverageStrip({ result, calculating, demand, radius, baselines, countyName }: { result: SimulationResult | null; calculating: boolean; demand: Indicator; radius: number; baselines: number; countyName: string }) {
+  const total = result?.proposed.total ?? 0; const share = total ? Math.round((result?.proposed.covered ?? 0) / total * 100) : 0;
+  return <section className="coverage-section" aria-labelledby="coverage-title"><div className="coverage-heading"><div><p className="eyebrow">What changes in {countyName}?</p><h2 id="coverage-title">{demand.label} within {radius} road miles.</h2></div><span>{calculating ? 'Recalculating…' : result ? `${decimal.format(result.elapsedMs)} ms calculation` : 'Waiting for the road network…'}</span></div><div className="coverage-grid"><div><span>Verified assistance baseline</span><strong>{result ? integer.format(result.baseline.covered) : '—'}</strong><small>{baselines} documented locations</small></div><div className="proposed-stat"><span>With proposed outreach</span><strong>{result ? integer.format(result.proposed.covered) : '—'}</strong><small>{result ? `${result.scenario.hubIds.length + result.scenario.hypotheticalSites.length} added sites · ${share}% of represented demand` : 'Computing geographic reach'}</small></div><div className="incremental-stat"><span>Additional geographic reach</span><strong>{result ? `+${integer.format(result.proposed.covered - result.baseline.covered)}` : '—'}</strong><small>Previously beyond the baseline</small></div></div>{result && <><div className="coverage-meter" role="img" aria-label={`${share}% of represented demand covered`}><span className="baseline-meter" style={{ width: `${total ? result.baseline.covered / total * 100 : 0}%` }} /><span className="increment-meter" style={{ width: `${total ? (result.proposed.covered - result.baseline.covered) / total * 100 : 0}%` }} /></div><div className="coverage-caveats"><span><strong>{integer.format(result.proposed.beyond)}</strong> beyond distance</span><span><strong>{integer.format(result.proposed.disconnected)}</strong> disconnected</span><span><strong>{integer.format(result.proposed.unmatched)}</strong> unmatched to roads</span><span><strong>{result.proposed.missingAreas}</strong> areas with missing demand</span><span>Total represented: <strong>{integer.format(total)}</strong></span></div></>}<p className="small-note">Coverage uses each block group’s internal point and a directed road graph. Overlapping site reach counts each block group once. This is geographic reach, not expected attendance.</p></section>;
 }
-
-function useCounty(fips: string, revision: string) {
-  const parser = useMemo(() => (value: unknown) => parseDetail(value, fips, revision), [fips, revision]);
-  return useResource(`/api/v1/counties/${fips}`, parser);
+function SelectedSites({ scenario, result, facilities, onRemove }: { scenario: Scenario | null; result: SimulationResult | null; facilities: Facility[]; onRemove: (id: string) => void }) {
+  const ids = scenario?.hubIds ?? []; return <div className="selected-sites"><h3>Proposed locations <span>{ids.length + (scenario?.hypotheticalSites.length ?? 0)}</span></h3>{ids.length === 0 && !scenario?.hypotheticalSites.length && <p className="small-note">Select candidate libraries on the map, or suggest three sites.</p>}<ol>{ids.map((id, index) => { const f = facilities.find((f) => f.id === id); const contribution = result?.suggested.find((s) => s.id === id); return <li key={id}><span className="site-number">{index + 1}</span><div><strong>{f?.name ?? id}</strong><small>{contribution ? `+${integer.format(contribution.incremental)} additional represented households` : 'Manually selected candidate'}</small></div><button aria-label={`Remove ${f?.name ?? id}`} onClick={() => onRemove(id)}>×</button></li>; })}{scenario?.hypotheticalSites.map((f, index) => <li key={f.id}><span className="site-number">{ids.length + index + 1}</span><div><strong>{f.name}</strong><small>Hypothetical · {f.lat.toFixed(4)}, {f.lon.toFixed(4)}</small></div><button aria-label={`Remove ${f.name}`} onClick={() => onRemove(f.id)}>×</button></li>)}</ol></div>;
 }
-
-function readyDetail(resource: Resource<CountyDetail>, fips: string): CountyDetail | undefined {
-  return resource.state === 'loaded' && resource.data.county.fips === fips ? resource.data : undefined;
+function HypotheticalCoordinates({ onAdd }: { onAdd: (lon: number, lat: number) => void }) {
+  const [lon, setLon] = useState('-76.61'); const [lat, setLat] = useState('39.30'); const [error, setError] = useState('');
+  return <form className="coordinate-form" onSubmit={(e) => { e.preventDefault(); const x = Number(lon); const y = Number(lat); if (!Number.isFinite(x) || !Number.isFinite(y) || x < -80 || x > -74.5 || y < 37.5 || y > 40.5) { setError('Enter coordinates in or near Maryland.'); return; } onAdd(x, y); }}><p>Select the map, or enter a location.</p><div><label>Latitude<input required type="number" step="any" value={lat} onChange={(e) => setLat(e.target.value)} /></label><label>Longitude<input required type="number" step="any" value={lon} onChange={(e) => setLon(e.target.value)} /></label></div><button className="button button-secondary">Add this location</button>{error && <p role="alert">{error}</p>}</form>;
 }
-
-function IndustryValue({ observation, county, onSource }: { observation: Observation | undefined; county: CountySummary; onSource: (request: SourceRequest) => void }) {
-  const content = <><span className="industry-jobs">{metric(observation, 'employment')}</span><span className="industry-share">{observation?.status === 'available' && observation.employmentShare != null ? `${employmentShare(observation.employmentShare)} of county jobs` : 'Share unavailable'}</span></>;
-  return observation?.sourceId ? <button className="data-source-button" onClick={() => onSource({ id: observation.sourceId!, title: `${industryName(observation.industryName)} · ${county.name}` })}>{content}<span className="sr-only"> — Inspect the source for {industryName(observation.industryName)} in {county.name}; employment is annual average jobs.</span><span className="source-arrow" aria-hidden="true">↗</span></button> : <div className="industry-value">{content}</div>;
+function AreaProfile({ area, catalog, access, onSource, pinned, onPin }: { area: Area; catalog: Catalog; access?: SimulationResult['areas'][number]; onSource: (id: string) => void; pinned: boolean; onPin: () => void }) {
+  return <div className="area-profile"><div className="profile-identity"><strong>{area.name}</strong><span>{area.geoid} · {area.level === 'blockGroup' ? 'Block group' : area.level === 'tract' ? 'Census tract' : 'County'}</span><button onClick={onPin}>{pinned ? '− Remove from comparison' : '＋ Compare this neighborhood'}</button></div><dl>{catalog.indicators.filter((i) => ['population', 'households', 'incomeUnder35k', 'poverty', 'rentBurden', 'noVehicle', 'noInternet', 'unemployment'].includes(i.id)).map((i) => <div key={i.id}><dt>{i.label}<small>{i.period}</small></dt><dd><button onClick={() => onSource(area.values[i.id]?.sourceId ?? i.sourceId)}>{valueText(area, i)}<span aria-hidden="true"> ↗</span></button>{area.values[i.id]?.moe != null && <small>± {decimal.format(area.values[i.id].moe!)}{i.unit === 'percent' ? ' pp' : ''} margin of error</small>}</dd></div>)}</dl>{access && <div className="profile-access"><strong>Current road scenario</strong><span>{access.state === 'covered' ? `${decimal.format(access.proposedMiles ?? 0)} miles to selected assistance` : access.state === 'beyond' ? 'Beyond the chosen road-distance threshold' : access.state === 'disconnected' ? 'Disconnected from the modeled network' : access.state === 'unmatched' ? 'Area point could not be matched to roads' : 'Demand measure unavailable'}</span></div>}</div>;
 }
-
-function Comparison({ overview, geometry, geometryRetry }: { overview: CountyOverview; geometry: Resource<CountyGeometry>; geometryRetry: () => void }) {
-  const [selectedA, setSelectedA] = useState('24510');
-  const [selectedB, setSelectedB] = useState('24005');
-  const [activeSelection, setActiveSelection] = useState<'a' | 'b'>('a');
-  const [source, setSource] = useState<SourceRequest | null>(null);
-  const sortedCounties = useMemo(() => [...overview.counties].sort((a, b) => a.name.localeCompare(b.name)), [overview.counties]);
-  const countyA = overview.counties.find((county) => county.fips === selectedA)!;
-  const countyB = overview.counties.find((county) => county.fips === selectedB)!;
-  const detailA = useCounty(selectedA, overview.revision);
-  const detailB = useCounty(selectedB, overview.revision);
-  const dataA = readyDetail(detailA.resource, selectedA);
-  const dataB = readyDetail(detailB.resource, selectedB);
-  const sectors = useMemo(() => {
-    const merged = new Map<string, string>();
-    for (const sector of [...(dataA?.sectors ?? []), ...(dataB?.sectors ?? [])]) merged.set(sector.industryCode, sector.industryName);
-    return [...merged].sort(([a], [b]) => a.localeCompare(b, 'en', { numeric: true }));
-  }, [dataA, dataB]);
-  const changeCounty = (selection: 'a' | 'b', fips: string) => {
-    if (selection === 'a') setSelectedA(fips); else setSelectedB(fips);
-    track('comparison_used');
-  };
-  const openSource = (request: SourceRequest) => { setSource(request); track('source_opened'); };
-  return <>
-    <div className="explorer-layout" id="explorer" tabIndex={-1}>
-      <CountyMap geometry={geometry} retry={geometryRetry} counties={overview.counties} selectedA={selectedA} selectedB={selectedB} activeSelection={activeSelection} onActiveSelection={setActiveSelection} onSelect={(fips) => changeCounty(activeSelection, fips)} />
-      <section className="comparison-panel" aria-labelledby="comparison-title">
-        <div className="panel-heading"><div><p className="eyebrow">Same year. Same definition.</p><h2 id="comparison-title">Compare counties</h2></div><span className="outline-label">Private sector</span></div>
-        <div className="county-controls"><CountySelect label="County A" marker="a" value={selectedA} counties={sortedCounties} onChange={(fips) => changeCounty('a', fips)} /><CountySelect label="County B" marker="b" value={selectedB} counties={sortedCounties} onChange={(fips) => changeCounty('b', fips)} /></div>
-        <p className="sr-only" aria-live="polite">Comparing {countyA.name} and {countyB.name}.</p>
-        <table className="comparison-table">
-          <caption className="sr-only">2024 private-sector county totals for {countyA.name} and {countyB.name}</caption>
-          <thead><tr><th scope="col">County totals</th><th scope="col"><span className="county-marker marker-a" aria-hidden="true" />{countyA.name}</th><th scope="col"><span className="county-marker marker-b" aria-hidden="true" />{countyB.name}</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Annual average jobs</th><td>{metric(countyA.total, 'employment')}</td><td>{metric(countyB.total, 'employment')}</td></tr>
-            <tr><th scope="row">Annual average establishments</th><td>{metric(countyA.total, 'establishments')}</td><td>{metric(countyB.total, 'establishments')}</td></tr>
-            <tr><th scope="row">Average annual pay</th><td>{metric(countyA.total, 'annualPay')}</td><td>{metric(countyB.total, 'annualPay')}</td></tr>
-          </tbody>
-        </table>
-        <div className="total-source-links">{[countyA, countyB].map((county, index) => county.total.sourceId ? <button key={`${county.fips}-${index}`} className="text-button" onClick={() => openSource({ id: county.total.sourceId!, title: `County totals · ${county.name}` })}>Inspect county {index === 0 ? 'A' : 'B'} source <span aria-hidden="true">↗</span></button> : <span key={`${county.fips}-${index}`}>County {index === 0 ? 'A' : 'B'} source unavailable</span>)}</div>
-        <div className="definition-note">{selectedA === selectedB && <p className="same-county-note">Both selections currently refer to the same jurisdiction.</p>}<strong>What does a job count mean?</strong><p>These are annual average jobs at covered workplaces in the county. They count jobs, rather than employed residents. Pay is an annual average, rather than a median salary.</p></div>
-      </section>
-    </div>
-    <section className="industry-panel" aria-labelledby="industry-title">
-      <div className="industry-heading"><div><p className="eyebrow">A closer look at the mix</p><h2 id="industry-title">Which industries employ people?</h2></div><p>Each share uses that county’s private-sector total. Select a value to see its original source.</p></div>
-      <div className="detail-status" aria-live="polite">
-        {detailA.resource.state === 'error' && <ErrorNotice heading={`Industries for ${countyA.name} could not be loaded`} message={detailA.resource.message} retry={detailA.retry} />}
-        {detailB.resource.state === 'error' && <ErrorNotice heading={`Industries for ${countyB.name} could not be loaded`} message={detailB.resource.message} retry={detailB.retry} />}
-        {(!dataA && detailA.resource.state !== 'error' || !dataB && detailB.resource.state !== 'error') && <p className="loading-industry" role="status">Loading industry observations…</p>}
-      </div>
-      {dataA && dataB && <table className="industry-table">
-        <caption className="sr-only">2024 annual average private-sector jobs and shares by NAICS sector for {countyA.name} and {countyB.name}</caption>
-        <thead><tr><th scope="col">Industry <span className="column-note">NAICS sector</span></th><th scope="col"><span className="county-marker marker-a" aria-hidden="true" />{countyA.name}</th><th scope="col"><span className="county-marker marker-b" aria-hidden="true" />{countyB.name}</th></tr></thead>
-        <tbody>{sectors.map(([code, name]) => <tr key={code}><th scope="row"><span className="sector-name">{industryName(name)}</span><span className="sector-code">{code}</span></th><td><IndustryValue observation={dataA.sectors.find((sector) => sector.industryCode === code)} county={countyA} onSource={openSource} /></td><td><IndustryValue observation={dataB.sectors.find((sector) => sector.industryCode === code)} county={countyB} onSource={openSource} /></td></tr>)}</tbody>
-      </table>}
-      <p className="disclosure-note">“Suppressed by BLS” means the figure is withheld to protect employer confidentiality. “Not reported” means no observation was supplied. Neither is counted as zero. Rounded shares and unavailable sectors may not sum to 100%.</p>
-    </section>
-    {source && <SourceInspector request={source} onClose={() => setSource(null)} />}
-    <section className="project-evidence" aria-labelledby="evidence-title">
-      <div><p className="eyebrow">I use AI. I check its work.</p><h2 id="evidence-title">Follow the evidence.</h2><p>Trace an observation to its source, inspect the pipeline, or edit a declared requirement in the Sentinels lab and inspect a fresh source-linked result.</p></div>
-      <div className="evidence-links"><a className="button button-primary" href={`${portfolioUrl}/work/civicatlas/`}>Read the engineering story <span aria-hidden="true">↗</span></a><a className="button button-secondary" href={`${portfolioUrl}/labs/sentinels/`}>Try the Sentinels lab <span aria-hidden="true">↗</span></a><a className="text-button" href="https://github.com/goldenmonkeyrnd/civicatlas" onClick={() => track('github_clicked')}>Open the source on GitHub <span aria-hidden="true">↗</span></a></div>
-    </section>
-  </>;
+function NeighborhoodComparison({ areas, catalog, onRemove, onSource }: { areas: Area[]; catalog: Catalog; onRemove: (id: string) => void; onSource: (id: string, geoid: string) => void }) {
+  return <section className="neighborhood-comparison"><div className="section-title"><div><p className="eyebrow">Side by side</p><h2>Compare neighborhood conditions.</h2></div></div><div className="table-scroll"><table className="records-table"><caption className="sr-only">Selected neighborhood indicators using the same definitions</caption><thead><tr><th>Indicator</th>{areas.map((a) => <th key={a.geoid}>{a.name}<button className="remove-pin" aria-label={`Remove ${a.name} from comparison`} onClick={() => onRemove(a.geoid)}>×</button></th>)}</tr></thead><tbody>{catalog.indicators.map((i) => <tr key={i.id}><th>{i.label}<small>{i.period}</small></th>{areas.map((a) => <td key={a.geoid}><button className="text-button" onClick={() => onSource(a.values[i.id]?.sourceId ?? i.sourceId, a.geoid)}>{valueText(a, i, true)} ↗</button></td>)}</tr>)}</tbody></table></div></section>;
 }
-
-function sourceValue(value: unknown): string {
-  return value === '' ? '"" (empty string)' : typeof value === 'string' ? value : JSON.stringify(value, null, 2) ?? 'Not supplied';
+function FacilityTable({ facilities, scenario, result, onToggle, onSource }: { facilities: Facility[]; scenario: Scenario | null; result: SimulationResult | null; onToggle: (id: string) => void; onSource: (id: string) => void }) {
+  return <section className="facility-section"><div className="section-title"><div><p className="eyebrow">Real locations, documented roles</p><h2>Where assistance can meet people.</h2><p>Libraries become candidates only after verification. A library is baseline assistance only with documented benefits services.</p></div></div><div className="table-scroll"><table className="records-table facility-table"><caption className="sr-only">Verified service locations, candidate libraries, and exclusions</caption><thead><tr><th>Location</th><th>Role and verification</th><th>Current choice</th><th>Evidence</th></tr></thead><tbody>{facilities.map((f) => <tr key={f.id}><th>{f.name}<small>{f.address}</small></th><td><span className={`facility-status ${f.baseline ? 'baseline' : f.status !== 'verified' ? 'excluded' : 'candidate'}`}>{f.baseline ? 'Verified assistance baseline' : f.candidate ? 'Verified candidate library' : f.status === 'closed' ? 'Closed · excluded' : f.status === 'unresolved' ? 'Unresolved · excluded' : 'Not eligible for suggestion'}</span><small>{f.note}</small></td><td>{f.candidate ? <button className={`site-toggle ${scenario?.hubIds.includes(f.id) ? 'selected' : ''}`} disabled={!scenario} aria-pressed={scenario?.hubIds.includes(f.id) ?? false} onClick={() => onToggle(f.id)}>{scenario?.hubIds.includes(f.id) ? 'Remove site' : 'Add site'}</button> : '—'}{result?.suggested.find((s) => s.id === f.id) && <small>+{integer.format(result.suggested.find((s) => s.id === f.id)!.incremental)} represented households</small>}</td><td><button className="text-button" onClick={() => onSource(f.sourceId)}>Source ↗</button><a className="verification-link" href={f.verificationUrl} target="_blank" rel="noreferrer">Directory ↗</a><small>Checked {f.checkedAt.slice(0, 10)}</small></td></tr>)}</tbody></table></div>{facilities.length === 0 && <p className="empty-note">No verified locations are published for this study area yet. Add a hypothetical site to explore the geography; it will remain labeled hypothetical.</p>}</section>;
 }
-
-function SourceInspector({ request, onClose }: { request: SourceRequest; onClose: () => void }) {
+function RoadTable({ graph, scenario, onToggle }: { graph: RoadGraph; scenario: Scenario; onToggle: (id: number) => void }) {
+  const [search, setSearch] = useState(''); const roads = graph.edges.map((edge, id) => ({ edge, id, name: graph.names[id] || 'Unnamed road' })).filter((r) => (search ? r.name.toLowerCase().includes(search.toLowerCase()) : scenario.closedEdgeIds.includes(r.id))).slice(0, 50);
+  return <section className="road-table"><div className="section-title"><div><p className="eyebrow">Accessible road controls</p><h2>Change a road’s availability.</h2><p>Search a street name to close or reopen a modeled section. Results show up to 50 directed segments.</p></div><label className="search-label">Road name<input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Charles, Pratt…" /></label></div><div className="table-scroll"><table className="records-table"><thead><tr><th>Road section</th><th>Length</th><th>Direction / endpoints</th><th>Availability</th></tr></thead><tbody>{roads.map((r) => <tr key={r.id}><th>{r.name}<small>Segment {r.id}</small></th><td>{decimal.format(r.edge[2])} mi</td><td><small>{graph.nodes[r.edge[0]].map((n) => n.toFixed(4)).join(', ')} → {graph.nodes[r.edge[1]].map((n) => n.toFixed(4)).join(', ')}</small></td><td><button className="site-toggle" onClick={() => onToggle(r.id)}>{scenario.closedEdgeIds.includes(r.id) ? 'Reopen section' : 'Close section'}</button></td></tr>)}</tbody></table></div>{!roads.length && <p className="empty-note">Search for a road, or select a road on the map after zooming in.</p>}</section>;
+}
+function HistoryPanel({ history, countyName, error, onSource }: { history: CountyHistory | null; countyName: string; error: string | null; onSource: (id: string) => void }) {
+  if (error) return <p className="small-note">County history could not load: {error}</p>; if (!history) return <p className="small-note" role="status">Loading county employment and nominal pay history…</p>;
+  const rows = [...history.observations].sort((a, b) => a.year - b.year); const jobs = rows.map((r) => r.employment ?? 0); const maximum = Math.max(1, ...jobs); const points = rows.map((r, i) => `${25 + i / Math.max(1, rows.length - 1) * 570},${130 - (r.employment ?? 0) / maximum * 105}`).join(' ');
+  return <div className="history-layout"><div className="history-chart"><span className="chart-caption">{countyName} · annual average workplace jobs</span><svg viewBox="0 0 630 160" role="img" aria-label={`Annual average employment in ${countyName}, ${rows[0]?.year ?? ''} to ${rows.at(-1)?.year ?? ''}; exact values in the adjacent table`}><line x1="25" x2="595" y1="130" y2="130" stroke="#ced0ca" /><polyline points={points} fill="none" stroke="#2452bd" strokeWidth="3" />{rows.map((r, i) => <circle key={r.year} cx={25 + i / Math.max(1, rows.length - 1) * 570} cy={130 - (r.employment ?? 0) / maximum * 105} r="4" fill="#dc9630" />)}<text x="25" y="154">{rows[0]?.year}</text><text x="575" y="154">{rows.at(-1)?.year}</text></svg><p className="small-note">Annual averages at covered workplaces. Pay is nominal dollars for each year; it is not adjusted for inflation. Census household conditions use their own periods.</p></div><div className="table-scroll"><table className="records-table history-table"><thead><tr><th>Year</th><th>Jobs</th><th>Average annual pay</th><th>Establishments</th></tr></thead><tbody>{rows.map((r) => <tr key={r.year}><th><button className="text-button" onClick={() => onSource(r.sourceId)}>{r.year} ↗</button></th><td>{r.employment == null ? r.status === 'suppressed' ? 'Suppressed' : 'Not reported' : integer.format(r.employment)}</td><td>{r.annualPay == null ? 'Not reported' : money.format(r.annualPay)}</td><td>{r.establishments == null ? 'Not reported' : integer.format(r.establishments)}</td></tr>)}</tbody></table></div></div>;
+}
+function Evidence({ catalog, graph, facilities, onSource, onPlan }: { catalog: Catalog; graph: RoadGraph | null; facilities: Facility[]; onSource: (id: string) => void; onPlan: () => void }) {
+  const counts = (kind: string) => catalog.reconciliation.filter((r) => r.kind === kind).length;
+  return <div className="evidence-view"><div className="evidence-intro"><div><p className="eyebrow">The useful part is that you can check it.</p><h2>A decision tool<br /><span>with a paper trail.</span></h2></div><p>From source files to geographic joins to an editable scenario, every step stays inspectable. Public data can support a conversation when its definitions, uncertainty, and limits travel with it.</p></div><div className="release-summary"><div><strong>{integer.format(catalog.counts.blockGroups)}</strong><span>Maryland block groups</span></div><div><strong>{integer.format(catalog.counts.tracts)}</strong><span>Census tracts</span></div><div><strong>{integer.format(catalog.counts.facilities)}</strong><span>Reconciled service locations</span></div><div><strong>{catalog.sources.length}</strong><span>Pinned source records</span></div></div><div className="method-layout"><section><p className="eyebrow">Source → transformation → decision</p><h3>How the scenario works</h3><ol className="method-steps"><li><strong>Keep the geography and the definition together.</strong><p>Each area carries its GEOID, estimate, margin of error, universe, period, and source. County jobs stay at county level; household measures stay at their published geography.</p></li><li><strong>Connect neighborhood points to real streets.</strong><p>Each block group’s documented internal point is snapped to a directed motor-vehicle street graph. Routes follow junctions and one-way restrictions. Grade-separated crossings do not become junctions.</p></li><li><strong>Add the greatest uncovered geographic reach.</strong><p>The suggestion engine chooses the candidate adding the most previously uncovered represented households, then repeats. Stable identifiers break ties. It is a deterministic greedy recommendation, not a claim of optimal placement.</p></li><li><strong>Show the valid routes.</strong><p>Modeled demand follows valid graph routes. Physarum-inspired reinforcement updates visual conductivity with D_next = 0.8D + 0.2|Q|. Pausing or replaying the animation cannot change coverage figures.</p></li></ol></section><aside className="method-aside"><h3>Read the result honestly.</h3><p>Coverage means households represented by block-group points within the selected modeled road distance. A whole block group is represented at one point.</p><p>This geographic model does not estimate program eligibility, attendance, transit access, driving directions, opening hours, or site capacity.</p><h4>One demand measure at a time</h4><p>Households without vehicles and households without internet can overlap. They remain separate scenarios.</p><h4>Unavailable stays unavailable</h4><p>Missing, suppressed, and observed zero are separate states. Unmatched and disconnected areas remain visible.</p><button className="button button-primary" onClick={onPlan}>Try the planning scenario →</button></aside></div><section className="reconciliation-section"><div className="section-title"><div><p className="eyebrow">The messy-data work, made visible</p><h2>What was reconciled?</h2><p>{counts('corrected')} corrections · {counts('excluded')} exclusions · {counts('unmatched')} unmatched records · {counts('coverage')} coverage checks</p></div><button className="button button-secondary" onClick={() => download('civicatlas-reconciliation.json', JSON.stringify({ revision: catalog.revision, reconciliation: catalog.reconciliation }, null, 2))}>Download report</button></div><div className="reconciliation-list">{catalog.reconciliation.map((r) => <article key={r.id}><span className={`reconciliation-kind ${r.kind}`}>{r.kind}</span><div><h3>{r.label}</h3><p>{r.detail}</p></div><button className="text-button" onClick={() => onSource(r.sourceId)}>Source ↗</button></article>)}</div><p className="small-note">{facilities.filter((f) => f.status !== 'verified' || !f.baseline && !f.candidate).length} locations excluded from baseline and automatic suggestions. The facility table retains their status and reason.</p></section><section className="source-catalog"><div className="section-title"><div><p className="eyebrow">Periods, transformations, integrity</p><h2>Inspect the published sources.</h2></div><button className="button button-secondary" onClick={() => download('civicatlas-release-manifest.json', JSON.stringify(catalog, null, 2))}>Download release manifest</button></div><div className="source-grid">{catalog.sources.map((s) => <SourceCard key={s.id} source={s} onInspect={() => onSource(s.id)} />)}</div></section><section className="release-details"><h3>Release and model boundaries</h3><dl><div><dt>Data revision</dt><dd><code>{catalog.revision}</code></dd></div><div><dt>Current road revision</dt><dd><code>{graph?.revision ?? 'Road network loading'}</code></dd></div><div><dt>Published periods</dt><dd>{catalog.period}</dd></div></dl><ul>{[...catalog.limitations, ...(graph?.limitations ?? [])].map((text, i) => <li key={i}>{text}</li>)}</ul><a href={`${portfolio}/work/civicatlas/`}>Read Pauline’s engineering story ↗</a><a href="https://github.com/goldenmonkeyrnd/civicatlas">Inspect the pipeline on GitHub ↗</a></section></div>;
+}
+function SourceCard({ source, onInspect }: { source: DataSource; onInspect: () => void }) {
+  return <article className="source-card"><p className="eyebrow">{source.publisher}</p><h3>{source.title}</h3><span className="source-period">{source.period}</span><p>{source.transformation}</p><div><button className="text-button" onClick={onInspect}>Inspect source ↗</button><a href={source.url} target="_blank" rel="noreferrer">Original ↗</a></div><small>Retrieved {source.retrievedAt.slice(0, 10)} · {source.license}</small></article>;
+}
+function SourceInspector({ request, catalog, fallbackArea, onClose }: { request: Inspector; catalog: Catalog; fallbackArea?: Area; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const parser = useMemo(() => (value: unknown) => {
-    const source = parseSource(value);
-    if (source.id !== request.id) throw new Error('The service returned a different source record. Try again.');
-    return source;
-  }, [request.id]);
-  const { resource, retry } = useResource(`/api/v1/sources/${encodeURIComponent(request.id)}`, parser);
-  useEffect(() => { const element = dialog.current; element?.showModal(); return () => element?.close(); }, []);
-  const close = () => { dialog.current?.close(); onClose(); };
-  return <dialog ref={dialog} className="source-dialog" aria-labelledby="source-title" onCancel={(event) => { event.preventDefault(); close(); }}>
-    <div className="source-dialog-header"><div><p className="eyebrow">The number has a paper trail</p><h2 id="source-title">Inspect the source</h2></div><button className="close-dialog" aria-label="Close source inspector" onClick={close}><span aria-hidden="true">×</span></button></div>
-    <p className="source-subtitle">{request.title}</p>
-    {resource.state === 'loading' && <p className="loading-message" role="status">Loading the original fields and definitions…</p>}
-    {resource.state === 'error' && <ErrorNotice message={resource.message} retry={retry} heading="The source could not be loaded" />}
-    {resource.state === 'loaded' && <>
-      <div className="source-origin"><strong>U.S. Bureau of Labor Statistics</strong><span>QCEW · 2024 annual · private ownership</span><a href={resource.data.url} target="_blank" rel="noopener noreferrer">Open the original CSV <span aria-hidden="true">↗</span><span className="sr-only"> (new tab)</span></a></div>
-      <h3>Definitions</h3>
-      <dl className="source-definitions">{Object.entries(resource.data.definitions).map(([key, value]) => <div key={key}><dt>{definitionLabels[key] ?? key.replaceAll('_', ' ')}</dt><dd>{sourceValue(value)}</dd></div>)}</dl>
-      <h3>Transformation</h3><p className="source-transformation">{resource.data.transformation}</p>
-      <h3>Original source fields</h3>
-      <div className="raw-fields"><table><caption className="sr-only">Original fields from the BLS CSV observation</caption><thead><tr><th scope="col">Field</th><th scope="col">Original value</th></tr></thead><tbody>{Object.entries(resource.data.raw).map(([key, value]) => <tr key={key}><th scope="row">{key}</th><td>{sourceValue(value)}</td></tr>)}</tbody></table></div>
-      <details className="source-reproducibility"><summary>Snapshot and integrity details</summary><dl><dt>Retrieved</dt><dd><time dateTime={resource.data.retrievedAt}>{new Date(resource.data.retrievedAt).toLocaleString('en-US', { timeZone: 'UTC' })} UTC</time></dd><dt>Source identifier</dt><dd><code>{resource.data.id}</code></dd><dt>SHA-256 of original source</dt><dd><code>{resource.data.sha256}</code></dd></dl></details>
-    </>}
-  </dialog>;
+  const parser = useMemo(() => (v: unknown) => parseSourceResponse(v, catalog.revision, request.sourceId), [catalog.revision, request.sourceId]);
+  const path = `/api/v2/sources/${encodeURIComponent(request.sourceId)}${request.geoid ? `?geoid=${request.geoid}` : ''}`;
+  const { resource, retry } = useResource(path, parser);
+  const data = loaded(resource); const source = data?.source ?? catalog.sources.find((s) => s.id === request.sourceId); const area = data?.area ?? fallbackArea;
+  useEffect(() => { if (!dialog.current?.open) dialog.current?.showModal(); return () => dialog.current?.close(); }, []);
+  const relevantIndicators = catalog.indicators.filter((i) => i.sourceId === request.sourceId || area?.values[i.id]?.sourceId === request.sourceId);
+  const raw = area?.raw[request.sourceId] ?? {};
+  return <dialog ref={dialog} className="source-dialog outreach-source-dialog" aria-labelledby="outreach-source-title" onCancel={(e) => { e.preventDefault(); onClose(); }}><div className="source-dialog-header"><div><p className="eyebrow">Follow the evidence</p><h2 id="outreach-source-title">{source?.title ?? 'Inspect this source'}</h2></div><button className="close-dialog" aria-label="Close source inspector" onClick={onClose}>×</button></div>{resource.state === 'loading' && <p role="status" className="small-note">Loading the original record…</p>}{resource.state === 'error' && <Notice retry={retry}><p>{resource.message}</p></Notice>}{source && <><div className="source-origin"><strong>{source.publisher}</strong><span>{source.period} · retrieved {source.retrievedAt.slice(0, 10)}</span><a href={source.url} target="_blank" rel="noreferrer">Open authoritative source ↗</a></div><h3>Transformation</h3><p className="source-transformation">{source.transformation}</p>{area && <><h3>{area.name}</h3><p className="small-note">{area.geoid} · {area.level} · internal point {area.lat.toFixed(5)}, {area.lon.toFixed(5)}</p><dl className="source-definitions">{relevantIndicators.map((i) => <div key={i.id}><dt>{i.label}</dt><dd><strong>{valueText(area, i, true)}</strong><br />{i.definition}<br /><small>Universe: {i.universe}. Period: {i.period}. Numerator: {area.values[i.id]?.numerator ?? 'not supplied'}; denominator: {area.values[i.id]?.denominator ?? 'not supplied'}.</small></dd></div>)}</dl><h3>Original source fields</h3>{Object.keys(raw).length ? <div className="raw-fields"><table><thead><tr><th>Original field</th><th>Original value</th></tr></thead><tbody>{Object.entries(raw).map(([key, value]) => <tr key={key}><th>{key}</th><td>{value === '' ? '"" (empty)' : value}</td></tr>)}</tbody></table></div> : <p className="small-note">This source is documented at release level. Select a neighborhood indicator with an original observation to inspect its raw fields.</p>}</>}<details className="source-reproducibility"><summary>Integrity and release details</summary><dl><dt>Source identifier</dt><dd><code>{source.id}</code></dd><dt>SHA-256</dt><dd><code>{source.sha256}</code></dd><dt>Data revision</dt><dd><code>{catalog.revision}</code></dd><dt>License</dt><dd>{source.license}</dd></dl></details><button className="button button-secondary source-download" onClick={() => download(`civicatlas-source-${source.id}${area ? `-${area.geoid}` : ''}.json`, JSON.stringify(data ?? { revision: catalog.revision, source, area }, null, 2))}>Download this evidence</button></>}</dialog>;
 }
-
-function Footer() {
-  return <footer className="site-footer"><div><a className="footer-name" href={portfolioUrl}>Pauline Yeary <span aria-hidden="true">↗</span></a><p>Data & AI Engineer · Golden Monkey Research and Development LLC</p></div><div className="footer-links"><a href={emailUrl} onClick={() => track('email_clicked')}>Let’s talk</a><a href={`${portfolioUrl}/downloads/Pauline_Yeary_Resume.pdf`} onClick={() => track('resume_downloaded')}>Download résumé</a><a href={`${portfolioUrl}/privacy/`}>Privacy & analytics</a></div><p className="footer-credit">Created with AI assistance. Directed and reviewed by Pauline Yeary. Source: <a href="https://www.bls.gov/cew/">BLS QCEW</a> and <a href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html">U.S. Census Bureau</a>.</p></footer>;
-}
-
-export default function App() {
-  const overview = useResource('/api/v1/counties', parseOverview);
-  const geometry = useResource('/data/maryland-counties.geojson', parseGeometry);
-  return <>
-    <Header />
-    <main>
-      <section className="intro" aria-labelledby="page-title"><div className="intro-copy"><p className="eyebrow"><span className="atlas-label">CivicAtlas</span> A public-sector data explorer</p><h1 id="page-title">Maryland,{' '}<br /><span>at work.</span></h1><p className="intro-description">Where is private-sector employment concentrated? Compare two counties, explore their industries, and inspect the evidence behind every number.</p></div><div className="snapshot-card"><span className="snapshot-year">2024</span><span>Private-sector employment snapshot</span><p>Annual averages across Maryland’s 23 counties and Baltimore city.</p><a href="https://www.bls.gov/cew/additional-resources/open-data/csv-data-slices.htm">About the BLS data <span aria-hidden="true">↗</span></a></div></section>
-      {overview.resource.state === 'loading' && <div className="initial-state" id="explorer" tabIndex={-1}><p className="loading-message" role="status">Loading Maryland’s employment snapshot…</p></div>}
-      {overview.resource.state === 'error' && <div className="initial-state" id="explorer" tabIndex={-1}><ErrorNotice message={overview.resource.message} retry={overview.retry} /><p>The portfolio, résumé and email links remain available while the data service recovers.</p><a href={emailUrl} className="button button-primary" onClick={() => track('email_clicked')}>Email Pauline</a></div>}
-      {overview.resource.state === 'loaded' && <Comparison overview={overview.resource.data} geometry={geometry.resource} geometryRetry={geometry.retry} />}
-    </main>
-    <Footer />
-  </>;
+function PrintableBriefing({ catalog, result, facilities, demand, countyName }: { catalog: Catalog; result: SimulationResult; facilities: Facility[]; demand: Indicator; countyName: string }) {
+  const siteNames = result.scenario.hubIds.map((id) => facilities.find((f) => f.id === id)?.name ?? id).concat(result.scenario.hypotheticalSites.map((s) => `${s.name} (hypothetical)`));
+  return <article className="print-briefing"><div className="print-wordmark"><img src="/favicon.svg" alt="" width="38" /><strong>CivicAtlas · Maryland Outreach Lab</strong></div><h1>Outreach planning briefing</h1><p>{countyName} · {demand.label} · {result.scenario.radiusMiles} modeled road miles</p><table><tbody><tr><th>Baseline represented demand within distance</th><td>{integer.format(result.baseline.covered)}</td></tr><tr><th>With proposed outreach</th><td>{integer.format(result.proposed.covered)}</td></tr><tr><th>Additional represented demand</th><td>{integer.format(result.proposed.covered - result.baseline.covered)}</td></tr><tr><th>Beyond distance / disconnected / unmatched</th><td>{integer.format(result.proposed.beyond)} / {integer.format(result.proposed.disconnected)} / {integer.format(result.proposed.unmatched)}</td></tr></tbody></table><h2>Proposed locations</h2><ol>{siteNames.map((name, i) => <li key={i}>{name}</li>)}</ol><h2>Assumptions</h2><p>Each block group is represented by one internal point snapped to a directed road graph. Coverage counts overlapping reach once. The selected demand universe is {demand.universe.toLowerCase()}. This estimates geographic reach, not eligibility, attendance, transit access, or service capacity. Road closures affect {result.scenario.closedEdgeIds.length} directed segments. Estimates retain their source periods and margins of error.</p><h2>Release and sources</h2><p>Data revision: {catalog.revision}<br />Road revision: {result.scenario.graphRevision}<br />Scenario version: {result.scenario.version}</p><ul>{catalog.sources.map((s) => <li key={s.id}>{s.title} · {s.publisher} · {s.period}<br />{s.url}</li>)}</ul><p>Prepared with CivicAtlas. Built by Pauline Yeary · Golden Monkey R&D · goldenmonkey.dev</p></article>;
 }
