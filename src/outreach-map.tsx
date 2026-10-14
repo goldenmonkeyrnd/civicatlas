@@ -69,12 +69,12 @@ export default function OutreachMap(props: OutreachMapProps) {
         instance.addSource('counties', { type: 'geojson', data: '/data/maryland-counties.geojson' });
         instance.addLayer({ id: 'county-fill', type: 'fill', source: 'counties', paint: { 'fill-color': '#f5f7f7', 'fill-opacity': .95 } });
         instance.addLayer({ id: 'county-outline', type: 'line', source: 'counties', paint: { 'line-color': '#6a8798', 'line-width': .8 } });
-        for (const id of ['areas', 'roads', 'flows', 'locations', 'commutes']) instance.addSource(id, { type: 'geojson', data: empty });
+        for (const id of ['areas', 'roads', 'closedRoads', 'flows', 'locations', 'commutes']) instance.addSource(id, { type: 'geojson', data: empty });
         instance.addLayer({ id: 'area-fill', type: 'fill', source: 'areas', paint: { 'fill-color': '#bed5e5', 'fill-opacity': .88 } });
         instance.addLayer({ id: 'area-outline', type: 'line', source: 'areas', paint: { 'line-color': '#ffffff', 'line-width': .6, 'line-opacity': .8 } });
         instance.addLayer({ id: 'selected-area', type: 'line', source: 'areas', filter: ['==', ['get', 'geoid'], ''], paint: { 'line-color': '#f4b844', 'line-width': 3 } });
         instance.addLayer({ id: 'roads', type: 'line', source: 'roads', minzoom: 10, paint: { 'line-color': '#657b8a', 'line-opacity': .3, 'line-width': ['interpolate', ['linear'], ['zoom'], 10, .3, 15, 1.5] } });
-        instance.addLayer({ id: 'closed-roads', type: 'line', source: 'roads', filter: ['==', ['get', 'closed'], true], paint: { 'line-color': '#b5413c', 'line-width': 4, 'line-dasharray': [2, 1] } });
+        instance.addLayer({ id: 'closed-roads', type: 'line', source: 'closedRoads', paint: { 'line-color': '#b5413c', 'line-width': 4, 'line-dasharray': [2, 1] } });
         instance.addLayer({ id: 'road-hit', type: 'line', source: 'roads', minzoom: 10, paint: { 'line-color': '#ffffff', 'line-width': 14, 'line-opacity': .001 } });
         instance.addLayer({ id: 'commute-lines', type: 'line', source: 'commutes', paint: { 'line-color': '#6755a7', 'line-opacity': .25, 'line-width': ['interpolate', ['linear'], ['get', 'jobs'], 0, .5, 1000, 3] } });
         instance.addLayer({ id: 'flow-halo', type: 'line', source: 'flows', paint: { 'line-color': '#fff8df', 'line-opacity': .7, 'line-width': ['+', 2, ['*', 4, ['get', 'q']]] } });
@@ -96,7 +96,7 @@ export default function OutreachMap(props: OutreachMapProps) {
           const areas = instance.queryRenderedFeatures(event.point, { layers: ['area-fill'] });
           instance.getCanvas().style.cursor = p.addingSite ? 'crosshair' : locations.length || areas.length || p.closingRoad ? 'pointer' : '';
           if (locations[0]) setHover(String(locations[0].properties?.name));
-          else if (p.closingRoad) { const roads = instance.queryRenderedFeatures(event.point, { layers: ['road-hit'] }); setHover(roads[0] ? `${roads[0].properties?.name || 'Unnamed road'} · click to ${roads[0].properties?.closed ? 'reopen' : 'close'}` : 'Zoom in and select a road to change its availability'); }
+          else if (p.closingRoad) { const roads = instance.queryRenderedFeatures(event.point, { layers: ['road-hit'] }); const closed = roads[0] && (p.scenario?.closedEdgeIds.includes(Number(roads[0].properties?.edgeId)) || p.scenario?.closedEdgeIds.includes(Number(roads[0].properties?.reverseId))); setHover(roads[0] ? `${roads[0].properties?.name || 'Unnamed road'} · click to ${closed ? 'reopen' : 'close'}` : 'Zoom in and select a road to change its availability'); }
           else if (areas[0]) { const f = areas[0].properties; setHover(`${f?.name} · ${f?.value == null ? 'Not reported' : integers.format(Number(f.value))} ${p.indicator.unit === 'percent' ? '%' : p.indicator.unit === 'dollars' ? 'dollars' : ''}`); }
         });
         setReady(true);
@@ -137,9 +137,31 @@ export default function OutreachMap(props: OutreachMapProps) {
   }, [ready, props.graph, props.focusRoadEdgeId, reduced]);
   useEffect(() => {
     if (!ready || !map.current) return;
-    const closed = new Set(props.scenario?.closedEdgeIds ?? []);
-    const data: FeatureCollection<LineString> = { type: 'FeatureCollection', features: props.graph?.edges.map((edge, edgeId) => ({ type: 'Feature', geometry: { type: 'LineString', coordinates: props.graph?.shapes[edgeId] ?? [props.graph!.nodes[edge[0]], props.graph!.nodes[edge[1]]] }, properties: { edgeId, closed: closed.has(edgeId), name: props.graph?.names[edgeId] ?? '' } })) ?? [] };
+    const graph = props.graph;
+    const data: FeatureCollection<LineString> = { type: 'FeatureCollection', features: [] };
+    if (graph) {
+      const exactAdjacentReverse = (firstId: number, secondId: number): boolean => {
+        const a = graph.edges[firstId]; const b = graph.edges[secondId]; if (!a || !b || a[0] !== b[1] || a[1] !== b[0] || a[2] !== b[2]) return false;
+        const first = graph.shapes[firstId] ?? [graph.nodes[a[0]], graph.nodes[a[1]]]; const second = graph.shapes[secondId] ?? [graph.nodes[b[0]], graph.nodes[b[1]]];
+        return first.length === second.length && first.every((point, index) => point[0] === second[second.length - 1 - index][0] && point[1] === second[second.length - 1 - index][1]);
+      };
+      for (let edgeId = 0; edgeId < graph.edges.length; edgeId++) {
+        const edge = graph.edges[edgeId]; const reverseId = exactAdjacentReverse(edgeId, edgeId + 1) ? edgeId + 1 : -1;
+        data.features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: graph.shapes[edgeId] ?? [graph.nodes[edge[0]], graph.nodes[edge[1]]] }, properties: { edgeId, reverseId, name: graph.names[edgeId] ?? '' } });
+        // The engine retains both directions; the context map draws identical physical geometry once.
+        if (reverseId !== -1) edgeId++;
+      }
+    }
     (map.current.getSource('roads') as maplibregl.GeoJSONSource).setData(data);
+  }, [ready, props.graph]);
+  useEffect(() => {
+    if (!ready || !map.current) return;
+    const graph = props.graph;
+    const data: FeatureCollection<LineString> = { type: 'FeatureCollection', features: graph ? (props.scenario?.closedEdgeIds ?? []).map((edgeId) => {
+      const edge = graph.edges[edgeId];
+      return { type: 'Feature', geometry: { type: 'LineString', coordinates: graph.shapes[edgeId] ?? [graph.nodes[edge[0]], graph.nodes[edge[1]]] }, properties: { edgeId } };
+    }) : [] };
+    (map.current.getSource('closedRoads') as maplibregl.GeoJSONSource).setData(data);
   }, [ready, props.graph, props.scenario?.closedEdgeIds]);
   useEffect(() => {
     if (!ready || !map.current) return;

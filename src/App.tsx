@@ -155,7 +155,7 @@ function Lab({ catalog }: { catalog: Catalog }) {
     if (!scene || !graph || !graph.edges[id]) return;
     const edge = graph.edges[id]; const ids = [id]; const shape = JSON.stringify(graph.shapes[id]); const reverseShape = JSON.stringify([...(graph.shapes[id] ?? [])].reverse());
     graph.edges.forEach((e, i) => { if (i !== id && e[0] === edge[1] && e[1] === edge[0] && (JSON.stringify(graph.shapes[i]) === reverseShape || JSON.stringify(graph.shapes[i]) === shape)) ids.push(i); });
-    const reopening = scene.closedEdgeIds.includes(id); const next = new Set(scene.closedEdgeIds); for (const i of ids) reopening ? next.delete(i) : next.add(i);
+    const reopening = ids.some((edgeId) => scene.closedEdgeIds.includes(edgeId)); const next = new Set(scene.closedEdgeIds); for (const i of ids) reopening ? next.delete(i) : next.add(i);
     changeScenario({ closedEdgeIds: [...next].sort((a, b) => a - b) }); setStatus(`${graph.names[id] || 'Road section'} ${reopening ? 'reopened' : 'closed'} in the scenario.`);
   };
   const addHypothetical = (lon: number, lat: number) => {
