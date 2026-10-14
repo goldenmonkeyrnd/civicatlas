@@ -44,7 +44,7 @@ export default function OutreachMap(props: OutreachMapProps) {
   const [hover, setHover] = useState('Select a neighborhood to inspect its evidence');
   const reduced = useReducedMotion();
   const firstFit = useRef(true);
-  const flowState = useRef<{ result: SimulationResult | null; epoch: number; conductivity: number[] }>({ result: null, epoch: -1, conductivity: [] });
+  const flowState = useRef<{ result: SimulationResult | null; epoch: number; strength: number }>({ result: null, epoch: -1, strength: 0 });
   const values = useMemo(() => props.areas.map((a) => a.values[props.indicator.id]?.value).filter((v): v is number => typeof v === 'number').sort((a, b) => a - b), [props.areas, props.indicator.id]);
   const stops = useMemo(() => [0, .25, .5, .75, 1].map((q) => values[Math.floor(q * Math.max(0, values.length - 1))] ?? 0), [values]);
   useEffect(() => {
@@ -72,8 +72,8 @@ export default function OutreachMap(props: OutreachMapProps) {
         instance.addLayer({ id: 'closed-roads', type: 'line', source: 'roads', filter: ['==', ['get', 'closed'], true], paint: { 'line-color': '#b5413c', 'line-width': 4, 'line-dasharray': [2, 1] } });
         instance.addLayer({ id: 'road-hit', type: 'line', source: 'roads', minzoom: 10, paint: { 'line-color': '#ffffff', 'line-width': 14, 'line-opacity': .001 } });
         instance.addLayer({ id: 'commute-lines', type: 'line', source: 'commutes', paint: { 'line-color': '#6755a7', 'line-opacity': .25, 'line-width': ['interpolate', ['linear'], ['get', 'jobs'], 0, .5, 1000, 3] } });
-        instance.addLayer({ id: 'flow-halo', type: 'line', source: 'flows', paint: { 'line-color': '#fff8df', 'line-opacity': .7, 'line-width': ['+', 2, ['*', 4, ['get', 'conductivity']]] } });
-        instance.addLayer({ id: 'flow-lines', type: 'line', source: 'flows', paint: { 'line-color': '#dc9630', 'line-opacity': .95, 'line-width': ['+', .5, ['*', 3.5, ['get', 'conductivity']]], 'line-dasharray': [3, 1] } });
+        instance.addLayer({ id: 'flow-halo', type: 'line', source: 'flows', paint: { 'line-color': '#fff8df', 'line-opacity': .7, 'line-width': ['+', 2, ['*', 4, ['get', 'q']]] } });
+        instance.addLayer({ id: 'flow-lines', type: 'line', source: 'flows', paint: { 'line-color': '#dc9630', 'line-opacity': .95, 'line-width': ['+', .5, ['*', 3.5, ['get', 'q']]], 'line-dasharray': [3, 1] } });
         instance.addLayer({ id: 'location-halo', type: 'circle', source: 'locations', paint: { 'circle-radius': ['case', ['get', 'selected'], 12, 8], 'circle-color': '#ffffff', 'circle-opacity': .9 } });
         instance.addLayer({ id: 'location-points', type: 'circle', source: 'locations', paint: { 'circle-radius': ['case', ['get', 'selected'], 8, 5], 'circle-color': ['match', ['get', 'role'], 'baseline', '#202b33', 'proposed', '#dc9630', '#ffffff'], 'circle-stroke-color': ['match', ['get', 'role'], 'baseline', '#202b33', 'proposed', '#a76616', '#2452bd'], 'circle-stroke-width': 2 } });
         instance.on('click', (event) => {
@@ -145,25 +145,32 @@ export default function OutreachMap(props: OutreachMapProps) {
   useEffect(() => {
     if (!ready || !map.current) return;
     const graph = props.graph; const flows = props.result?.flows ?? [];
-    const maximum = flows.reduce((max, f) => Math.max(max, f.demand), 1);
-    if (flowState.current.result !== props.result || flowState.current.epoch !== props.animationEpoch) flowState.current = { result: props.result, epoch: props.animationEpoch, conductivity: flows.map(() => 0) };
-    const conductivity = flowState.current.conductivity;
+    const maximum = flows.reduce((max, flow) => Math.max(max, flow.demand), 1);
+    const data: FeatureCollection<Geometry> = { type: 'FeatureCollection', features: graph ? flows.map((flow) => {
+      const edge = graph.edges[flow.edgeId];
+      return { type: 'Feature', geometry: { type: 'LineString', coordinates: graph.shapes[flow.edgeId] ?? [graph.nodes[edge[0]], graph.nodes[edge[1]]] }, properties: { q: flow.demand / maximum, demand: flow.demand } };
+    }) : [] };
+    // Geometry is published once per calculated result. Only paint changes during playback.
+    (map.current.getSource('flows') as maplibregl.GeoJSONSource).setData(data);
+  }, [ready, props.graph, props.result]);
+  useEffect(() => {
+    if (!ready || !map.current) return;
+    if (flowState.current.result !== props.result || flowState.current.epoch !== props.animationEpoch) flowState.current = { result: props.result, epoch: props.animationEpoch, strength: 0 };
     let iteration = 0;
     const tick = () => {
-      if (!map.current || !graph) return;
-      const data: FeatureCollection<Geometry> = { type: 'FeatureCollection', features: flows.map((flow, index) => {
-        const edge = graph.edges[flow.edgeId]; const q = flow.demand / maximum;
-        if (reduced) conductivity[index] = q;
-        else if (!props.animationPaused) conductivity[index] = .8 * conductivity[index] + .2 * q;
-        return { type: 'Feature', geometry: { type: 'LineString', coordinates: graph.shapes[flow.edgeId] ?? [graph.nodes[edge[0]], graph.nodes[edge[1]]] }, properties: { conductivity: conductivity[index], demand: flow.demand } };
-      }) };
-      (map.current.getSource('flows') as maplibregl.GeoJSONSource).setData(data);
+      if (!map.current) return;
+      // With fixed Q and D_0=0, every edge shares D_t=Q*g_t; g_next=.8g+.2.
+      // Advancing one scalar therefore gives exactly the same per-edge EMA.
+      if (reduced) flowState.current.strength = 1;
+      else if (!props.animationPaused) flowState.current.strength = .8 * flowState.current.strength + .2;
+      const strength = flowState.current.strength;
+      map.current.setPaintProperty('flow-halo', 'line-width', ['+', 2, ['*', 4, strength, ['get', 'q']]]);
+      map.current.setPaintProperty('flow-lines', 'line-width', ['+', .5, ['*', 3.5, strength, ['get', 'q']]]);
       if (!reduced && !props.animationPaused) map.current.setPaintProperty('flow-lines', 'line-dasharray', [[3, 1], [2, 1, 1, 1], [1, 1, 2, 1]][iteration++ % 3]);
     };
-    if (!graph || !flows.length) { (map.current.getSource('flows') as maplibregl.GeoJSONSource).setData(empty); return; }
-    tick(); if (reduced || props.animationPaused) return;
+    tick(); if (reduced || props.animationPaused || !props.result?.flows.length) return;
     const timer = window.setInterval(tick, 200); return () => window.clearInterval(timer);
-  }, [ready, props.graph, props.result, props.animationEpoch, props.animationPaused, reduced]);
+  }, [ready, props.result, props.animationEpoch, props.animationPaused, reduced]);
   return <div className={`outreach-map ${props.addingSite ? 'adding-site' : ''}`}>
     <div ref={container} className="map-surface" aria-label="Maryland neighborhood map; equivalent values and controls follow in the tables" />
     {mapError && <div className="map-failure" role="status"><strong>Explore through the tables</strong><p>{mapError}</p></div>}
