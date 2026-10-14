@@ -1,0 +1,146 @@
+{
+  "readyMs": 6522.740132,
+  "timing": {
+    "pageNow": 6521.899999856949,
+    "lastInputResponseEnd": 2160.7999999523163,
+    "usableAfterInputsMs": 4361.099999904633
+  },
+  "engineTiming": "753.4 ms calculation",
+  "initial": [
+    "231,421",
+    "250,622",
+    "+19,201"
+  ],
+  "oneMile": [
+    "70,431",
+    "82,437",
+    "+12,006"
+  ],
+  "noVehicle": [
+    "24,269",
+    "27,400",
+    "+3,131"
+  ],
+  "suggested": [
+    "24,269",
+    "29,332",
+    "+5,063"
+  ],
+  "hypothetical": [
+    "24,269",
+    "30,585",
+    "+6,316"
+  ],
+  "roadRows": 50,
+  "roadCoverage": [
+    "24,269",
+    "30,173",
+    "+5,904"
+  ],
+  "mapCanvases": 1,
+  "mapFailure": 0,
+  "desktopOverflow": false,
+  "mobileOverflow": false,
+  "scenario": {
+    "dataRevision": "md-outreach-2024-6758eb5373114191",
+    "graphRevision": "roads-85c5625e0a1c3be9",
+    "sites": 3
+  },
+  "sourceFields": "U.S. Census Bureau\n2020–2024 · retrieved 2026-10-14\nOpen authoritative source ↗",
+  "sourceCards": 16,
+  "sourceSummary": "71 matching sources · 71 in the release",
+  "disrupted": [
+    "230,848",
+    "250,049",
+    "+19,201"
+  ],
+  "reopened": [
+    "231,421",
+    "250,622",
+    "+19,201"
+  ],
+  "trace": {
+    "geoid": "245102708031",
+    "api": {
+      "households": {
+        "denominator": null,
+        "moe": 306,
+        "numerator": 933,
+        "sourceId": "acs-2024-B11001",
+        "status": "available",
+        "value": 933
+      },
+      "noVehicle": {
+        "denominator": 933,
+        "moe": 19.79899,
+        "numerator": 0,
+        "sourceId": "acs-2024-B25044",
+        "status": "available",
+        "value": 0
+      },
+      "noInternet": {
+        "denominator": 933,
+        "moe": 42,
+        "numerator": 27,
+        "sourceId": "acs-2024-B28002",
+        "status": "available",
+        "value": 27
+      }
+    },
+    "rowText": "Block group 1 · Tract 2708.03\n245102708031 · Baltimore City\n\t933\t306\tdisconnected\tSource ↗",
+    "profileText": "Block group 1 · Tract 2708.03\n245102708031 · Block group\n− Remove from comparison\nPopulation\n2020–2024 ACS five-year estimates\n2,776 ↗\n± 1,210 margin of error\nHouseholds\n2020–2024 ACS five-year estimates\n933 ↗\n± 306 margin of error\nHousehold income below $35,000\n2020–2024 ACS five-year estimates\n12.9% ↗\n± 9.5 pp margin of error\nUnemployment\n2020–2024 ACS five-year estimates\n0% ↗\n± 0.9 pp margin of error\nBelow poverty level\n2020–2024 ACS five-year estimates\n3.7% ↗\n± 4 pp margin of error\nRent takes at least 30% of income\n2020–2024 ACS five-year estimates\n8% ↗\n± 13.6 pp margin of error\nHouseholds without a vehicle\n2020–2024 ACS five-year estimates\n0 ↗\n± 19.8 margin of error\nHouseholds without internet access\n2020–2024 ACS five-year estimates\n27 ↗\n± 42 margin of error\nHouseholds without a vehicle (%)\n2020–2024 ACS five-year estimates\n0% ↗\n± 2.1 pp margin of error\nHouseholds without internet access (%)\n2020–2024 ACS five-year estimates\n2.9% ↗\n± 4.4 pp margin of error\nCurrent road scenario\nDisconnected from the modeled network",
+    "exported": {
+      "geoid": "245102708031",
+      "area_name": "Block group 1 · Tract 2708.03",
+      "county": "24510",
+      "indicator": "Households",
+      "unit": "count",
+      "universe": "Households",
+      "value": "933",
+      "margin_of_error": "306",
+      "numerator": "933",
+      "denominator": "",
+      "status": "available",
+      "period": "2020–2024 ACS five-year estimates",
+      "source": "acs-2024-B11001",
+      "baseline_road_miles": "",
+      "proposed_road_miles": "",
+      "access_state": "disconnected",
+      "data_revision": "md-outreach-2024-6758eb5373114191"
+    },
+    "exportedZero": {
+      "geoid": "245102708031",
+      "area_name": "Block group 1 · Tract 2708.03",
+      "county": "24510",
+      "indicator": "Households without a vehicle",
+      "unit": "count",
+      "universe": "Occupied housing units (households)",
+      "value": "0",
+      "margin_of_error": "19.79899",
+      "numerator": "0",
+      "denominator": "933",
+      "status": "available",
+      "period": "2020–2024 ACS five-year estimates",
+      "source": "acs-2024-B25044",
+      "baseline_road_miles": "",
+      "proposed_road_miles": "",
+      "access_state": "disconnected",
+      "data_revision": "md-outreach-2024-6758eb5373114191"
+    }
+  },
+  "printable": true,
+  "printedSources": 8,
+  "printedFigures": [
+    "24,269",
+    "30,585",
+    "6,316",
+    "37,113 / 452 / 0"
+  ],
+  "finalCoverage": [
+    "24,269",
+    "30,585",
+    "+6,316"
+  ],
+  "errors": [],
+  "failedResponses": []
+}

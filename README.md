@@ -16,6 +16,8 @@ An inspectable public-data decision tool by Pauline Yeary, built with React, Typ
 
 Equivalent neighborhood and facility tables remain usable when WebGL is unavailable. Reduced motion disables automatic flow animation; pause, reset, and replay also control it.
 
+Use **Try a road disruption** for a replayable, revision-checked East University Parkway example. It moves 573 represented households beyond the distance threshold; **Reopen all** restores the original results. The example resets to the default Baltimore measure/sites before applying its saved closure.
+
 ## Run locally, including without conference connectivity
 
 Use Python 3.12, uv, and Bun 1.3.4. Install dependencies and seed once while connected:
@@ -53,6 +55,8 @@ bun run build
 ```
 
 Python gates verify raw hashes, coverage, joins, statistical transformations, exact SQL round trips, and byte reproduction. Worker tests execute the actual SQLite seed. Engine tests cover directed roads, disconnected components, closures, deterministic tie-breaking, replay, and no double counting. Sentinels v0.2.0 checks five structural contracts and the explicit pipeline coverage ledger. Structural PASS and runtime verification remain separate evidence.
+
+`data/qualification/` records actual verification. Original and reduced Baltimore graphs preserve coverage/recommendations at one, three, and ten miles. Across all jurisdictions, 120 scenario runs check replay, conservation, additions, closures, and alternative measures. On the Ryzen 5 2600 development machine, default Baltimore engine execution took 701 ms; the slowest county took 1,262 ms. Chromium production-preview qualification became usable 4.36 seconds after required input responses (6.52 seconds cold-page total), and includes visible polygons, proposed pins, route flows, source/API/profile/CSV traces, print figures, offline use, and WebGL-disabled tables. Measurements cover this development host and emulated mobile layouts.
 
 Graph preparation requires the six pinned Geofabrik extracts in `data/outreach/roads-manifest.json` under `artifacts/roads/`, plus the original county shape source in the read-only corpus. Run `uv run --locked python tools/build_roads.py`, then `uv run --locked python tools/stage_outreach.py`. Raw PBFs and uncompressed graphs are ignored; bounded gzip graphs and compressed/decoded hashes are committed. Source updates require acquisition, a new revision, graph regeneration, reconciliation, and verification before publication.
 

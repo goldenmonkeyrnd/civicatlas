@@ -1,0 +1,28 @@
+{
+  "offline": {
+    "coverage": [
+      "231,421",
+      "250,622",
+      "+19,201"
+    ],
+    "rowText": "Block group 1 · Tract 2708.03\n245102708031 · Baltimore City\n\t12.9%\t9.5 percentage points\tdisconnected\tSource ↗",
+    "fallback": 0,
+    "errors": [],
+    "blockedExternalRequests": [
+      "https://static.cloudflareinsights.com/beacon.min.js"
+    ]
+  },
+  "no-webgl": {
+    "coverage": [
+      "231,421",
+      "250,622",
+      "+19,201"
+    ],
+    "rowText": "Block group 1 · Tract 2708.03\n245102708031 · Baltimore City\n\t12.9%\t9.5 percentage points\tdisconnected\tSource ↗",
+    "fallback": 1,
+    "errors": [],
+    "blockedExternalRequests": [
+      "https://static.cloudflareinsights.com/beacon.min.js"
+    ]
+  }
+}
