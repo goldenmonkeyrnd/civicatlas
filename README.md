@@ -1,69 +1,83 @@
-# CivicAtlas
+# CivicAtlas · Maryland Outreach Lab
 
-An observable Maryland public-data application by Pauline Yeary: React, TypeScript, Vite, Bun, Cloudflare Workers/D1, Python and DuckDB. Production: https://atlas.goldenmonkey.dev. Portfolio: https://goldenmonkey.dev/work/civicatlas/.
+**Where could three additional outreach sites bring benefits assistance closer?**
 
-## Launch status — October 11, 2026
+[Open the application](https://atlas.goldenmonkey.dev/?view=plan) · [Engineering story](https://goldenmonkey.dev/work/civicatlas/) · [Conference introduction](https://goldenmonkey.dev/summit/2026/)
 
-The application is live against Cloudflare D1. Production verification checked all 24 county responses and all 504 source observations against the validated snapshot: 530 requests and 9,736 assertions, with no mismatch. GitHub Actions validation, automatic deployment and the separately checked snapshot import have passed against production. The import saved a recovery export before updating D1 and verified the exact deployed revision afterward. Analytics Engine capture has been verified for real conference-page, comparison and source-inspector interactions using a sampling-aware query. Verification traffic is not recruiter engagement.
+An inspectable public-data decision tool by Pauline Yeary, built with React, TypeScript, MapLibre, a browser Web Worker, Python/DuckDB, and Cloudflare Workers/D1. It covers 4,079 Maryland block groups, 1,475 tracts, and all 24 county-equivalent jurisdictions. Baltimore city (24510) and Baltimore County (24005) remain separate.
 
-## The snapshot
+## Try a three-minute demonstration
 
-2024 BLS QCEW annual data for all 24 Maryland jurisdictions, private ownership code 5. Employment measures covered workplace jobs. Average pay is nominal annual pay per job, not household income. NAICS sectors divide by the same county private-sector total. BLS disclosure code N is withheld; a missing observation is unavailable; a disclosed zero stays zero.
+1. Open **Plan outreach** in Baltimore City. Defaults: three proposed library sites, three modeled road miles, total households.
+2. Review baseline, proposed coverage, and each suggested site's contribution. Replace a site, change the distance, or close a road and compare the consequence.
+3. Switch to **Explore** for income, poverty, rent burden, vehicles, internet, household composition, and workforce estimates. Employment/pay remain county observations; commuting shows 2021 Maryland home–work job relationships.
+4. Inspect a neighborhood's source records. Open **Evidence** for address corrections, closures, exclusions, source hashes, and coverage.
+5. Export a comparison CSV or scenario JSON, share a versioned link, and print the briefing. Import JSON to replay the same release, graph, sites, distance, and closures.
 
-`data/raw/manifest.json` pins 24 official BLS county CSV files, official industry titles and the Census 2024 1:5 million county geometry by URL, retrieval time and SHA-256. The offline pipeline validates those hashes and produces byte-reproducible SQL, Parquet, GeoJSON and snapshot JSON. Source inspection connects displayed values to the original source fields. Baltimore city 24510 and Baltimore County 24005 are separate jurisdictions.
+Equivalent neighborhood and facility tables remain usable when WebGL is unavailable. Reduced motion disables automatic flow animation; pause, reset, and replay also control it.
 
-## Run and verify
+## Run locally, including without conference connectivity
 
-Use Python 3.12, uv and Bun 1.3.4. The raw public snapshot is included; routine builds require no source API key or network fetch.
+Use Python 3.12, uv, and Bun 1.3.4. Install dependencies and seed once while connected:
 
 ```sh
 uv sync --locked
 bun install --frozen-lockfile
+bun run db:local
+bun run db:outreach:local
+bun run dev -- --host 127.0.0.1 --port 5175
+```
+
+Open `http://127.0.0.1:5175/?view=plan`. Both databases, fonts, boundaries, roads, and commuting assets are local. Leave the terminal running; Ctrl-C stops it. After installation/seeding, launch requires no source API key or internet. Public and local apps use the same pinned release.
+
+An unavailable-data message usually means a seed command was omitted. A revision mismatch means the scenario belongs to another release; start a new scenario or use its archived release. Choose another port if 5175 is occupied. Reseeding restores the committed local data.
+
+## Data and reproducible publication
+
+`/media/user/data/babylon-data` is the primary read-only source library. Acquisition extracts bounded Maryland records. `data/outreach/raw/manifest.json` and `data/raw/manifest.json` pin URLs, periods, retrieval evidence, hashes, and transformations. Ordinary builds use committed bounded inputs, separately from acquisition.
+
+ACS observations retain estimates, margins of error, denominators, geography, and observed-zero versus unavailable/suppressed states. Additional block-group tables: C17002 (poverty), B25070 (rent burden), B25044 (vehicles), B28002 (internet). Each measure has its own universe. Total households, households without vehicles, and households without internet are alternative demand measures; overlapping groups are never added together.
+
+County context contains 2010–2024 QCEW private-sector history and the existing 2024 sector comparisons. Employment means covered workplace jobs; pay is nominal annual pay per job. LODES 2021 includes relationships with both home and workplace in Maryland. These are jobs, not observed routes; top-flow truncation reports omitted jobs.
+
+Current library directories and DHS records reconcile the local facility inventory: 172 verified library candidates and 38 verified benefits sites across all jurisdictions. Six documented closures and 51 unresolved/obsolete/non-public records remain inspectable and excluded. Thirty explicit address corrections retain source evidence; six unresolved corrections remain excluded. Libraries without documented assistance are candidates rather than existing services.
+
+```sh
 uv run --locked python -m pipeline.build --check
+uv run --locked python -m pipeline.outreach_build --check
+uv run --locked python tools/stage_outreach.py --check
 uv run --locked python -m unittest discover -s tests/python -v
 uv run --locked sentinels check --root . --config sentinels.toml --json
 bun run check
-bun run db:local
-bun run dev
+bun run build
 ```
 
-The Cloudflare Vite plugin serves the frontend and Worker together at localhost:5173. Local D1 is seeded separately. `bun run build` emits the production client and Worker. Worker tests execute the actual seed schema using SQLite; production smoke checks separately establish Cloudflare/D1 connectivity.
+Python gates verify raw hashes, coverage, joins, statistical transformations, exact SQL round trips, and byte reproduction. Worker tests execute the actual SQLite seed. Engine tests cover directed roads, disconnected components, closures, deterministic tie-breaking, replay, and no double counting. Sentinels v0.2.0 checks five structural contracts and the explicit pipeline coverage ledger. Structural PASS and runtime verification remain separate evidence.
 
-## API and failure behavior
+Graph preparation requires the six pinned Geofabrik extracts in `data/outreach/roads-manifest.json` under `artifacts/roads/`, plus the original county shape source in the read-only corpus. Run `uv run --locked python tools/build_roads.py`, then `uv run --locked python tools/stage_outreach.py`. Raw PBFs and uncompressed graphs are ignored; bounded gzip graphs and compressed/decoded hashes are committed. Source updates require acquisition, a new revision, graph regeneration, reconciliation, and verification before publication.
 
-GET /api/v1/counties returns all county totals; GET /api/v1/counties/{fips} returns a county and its NAICS sectors; GET /api/v1/sources/{id} returns provenance; GET /api/health checks D1 and the data revision. Identifiers stay strings, queries are parameterized, public SQL submission is unavailable, and API faults return explicit JSON errors. The UI provides retry and retains ordinary portfolio/contact navigation.
+## What the model calculates
 
-## Released Sentinels contracts
+Each block group uses its Census internal representative point snapped to an existing motor-road node within 500 meters. Shared OSM nodes establish junctions, preserving grade separation, recorded motor access, and one-way direction. County graphs include 17 km of surrounding roads, beyond the supported ten-mile threshold. Degree-two corridors and branches without attached neighborhoods/facilities are reduced while preserving distance/connectivity. Hypothetical locations snap to a retained node within 500 meters.
 
-The pipeline consumes [Sentinels v0.2.0](https://github.com/goldenmonkeyrnd/sentinels/releases/tag/v0.2.0) through an exact GitHub wheel URL and SHA-256 in `pyproject.toml`, with its dependency closure recorded in `uv.lock`. `uv sync --locked` verifies that the manifest and lock agree. Sentinels is AGPL-3.0-only; its release includes corresponding source and notices. CivicAtlas remains a separate application with its existing license and data attribution.
+Verified benefits sites mapped in the surrounding road graph form the baseline, including nearby Maryland jurisdictions. Candidates come from the selected county. Greedy coverage adds the candidate covering the most previously uncovered represented households, repeats, and breaks ties by stable ID. This transparent heuristic does not establish optimal placement.
 
-`sentinels.toml` declares three real integration requirements: production `main` connects to `validate_snapshot`; the return from `load_manifest` reaches `build_observations`'s `manifest` argument; and the committed snapshot has the declared top-level JSON fields and types. The version 2 coverage ledger inventories every declaration under `pipeline/`: four surfaces name these real contracts, and eleven internal surfaces have explicit reasons that point to the existing acquisition, data-validation and reproduction gates. Adding an unclassified declaration or leaving a stale ledger entry fails coverage; an internal reason does not prove correctness. Existing count and year fields deliberately remain strings. A PASS describes supported structural evidence, not successful execution on every branch. The source-only analyzer does not import or run the pipeline, and relevant ambiguity is reported as UNRESOLVED.
+Results describe **households represented by points within the chosen modeled road distance**. Unmatched, disconnected, unavailable, and beyond-threshold observations remain separate. Results do not establish eligibility, attendance, transit access, site capacity, travel time, or driving directions. Turn restrictions, schedules, and traffic are not modeled.
 
-Data validation and byte-reproducibility remain independent gates. The adoption tests invoke the installed CLI against this configuration and inject defects into temporary copies of the real pipeline and artifact; reusable analyzer fixtures belong upstream. A fresh report can be saved with `uv run --locked sentinels check --root . --config sentinels.toml --json > artifacts/sentinels-report.json` after creating `artifacts/`.
+Demand follows valid directed routes. Physarum-inspired conductivity follows `D_next = 0.8 D + 0.2 |Q|`; animation does not determine statistics. Scenario version 1 records data/graph revisions, county, one measure, sites, hypothetical locations, closures, and distance. Obsolete workers are cancelled and stale results rejected.
 
-The captured recording, transcript, cast, captions and hashes under `data/evidence/` are preserved historical evidence of the original local checker. Its generator and duplicate checker have been retired. Their source remains recoverable from [the original launch commit](https://github.com/goldenmonkeyrnd/civicatlas/tree/8522b545c2d8819e559ae421738d5cdc9d73797c). The current [editable lab](https://goldenmonkey.dev/labs/sentinels/) produces new reports from visitor edits.
+## API, assets, and deployment
 
-## Deploy and import
+Typed `/api/v2` endpoints provide catalog, areas filtered by county/level, facilities, county history, source inspection with optional raw fields, and release health. Invalid identifiers and duplicate/unknown parameters return explicit errors. Queries are parameterized; public SQL submission is unavailable. Existing `/api/v1` employment endpoints remain supported.
 
-```sh
-bun run deploy
-```
+D1 stores observations and provenance. Ordered bounded SQL fragments reassemble the catalog exactly. Immutable gzip map/graph assets are self-hosted under `/data/outreach/{revision}/` and delivered by the same-origin Worker. R2 is disabled on this account; this release uses existing Workers Assets and verifies immutable publication hashes without adding a paid service.
 
-Main-branch GitHub Actions validates before deployment. Configure `CLOUDFLARE_API_TOKEN` in the production environment with Workers Scripts Edit, Workers Routes Edit, Account Settings Read, Account Analytics Read and Zone Read scoped to the configured account and goldenmonkey.dev zone. Deploy does not import or replace data. The manually dispatched import-snapshot workflow checks the pinned artifacts, exports a recovery backup and imports data with a separate `CLOUDFLARE_D1_TOKEN` (D1 Edit). Ordinary deployments retain the snapshot.
+GitHub Actions checks data, contracts, TypeScript, Worker/engine tests, compressed assets, and builds before deployment. The independent import workflow exports the existing database for recovery and imports outreach into separate `civicatlas-outreach-20261014`. Validate the new database/revision before switching the app. Deployments do not acquire or reseed data.
 
-To roll back code, use `bunx wrangler deployments list` and `bunx wrangler rollback <version-id>`. A code rollback does not restore D1; keep the exported snapshot and use D1 Time Travel or the verified backup for data recovery.
+Authenticated maintainers can run `bun run db:outreach:import` and `bun run deploy`; tokens stay in GitHub environment secrets. Code recovery: `bunx wrangler deployments list`, then `bunx wrangler rollback <version-id>`. Code rollback does not restore a database; retain the SQL export and use D1 Time Travel or a verified backup when needed. The original county database remains independent.
 
-## Privacy and engagement
+## Attribution and privacy
 
-POST /api/events accepts only event, surface and campaign labels, no extra fields. Accepted events: conference_viewed, comparison_used, source_opened, github_clicked, resume_downloaded, walkthrough_started and email_clicked. No persistent visitor identifier, fingerprint, email or contact record is stored. A public no-transform response prevents automatic beacon injection; the manual page beacon and application events honor browser privacy signals. Browser GPC/DNT prevents analytics collection; telemetry faults never block exploration. Cloudflare still processes ordinary connection metadata to deliver the application. These aggregate actions cannot identify recruiters or prove a linked visitor funnel; an email click measures intent.
+Application code is MIT. Derived street graph data is © OpenStreetMap contributors, ODbL 1.0, downloadable with its manifest. Census, BLS, Maryland, DHS, and libraries are attributed in Evidence. Fonts retain SIL Open Font Licenses. Sentinels is separately consumed under AGPL-3.0-only with corresponding release source and notices.
 
-Private Analytics Engine report (Account Analytics Read token required):
-
-```sql
-SELECT blob1 AS event, blob2 AS surface, SUM(_sample_interval) AS actions
-FROM goldenmonkey_engagement
-WHERE timestamp >= NOW() - INTERVAL '7' DAY AND blob3 = 'nava-2026'
-GROUP BY event, surface ORDER BY actions DESC FORMAT JSON
-```
-
-CivicAtlas code is MIT licensed; the separately consumed Sentinels tool is AGPL-3.0-only; fonts keep their SIL Open Font Licenses. Official public data is attributed in its manifest and source inspector.
+Existing aggregate events retain their privacy contract: event/surface/campaign labels only, no persistent visitor ID or contact record, GPC/DNT honored, telemetry faults never block use. Cloudflare processes ordinary connection metadata to serve the app. Aggregate actions cannot identify recruiters or establish a linked visitor funnel.

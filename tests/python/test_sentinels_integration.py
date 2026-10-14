@@ -34,15 +34,16 @@ class SentinelsIntegrationTests(unittest.TestCase):
         code, report = self.inspect()
         self.assertEqual((code, report["status"]), (0, "PASS"), report)
         results = {result["id"]: result for result in report["contracts"]}
-        self.assertEqual(set(results), {"production-validation", "pinned-manifest-handoff", "published-snapshot-shape", "pipeline-coverage"})
+        self.assertEqual(set(results), {"production-validation", "pinned-manifest-handoff", "published-snapshot-shape", "pipeline-coverage", "outreach-validation"})
         self.assertTrue(results["production-validation"]["witness"])
         self.assertTrue(results["pinned-manifest-handoff"]["witness"])
         self.assertFalse(any(path.startswith("tests/") for path in report["scope"]))
         inventory = results["pipeline-coverage"]["coverage"]
         self.assertEqual(inventory["roots"], ["pipeline"])
-        self.assertEqual(len(inventory["surfaces"]), 15)
-        self.assertEqual(sum(item["classification"] == "contract" for item in inventory["surfaces"]), 4)
-        self.assertEqual(sum(item["classification"] == "internal" for item in inventory["surfaces"]), 11)
+        self.assertEqual(len(inventory["surfaces"]), 52)
+        self.assertEqual(sum(item["classification"] == "contract" for item in inventory["surfaces"]), 6)
+        self.assertEqual(sum(item["classification"] == "internal" for item in inventory["surfaces"]), 46)
+        self.assertTrue(results["outreach-validation"]["witness"])
         self.assertTrue(all(item["reason"] for item in inventory["surfaces"] if item["classification"] == "internal"))
         self.assertEqual(inventory["stale"], [])
 

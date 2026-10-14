@@ -1,0 +1,2395 @@
+{
+  "version": 1,
+  "status": "PASS",
+  "measuredAt": "2026-10-14T07:02:39.227230+00:00",
+  "runtime": {
+    "cpu": "AMD Ryzen 5 2600 Six-Core Processor",
+    "cores": 6,
+    "logicalCPUs": 12,
+    "memoryMiB": 32013,
+    "os": "Linux 6.12.107+deb13-amd64 x86_64",
+    "engine": "Bun 1.3.4",
+    "timingScope": "Engine execution after JSON assets load; browser UI load is qualified separately"
+  },
+  "engineRegressions": {
+    "bunTests": 17,
+    "assertions": 117,
+    "pythonRoadTests": 10,
+    "typeScript": "PASS",
+    "redGreenEvidence": [
+      "Opposing one-way contraction loses protected attachments before fix",
+      "Protected cycle disappears before fix",
+      "Endpoints-only publication loses an isolated protected attachment before fix",
+      "County-only baseline excludes nearby assistance before geographic baseline fix"
+    ]
+  },
+  "graphReduction": {
+    "comparisonInputRevision": "md-outreach-2024-efea50023e093ab1",
+    "description": "Identical fixed initial Baltimore observations and complete initial Maryland facility inventory on original and final graphs; graph/data revisions validated independently",
+    "evidence": {
+      "original": {
+        "revision": "roads-b6675d1aabfef92a",
+        "dataRevision": "md-outreach-2024-efea50023e093ab1",
+        "nodes": 229427,
+        "edges": 534799,
+        "matched": 617
+      },
+      "reduced": {
+        "revision": "roads-85c5625e0a1c3be9",
+        "dataRevision": "md-outreach-2024-6758eb5373114191",
+        "nodes": 109169,
+        "edges": 305286,
+        "matched": 617
+      },
+      "status": "all distances, demand, categories, chosen hubs and coverage counts preserved",
+      "summaries": [
+        {
+          "radiusMiles": 1,
+          "before": {
+            "baseline": {
+              "total": 255668,
+              "covered": 70431,
+              "beyond": 182299,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "proposed": {
+              "total": 255668,
+              "covered": 92209,
+              "beyond": 160521,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "suggested": [
+              {
+                "id": "library-31",
+                "incremental": 8819
+              },
+              {
+                "id": "library-49",
+                "incremental": 6949
+              },
+              {
+                "id": "library-30",
+                "incremental": 6010
+              }
+            ],
+            "elapsedMs": 1726.8105509999998
+          },
+          "after": {
+            "baseline": {
+              "total": 255668,
+              "covered": 70431,
+              "beyond": 182299,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "proposed": {
+              "total": 255668,
+              "covered": 92209,
+              "beyond": 160521,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "suggested": [
+              {
+                "id": "library-31",
+                "incremental": 8819
+              },
+              {
+                "id": "library-49",
+                "incremental": 6949
+              },
+              {
+                "id": "library-30",
+                "incremental": 6010
+              }
+            ],
+            "elapsedMs": 818.3079189999999
+          },
+          "maxBaselineDifference": 1.7763568394002505e-15,
+          "maxProposedDifference": 1.3322676295501878e-15,
+          "weightedFlowDifference": -5.093170329928398e-11,
+          "differences": []
+        },
+        {
+          "radiusMiles": 3,
+          "before": {
+            "baseline": {
+              "total": 255668,
+              "covered": 231421,
+              "beyond": 21309,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "proposed": {
+              "total": 255668,
+              "covered": 250622,
+              "beyond": 2108,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "suggested": [
+              {
+                "id": "library-18",
+                "incremental": 16813
+              },
+              {
+                "id": "library-47",
+                "incremental": 1968
+              },
+              {
+                "id": "library-68",
+                "incremental": 420
+              }
+            ],
+            "elapsedMs": 1910.0893129999995
+          },
+          "after": {
+            "baseline": {
+              "total": 255668,
+              "covered": 231421,
+              "beyond": 21309,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "proposed": {
+              "total": 255668,
+              "covered": 250622,
+              "beyond": 2108,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "suggested": [
+              {
+                "id": "library-18",
+                "incremental": 16813
+              },
+              {
+                "id": "library-47",
+                "incremental": 1968
+              },
+              {
+                "id": "library-68",
+                "incremental": 420
+              }
+            ],
+            "elapsedMs": 818.4008320000003
+          },
+          "maxBaselineDifference": 1.7763568394002505e-15,
+          "maxProposedDifference": 8.881784197001252e-16,
+          "weightedFlowDifference": -1.1641532182693481e-10,
+          "differences": []
+        },
+        {
+          "radiusMiles": 10,
+          "before": {
+            "baseline": {
+              "total": 255668,
+              "covered": 252730,
+              "beyond": 0,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "proposed": {
+              "total": 255668,
+              "covered": 252730,
+              "beyond": 0,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "suggested": [],
+            "elapsedMs": 2245.618681
+          },
+          "after": {
+            "baseline": {
+              "total": 255668,
+              "covered": 252730,
+              "beyond": 0,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "proposed": {
+              "total": 255668,
+              "covered": 252730,
+              "beyond": 0,
+              "disconnected": 2830,
+              "unmatched": 108,
+              "missingAreas": 0
+            },
+            "suggested": [],
+            "elapsedMs": 1254.7663900000007
+          },
+          "maxBaselineDifference": 1.7763568394002505e-15,
+          "maxProposedDifference": 1.7763568394002505e-15,
+          "weightedFlowDifference": 7.566995918750763e-10,
+          "differences": []
+        }
+      ]
+    }
+  },
+  "releaseQualification": {
+    "status": "PASS",
+    "dataRevision": "md-outreach-2024-6758eb5373114191",
+    "counties": 24,
+    "scenarioRuns": 120,
+    "maximumDefaultElapsedMs": 1261.923313000003,
+    "slowestCounty": "24033",
+    "totalAreaMatches": 3983,
+    "totalAreas": 4079,
+    "baltimore": {
+      "county": "24510",
+      "name": "Baltimore City",
+      "graphRevision": "roads-85c5625e0a1c3be9",
+      "nodes": 109169,
+      "edges": 305286,
+      "areas": 618,
+      "matched": 617,
+      "baseline": {
+        "total": 255668,
+        "covered": 231421,
+        "beyond": 21309,
+        "disconnected": 2830,
+        "unmatched": 108,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 255668,
+        "covered": 250622,
+        "beyond": 2108,
+        "disconnected": 2830,
+        "unmatched": 108,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-18",
+          "incremental": 16813
+        },
+        {
+          "id": "library-47",
+          "incremental": 1968
+        },
+        {
+          "id": "library-68",
+          "incremental": 420
+        }
+      ],
+      "baselineMappedSites": 13,
+      "elapsedMs": 701.4934539999995,
+      "replayElapsedMs": 229.20917499999996,
+      "closureCovered": 250622,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 68150,
+            "covered": 64938,
+            "beyond": 2760,
+            "disconnected": 452,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 68150,
+            "covered": 67392,
+            "beyond": 306,
+            "disconnected": 452,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 249.07939500000066
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 24937,
+            "covered": 23297,
+            "beyond": 1495,
+            "disconnected": 145,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 24937,
+            "covered": 24641,
+            "beyond": 151,
+            "disconnected": 145,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 232.93336600000112
+        }
+      ]
+    }
+  },
+  "countyResults": [
+    {
+      "county": "24001",
+      "name": "Allegany County",
+      "graphRevision": "roads-03bb42c8d2dc64d3",
+      "nodes": 11940,
+      "edges": 34400,
+      "areas": 53,
+      "matched": 47,
+      "baseline": {
+        "total": 27382,
+        "covered": 6321,
+        "beyond": 17782,
+        "disconnected": 0,
+        "unmatched": 3279,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 27382,
+        "covered": 13101,
+        "beyond": 11002,
+        "disconnected": 0,
+        "unmatched": 3279,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-2",
+          "incremental": 3889
+        },
+        {
+          "id": "library-1",
+          "incremental": 2222
+        },
+        {
+          "id": "library-62",
+          "incremental": 669
+        }
+      ],
+      "baselineMappedSites": 1,
+      "elapsedMs": 101.38006999999993,
+      "replayElapsedMs": 27.41996199999994,
+      "closureCovered": 13101,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 2503,
+            "covered": 1248,
+            "beyond": 1124,
+            "disconnected": 0,
+            "unmatched": 131,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2503,
+            "covered": 1853,
+            "beyond": 519,
+            "disconnected": 0,
+            "unmatched": 131,
+            "missingAreas": 0
+          },
+          "elapsedMs": 26.773098000000005
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 3539,
+            "covered": 771,
+            "beyond": 2101,
+            "disconnected": 0,
+            "unmatched": 667,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 3539,
+            "covered": 1502,
+            "beyond": 1370,
+            "disconnected": 0,
+            "unmatched": 667,
+            "missingAreas": 0
+          },
+          "elapsedMs": 25.169528000000014
+        }
+      ]
+    },
+    {
+      "county": "24003",
+      "name": "Anne Arundel County",
+      "graphRevision": "roads-0b4ecc527310a1c6",
+      "nodes": 154686,
+      "edges": 429866,
+      "areas": 340,
+      "matched": 335,
+      "baseline": {
+        "total": 224748,
+        "covered": 44828,
+        "beyond": 172428,
+        "disconnected": 5044,
+        "unmatched": 2448,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 224748,
+        "covered": 84210,
+        "beyond": 133046,
+        "disconnected": 5044,
+        "unmatched": 2448,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-15",
+          "incremental": 14800
+        },
+        {
+          "id": "library-12",
+          "incremental": 12928
+        },
+        {
+          "id": "library-14",
+          "incremental": 11654
+        }
+      ],
+      "baselineMappedSites": 15,
+      "elapsedMs": 1012.7874159999999,
+      "replayElapsedMs": 357.36388099999976,
+      "closureCovered": 83700,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 9120,
+            "covered": 3729,
+            "beyond": 5165,
+            "disconnected": 168,
+            "unmatched": 58,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 9120,
+            "covered": 4923,
+            "beyond": 3971,
+            "disconnected": 168,
+            "unmatched": 58,
+            "missingAreas": 0
+          },
+          "elapsedMs": 369.7652399999997
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 6696,
+            "covered": 2082,
+            "beyond": 4436,
+            "disconnected": 108,
+            "unmatched": 70,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 6696,
+            "covered": 3130,
+            "beyond": 3388,
+            "disconnected": 108,
+            "unmatched": 70,
+            "missingAreas": 0
+          },
+          "elapsedMs": 448.67454799999996
+        }
+      ]
+    },
+    {
+      "county": "24005",
+      "name": "Baltimore County",
+      "graphRevision": "roads-6ed5ea25b073eb26",
+      "nodes": 144812,
+      "edges": 404828,
+      "areas": 562,
+      "matched": 557,
+      "baseline": {
+        "total": 332801,
+        "covered": 33011,
+        "beyond": 286656,
+        "disconnected": 10908,
+        "unmatched": 2226,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 332801,
+        "covered": 107432,
+        "beyond": 212235,
+        "disconnected": 10908,
+        "unmatched": 2226,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-35",
+          "incremental": 28394
+        },
+        {
+          "id": "library-34",
+          "incremental": 25549
+        },
+        {
+          "id": "library-24",
+          "incremental": 20478
+        }
+      ],
+      "baselineMappedSites": 15,
+      "elapsedMs": 1107.8444929999996,
+      "replayElapsedMs": 339.0834539999996,
+      "closureCovered": 107432,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 26021,
+            "covered": 3395,
+            "beyond": 21330,
+            "disconnected": 1156,
+            "unmatched": 140,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 26021,
+            "covered": 10709,
+            "beyond": 14016,
+            "disconnected": 1156,
+            "unmatched": 140,
+            "missingAreas": 0
+          },
+          "elapsedMs": 342.6311739999992
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 16832,
+            "covered": 1667,
+            "beyond": 14369,
+            "disconnected": 715,
+            "unmatched": 81,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 16832,
+            "covered": 6414,
+            "beyond": 9622,
+            "disconnected": 715,
+            "unmatched": 81,
+            "missingAreas": 0
+          },
+          "elapsedMs": 354.01510300000064
+        }
+      ]
+    },
+    {
+      "county": "24009",
+      "name": "Calvert County",
+      "graphRevision": "roads-cf8212f4bfbb0ce7",
+      "nodes": 26563,
+      "edges": 72938,
+      "areas": 41,
+      "matched": 40,
+      "baseline": {
+        "total": 33465,
+        "covered": 0,
+        "beyond": 30662,
+        "disconnected": 2803,
+        "unmatched": 0,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 33465,
+        "covered": 6858,
+        "beyond": 23804,
+        "disconnected": 2803,
+        "unmatched": 0,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-61",
+          "incremental": 3521
+        },
+        {
+          "id": "library-44",
+          "incremental": 2008
+        },
+        {
+          "id": "library-54",
+          "incremental": 1329
+        }
+      ],
+      "baselineMappedSites": 3,
+      "elapsedMs": 127.72255000000041,
+      "replayElapsedMs": 51.788706999999704,
+      "closureCovered": 6858,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 988,
+            "covered": 0,
+            "beyond": 949,
+            "disconnected": 39,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 988,
+            "covered": 415,
+            "beyond": 534,
+            "disconnected": 39,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 58.957204000000274
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1604,
+            "covered": 0,
+            "beyond": 1305,
+            "disconnected": 299,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1604,
+            "covered": 499,
+            "beyond": 806,
+            "disconnected": 299,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 53.4193180000002
+        }
+      ]
+    },
+    {
+      "county": "24011",
+      "name": "Caroline County",
+      "graphRevision": "roads-6c5f8630872e20f9",
+      "nodes": 23791,
+      "edges": 67975,
+      "areas": 22,
+      "matched": 19,
+      "baseline": {
+        "total": 12495,
+        "covered": 1410,
+        "beyond": 8952,
+        "disconnected": 428,
+        "unmatched": 1705,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 12495,
+        "covered": 2469,
+        "beyond": 7893,
+        "disconnected": 428,
+        "unmatched": 1705,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-58",
+          "incremental": 1059
+        }
+      ],
+      "baselineMappedSites": 4,
+      "elapsedMs": 71.33956799999942,
+      "replayElapsedMs": 40.84828000000016,
+      "closureCovered": 2469,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 692,
+            "covered": 58,
+            "beyond": 479,
+            "disconnected": 0,
+            "unmatched": 155,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 692,
+            "covered": 179,
+            "beyond": 358,
+            "disconnected": 0,
+            "unmatched": 155,
+            "missingAreas": 0
+          },
+          "elapsedMs": 42.297720999999
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1234,
+            "covered": 130,
+            "beyond": 816,
+            "disconnected": 12,
+            "unmatched": 276,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1234,
+            "covered": 266,
+            "beyond": 680,
+            "disconnected": 12,
+            "unmatched": 276,
+            "missingAreas": 0
+          },
+          "elapsedMs": 44.81224999999904
+        }
+      ]
+    },
+    {
+      "county": "24013",
+      "name": "Carroll County",
+      "graphRevision": "roads-fb4b2cf204c476cf",
+      "nodes": 61173,
+      "edges": 172631,
+      "areas": 100,
+      "matched": 100,
+      "baseline": {
+        "total": 64285,
+        "covered": 2490,
+        "beyond": 60703,
+        "disconnected": 1092,
+        "unmatched": 0,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 64285,
+        "covered": 20377,
+        "beyond": 42816,
+        "disconnected": 1092,
+        "unmatched": 0,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-73",
+          "incremental": 8668
+        },
+        {
+          "id": "library-66",
+          "incremental": 6578
+        },
+        {
+          "id": "library-106",
+          "incremental": 2641
+        }
+      ],
+      "baselineMappedSites": 2,
+      "elapsedMs": 307.8760510000011,
+      "replayElapsedMs": 117.01894600000014,
+      "closureCovered": 20377,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 2099,
+            "covered": 211,
+            "beyond": 1849,
+            "disconnected": 39,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2099,
+            "covered": 1238,
+            "beyond": 822,
+            "disconnected": 39,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 123.59065299999929
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 3711,
+            "covered": 158,
+            "beyond": 3455,
+            "disconnected": 98,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 3711,
+            "covered": 1194,
+            "beyond": 2419,
+            "disconnected": 98,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 105.52921699999933
+        }
+      ]
+    },
+    {
+      "county": "24015",
+      "name": "Cecil County",
+      "graphRevision": "roads-02587d5c5af6b50f",
+      "nodes": 50865,
+      "edges": 140304,
+      "areas": 65,
+      "matched": 54,
+      "baseline": {
+        "total": 40595,
+        "covered": 6765,
+        "beyond": 24998,
+        "disconnected": 2462,
+        "unmatched": 6370,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 40595,
+        "covered": 11588,
+        "beyond": 20175,
+        "disconnected": 2462,
+        "unmatched": 6370,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-74",
+          "incremental": 2214
+        },
+        {
+          "id": "library-75",
+          "incremental": 1710
+        },
+        {
+          "id": "library-79",
+          "incremental": 899
+        }
+      ],
+      "baselineMappedSites": 1,
+      "elapsedMs": 245.65689500000008,
+      "replayElapsedMs": 95.41813700000057,
+      "closureCovered": 10804,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 1973,
+            "covered": 662,
+            "beyond": 978,
+            "disconnected": 72,
+            "unmatched": 261,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1973,
+            "covered": 1033,
+            "beyond": 607,
+            "disconnected": 72,
+            "unmatched": 261,
+            "missingAreas": 0
+          },
+          "elapsedMs": 92.1221600000008
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 2475,
+            "covered": 479,
+            "beyond": 1502,
+            "disconnected": 79,
+            "unmatched": 415,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2475,
+            "covered": 665,
+            "beyond": 1316,
+            "disconnected": 79,
+            "unmatched": 415,
+            "missingAreas": 0
+          },
+          "elapsedMs": 92.8656260000007
+        }
+      ]
+    },
+    {
+      "county": "24017",
+      "name": "Charles County",
+      "graphRevision": "roads-7308012a5ec30cea",
+      "nodes": 84353,
+      "edges": 233624,
+      "areas": 88,
+      "matched": 81,
+      "baseline": {
+        "total": 60875,
+        "covered": 4694,
+        "beyond": 51566,
+        "disconnected": 1586,
+        "unmatched": 3029,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 60875,
+        "covered": 25731,
+        "beyond": 30529,
+        "disconnected": 1586,
+        "unmatched": 3029,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-81",
+          "incremental": 14754
+        },
+        {
+          "id": "library-82",
+          "incremental": 3899
+        },
+        {
+          "id": "library-83",
+          "incremental": 2384
+        }
+      ],
+      "baselineMappedSites": 2,
+      "elapsedMs": 385.75836999999956,
+      "replayElapsedMs": 143.41717100000096,
+      "closureCovered": 25731,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 2358,
+            "covered": 291,
+            "beyond": 1832,
+            "disconnected": 41,
+            "unmatched": 194,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2358,
+            "covered": 1261,
+            "beyond": 862,
+            "disconnected": 41,
+            "unmatched": 194,
+            "missingAreas": 0
+          },
+          "elapsedMs": 143.3648720000001
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 2880,
+            "covered": 147,
+            "beyond": 2305,
+            "disconnected": 106,
+            "unmatched": 322,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2880,
+            "covered": 1111,
+            "beyond": 1341,
+            "disconnected": 106,
+            "unmatched": 322,
+            "missingAreas": 0
+          },
+          "elapsedMs": 144.16982400000052
+        }
+      ]
+    },
+    {
+      "county": "24019",
+      "name": "Dorchester County",
+      "graphRevision": "roads-4b73cff9d05883f2",
+      "nodes": 26943,
+      "edges": 75747,
+      "areas": 30,
+      "matched": 27,
+      "baseline": {
+        "total": 13546,
+        "covered": 5258,
+        "beyond": 7265,
+        "disconnected": 477,
+        "unmatched": 546,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 13546,
+        "covered": 6950,
+        "beyond": 5573,
+        "disconnected": 477,
+        "unmatched": 546,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-85",
+          "incremental": 900
+        },
+        {
+          "id": "library-86",
+          "incremental": 792
+        }
+      ],
+      "baselineMappedSites": 3,
+      "elapsedMs": 78.71722600000066,
+      "replayElapsedMs": 39.145603999999366,
+      "closureCovered": 6636,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 1577,
+            "covered": 1151,
+            "beyond": 404,
+            "disconnected": 18,
+            "unmatched": 4,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1577,
+            "covered": 1300,
+            "beyond": 255,
+            "disconnected": 18,
+            "unmatched": 4,
+            "missingAreas": 0
+          },
+          "elapsedMs": 37.44841700000143
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1471,
+            "covered": 568,
+            "beyond": 764,
+            "disconnected": 81,
+            "unmatched": 58,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1471,
+            "covered": 759,
+            "beyond": 573,
+            "disconnected": 81,
+            "unmatched": 58,
+            "missingAreas": 0
+          },
+          "elapsedMs": 38.52824399999918
+        }
+      ]
+    },
+    {
+      "county": "24021",
+      "name": "Frederick County",
+      "graphRevision": "roads-f3757d487d554df8",
+      "nodes": 65383,
+      "edges": 183561,
+      "areas": 200,
+      "matched": 192,
+      "baseline": {
+        "total": 104635,
+        "covered": 15325,
+        "beyond": 85284,
+        "disconnected": 1521,
+        "unmatched": 2505,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 104635,
+        "covered": 33463,
+        "beyond": 67146,
+        "disconnected": 1521,
+        "unmatched": 2505,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-88",
+          "incremental": 9870
+        },
+        {
+          "id": "library-92",
+          "incremental": 4635
+        },
+        {
+          "id": "library-84",
+          "incremental": 3633
+        }
+      ],
+      "baselineMappedSites": 4,
+      "elapsedMs": 352.5911479999995,
+      "replayElapsedMs": 137.95270299999902,
+      "closureCovered": 33463,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 4623,
+            "covered": 1245,
+            "beyond": 3140,
+            "disconnected": 171,
+            "unmatched": 67,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 4623,
+            "covered": 2145,
+            "beyond": 2240,
+            "disconnected": 171,
+            "unmatched": 67,
+            "missingAreas": 0
+          },
+          "elapsedMs": 145.32892900000115
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 5823,
+            "covered": 886,
+            "beyond": 4557,
+            "disconnected": 175,
+            "unmatched": 205,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 5823,
+            "covered": 2145,
+            "beyond": 3298,
+            "disconnected": 175,
+            "unmatched": 205,
+            "missingAreas": 0
+          },
+          "elapsedMs": 128.4786980000008
+        }
+      ]
+    },
+    {
+      "county": "24023",
+      "name": "Garrett County",
+      "graphRevision": "roads-2f27571b09992de0",
+      "nodes": 14611,
+      "edges": 42486,
+      "areas": 24,
+      "matched": 20,
+      "baseline": {
+        "total": 12578,
+        "covered": 1593,
+        "beyond": 9031,
+        "disconnected": 0,
+        "unmatched": 1954,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 12578,
+        "covered": 2219,
+        "beyond": 8405,
+        "disconnected": 0,
+        "unmatched": 1954,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-96",
+          "incremental": 626
+        }
+      ],
+      "baselineMappedSites": 2,
+      "elapsedMs": 40.31272400000125,
+      "replayElapsedMs": 24.32044400000086,
+      "closureCovered": 2219,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 990,
+            "covered": 169,
+            "beyond": 696,
+            "disconnected": 0,
+            "unmatched": 125,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 990,
+            "covered": 230,
+            "beyond": 635,
+            "disconnected": 0,
+            "unmatched": 125,
+            "missingAreas": 0
+          },
+          "elapsedMs": 24.775166999999783
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1810,
+            "covered": 263,
+            "beyond": 1299,
+            "disconnected": 0,
+            "unmatched": 248,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1810,
+            "covered": 354,
+            "beyond": 1208,
+            "disconnected": 0,
+            "unmatched": 248,
+            "missingAreas": 0
+          },
+          "elapsedMs": 24.868082999999388
+        }
+      ]
+    },
+    {
+      "county": "24025",
+      "name": "Harford County",
+      "graphRevision": "roads-f71c647d36262461",
+      "nodes": 56119,
+      "edges": 157282,
+      "areas": 171,
+      "matched": 167,
+      "baseline": {
+        "total": 101795,
+        "covered": 19475,
+        "beyond": 79224,
+        "disconnected": 2398,
+        "unmatched": 698,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 101795,
+        "covered": 49495,
+        "beyond": 49204,
+        "disconnected": 2398,
+        "unmatched": 698,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-121",
+          "incremental": 13168
+        },
+        {
+          "id": "library-102",
+          "incremental": 10799
+        },
+        {
+          "id": "library-97",
+          "incremental": 6053
+        }
+      ],
+      "baselineMappedSites": 1,
+      "elapsedMs": 266.69046700000035,
+      "replayElapsedMs": 103.54363999999987,
+      "closureCovered": 49495,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 4512,
+            "covered": 1067,
+            "beyond": 3347,
+            "disconnected": 93,
+            "unmatched": 5,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 4512,
+            "covered": 2919,
+            "beyond": 1495,
+            "disconnected": 93,
+            "unmatched": 5,
+            "missingAreas": 0
+          },
+          "elapsedMs": 116.68529999999919
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 4511,
+            "covered": 734,
+            "beyond": 3704,
+            "disconnected": 73,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 4511,
+            "covered": 2007,
+            "beyond": 2431,
+            "disconnected": 73,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 95.55082699999912
+        }
+      ]
+    },
+    {
+      "county": "24027",
+      "name": "Howard County",
+      "graphRevision": "roads-92c93ebdeb2f3df8",
+      "nodes": 142478,
+      "edges": 394715,
+      "areas": 166,
+      "matched": 165,
+      "baseline": {
+        "total": 121065,
+        "covered": 9995,
+        "beyond": 108391,
+        "disconnected": 2444,
+        "unmatched": 235,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 121065,
+        "covered": 47680,
+        "beyond": 70706,
+        "disconnected": 2444,
+        "unmatched": 235,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-111",
+          "incremental": 15400
+        },
+        {
+          "id": "library-115",
+          "incremental": 13352
+        },
+        {
+          "id": "library-120",
+          "incremental": 8933
+        }
+      ],
+      "baselineMappedSites": 17,
+      "elapsedMs": 805.099368000001,
+      "replayElapsedMs": 314.35031300000264,
+      "closureCovered": 46789,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 4391,
+            "covered": 776,
+            "beyond": 3566,
+            "disconnected": 48,
+            "unmatched": 1,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 4391,
+            "covered": 2538,
+            "beyond": 1804,
+            "disconnected": 48,
+            "unmatched": 1,
+            "missingAreas": 0
+          },
+          "elapsedMs": 259.7068169999984
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 2498,
+            "covered": 316,
+            "beyond": 2148,
+            "disconnected": 17,
+            "unmatched": 17,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2498,
+            "covered": 1054,
+            "beyond": 1410,
+            "disconnected": 17,
+            "unmatched": 17,
+            "missingAreas": 0
+          },
+          "elapsedMs": 272.1029159999998
+        }
+      ]
+    },
+    {
+      "county": "24029",
+      "name": "Kent County",
+      "graphRevision": "roads-714cd4ff971a3fd9",
+      "nodes": 34894,
+      "edges": 96726,
+      "areas": 18,
+      "matched": 15,
+      "baseline": {
+        "total": 8493,
+        "covered": 2310,
+        "beyond": 5099,
+        "disconnected": 0,
+        "unmatched": 1084,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 8493,
+        "covered": 3563,
+        "beyond": 3846,
+        "disconnected": 0,
+        "unmatched": 1084,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-125",
+          "incremental": 695
+        },
+        {
+          "id": "library-117",
+          "incremental": 558
+        }
+      ],
+      "baselineMappedSites": 3,
+      "elapsedMs": 73.09383000000162,
+      "replayElapsedMs": 32.37161699999706,
+      "closureCovered": 2868,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 485,
+            "covered": 188,
+            "beyond": 227,
+            "disconnected": 0,
+            "unmatched": 70,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 485,
+            "covered": 262,
+            "beyond": 153,
+            "disconnected": 0,
+            "unmatched": 70,
+            "missingAreas": 0
+          },
+          "elapsedMs": 33.7572880000007
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 955,
+            "covered": 217,
+            "beyond": 491,
+            "disconnected": 0,
+            "unmatched": 247,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 955,
+            "covered": 244,
+            "beyond": 464,
+            "disconnected": 0,
+            "unmatched": 247,
+            "missingAreas": 0
+          },
+          "elapsedMs": 34.87629899999956
+        }
+      ]
+    },
+    {
+      "county": "24031",
+      "name": "Montgomery County",
+      "graphRevision": "roads-1c94e080055e47e4",
+      "nodes": 202103,
+      "edges": 558068,
+      "areas": 664,
+      "matched": 660,
+      "baseline": {
+        "total": 389210,
+        "covered": 127167,
+        "beyond": 254686,
+        "disconnected": 4776,
+        "unmatched": 2581,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 389210,
+        "covered": 222293,
+        "beyond": 159560,
+        "disconnected": 4776,
+        "unmatched": 2581,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-126",
+          "incremental": 34302
+        },
+        {
+          "id": "library-135",
+          "incremental": 31632
+        },
+        {
+          "id": "library-129",
+          "incremental": 29192
+        }
+      ],
+      "baselineMappedSites": 6,
+      "elapsedMs": 1168.912508999998,
+      "replayElapsedMs": 370.289299,
+      "closureCovered": 222293,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 33093,
+            "covered": 14834,
+            "beyond": 17630,
+            "disconnected": 621,
+            "unmatched": 8,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 33093,
+            "covered": 23949,
+            "beyond": 8515,
+            "disconnected": 621,
+            "unmatched": 8,
+            "missingAreas": 0
+          },
+          "elapsedMs": 443.01277400000254
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 10079,
+            "covered": 3579,
+            "beyond": 6371,
+            "disconnected": 79,
+            "unmatched": 50,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 10079,
+            "covered": 6488,
+            "beyond": 3462,
+            "disconnected": 79,
+            "unmatched": 50,
+            "missingAreas": 0
+          },
+          "elapsedMs": 409.88237300000037
+        }
+      ]
+    },
+    {
+      "county": "24033",
+      "name": "Prince George's County",
+      "graphRevision": "roads-03a8cb6eb3b7da6b",
+      "nodes": 193951,
+      "edges": 535671,
+      "areas": 538,
+      "matched": 535,
+      "baseline": {
+        "total": 347744,
+        "covered": 18184,
+        "beyond": 321529,
+        "disconnected": 5102,
+        "unmatched": 2929,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 347744,
+        "covered": 105929,
+        "beyond": 233784,
+        "disconnected": 5102,
+        "unmatched": 2929,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-158",
+          "incremental": 35662
+        },
+        {
+          "id": "library-182",
+          "incremental": 30056
+        },
+        {
+          "id": "library-157",
+          "incremental": 22027
+        }
+      ],
+      "baselineMappedSites": 7,
+      "elapsedMs": 1261.923313000003,
+      "replayElapsedMs": 417.40045499999906,
+      "closureCovered": 105929,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 31898,
+            "covered": 1906,
+            "beyond": 29777,
+            "disconnected": 171,
+            "unmatched": 44,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 31898,
+            "covered": 14920,
+            "beyond": 16763,
+            "disconnected": 171,
+            "unmatched": 44,
+            "missingAreas": 0
+          },
+          "elapsedMs": 412.18016499999794
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 14293,
+            "covered": 757,
+            "beyond": 13275,
+            "disconnected": 261,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 14293,
+            "covered": 6011,
+            "beyond": 8021,
+            "disconnected": 261,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 422.4527580000031
+        }
+      ]
+    },
+    {
+      "county": "24035",
+      "name": "Queen Anne's County",
+      "graphRevision": "roads-644333b26c9131e6",
+      "nodes": 30966,
+      "edges": 86651,
+      "areas": 35,
+      "matched": 31,
+      "baseline": {
+        "total": 19907,
+        "covered": 1607,
+        "beyond": 17236,
+        "disconnected": 702,
+        "unmatched": 362,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 19907,
+        "covered": 4890,
+        "beyond": 13953,
+        "disconnected": 702,
+        "unmatched": 362,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-168",
+          "incremental": 3283
+        }
+      ],
+      "baselineMappedSites": 5,
+      "elapsedMs": 83.86031099999673,
+      "replayElapsedMs": 54.21322800000053,
+      "closureCovered": 4890,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 633,
+            "covered": 15,
+            "beyond": 484,
+            "disconnected": 114,
+            "unmatched": 20,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 633,
+            "covered": 145,
+            "beyond": 354,
+            "disconnected": 114,
+            "unmatched": 20,
+            "missingAreas": 0
+          },
+          "elapsedMs": 71.52930299999935
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1057,
+            "covered": 136,
+            "beyond": 835,
+            "disconnected": 64,
+            "unmatched": 22,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1057,
+            "covered": 322,
+            "beyond": 649,
+            "disconnected": 64,
+            "unmatched": 22,
+            "missingAreas": 0
+          },
+          "elapsedMs": 58.24398400000064
+        }
+      ]
+    },
+    {
+      "county": "24037",
+      "name": "St. Mary's County",
+      "graphRevision": "roads-e68e3b94919c5284",
+      "nodes": 23796,
+      "edges": 65897,
+      "areas": 63,
+      "matched": 60,
+      "baseline": {
+        "total": 42436,
+        "covered": 3913,
+        "beyond": 35066,
+        "disconnected": 1726,
+        "unmatched": 1731,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 42436,
+        "covered": 7647,
+        "beyond": 31332,
+        "disconnected": 1726,
+        "unmatched": 1731,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-180",
+          "incremental": 3369
+        },
+        {
+          "id": "library-181",
+          "incremental": 365
+        }
+      ],
+      "baselineMappedSites": 4,
+      "elapsedMs": 78.71736600000077,
+      "replayElapsedMs": 32.57053099999757,
+      "closureCovered": 7647,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 1339,
+            "covered": 156,
+            "beyond": 1061,
+            "disconnected": 21,
+            "unmatched": 101,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1339,
+            "covered": 491,
+            "beyond": 726,
+            "disconnected": 21,
+            "unmatched": 101,
+            "missingAreas": 0
+          },
+          "elapsedMs": 30.008271000002424
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 2520,
+            "covered": 262,
+            "beyond": 1846,
+            "disconnected": 146,
+            "unmatched": 266,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2520,
+            "covered": 491,
+            "beyond": 1617,
+            "disconnected": 146,
+            "unmatched": 266,
+            "missingAreas": 0
+          },
+          "elapsedMs": 30.5938900000001
+        }
+      ]
+    },
+    {
+      "county": "24039",
+      "name": "Somerset County",
+      "graphRevision": "roads-ce3bf50c46f98928",
+      "nodes": 17018,
+      "edges": 48646,
+      "areas": 22,
+      "matched": 15,
+      "baseline": {
+        "total": 8348,
+        "covered": 1759,
+        "beyond": 4659,
+        "disconnected": 263,
+        "unmatched": 1667,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 8348,
+        "covered": 3153,
+        "beyond": 3265,
+        "disconnected": 263,
+        "unmatched": 1667,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-173",
+          "incremental": 1394
+        }
+      ],
+      "baselineMappedSites": 3,
+      "elapsedMs": 36.67398300000059,
+      "replayElapsedMs": 28.584717999998247,
+      "closureCovered": 3153,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 636,
+            "covered": 338,
+            "beyond": 105,
+            "disconnected": 66,
+            "unmatched": 127,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 636,
+            "covered": 416,
+            "beyond": 27,
+            "disconnected": 66,
+            "unmatched": 127,
+            "missingAreas": 0
+          },
+          "elapsedMs": 28.06937200000175
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1110,
+            "covered": 226,
+            "beyond": 531,
+            "disconnected": 111,
+            "unmatched": 242,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1110,
+            "covered": 480,
+            "beyond": 277,
+            "disconnected": 111,
+            "unmatched": 242,
+            "missingAreas": 0
+          },
+          "elapsedMs": 26.690903999999136
+        }
+      ]
+    },
+    {
+      "county": "24041",
+      "name": "Talbot County",
+      "graphRevision": "roads-b856c144cc61c97f",
+      "nodes": 23840,
+      "edges": 66600,
+      "areas": 27,
+      "matched": 25,
+      "baseline": {
+        "total": 16433,
+        "covered": 4041,
+        "beyond": 11591,
+        "disconnected": 0,
+        "unmatched": 801,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 16433,
+        "covered": 6970,
+        "beyond": 8662,
+        "disconnected": 0,
+        "unmatched": 801,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-197",
+          "incremental": 1465
+        },
+        {
+          "id": "library-195",
+          "incremental": 1464
+        }
+      ],
+      "baselineMappedSites": 5,
+      "elapsedMs": 81.09082200000194,
+      "replayElapsedMs": 39.412083999999595,
+      "closureCovered": 6970,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 1197,
+            "covered": 660,
+            "beyond": 537,
+            "disconnected": 0,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1197,
+            "covered": 767,
+            "beyond": 430,
+            "disconnected": 0,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 38.12853399999949
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1285,
+            "covered": 300,
+            "beyond": 985,
+            "disconnected": 0,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1285,
+            "covered": 508,
+            "beyond": 777,
+            "disconnected": 0,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 41.29710200000045
+        }
+      ]
+    },
+    {
+      "county": "24043",
+      "name": "Washington County",
+      "graphRevision": "roads-5204effa2a32cc3a",
+      "nodes": 40812,
+      "edges": 115828,
+      "areas": 105,
+      "matched": 103,
+      "baseline": {
+        "total": 59818,
+        "covered": 19521,
+        "beyond": 39717,
+        "disconnected": 0,
+        "unmatched": 580,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 59818,
+        "covered": 28438,
+        "beyond": 30800,
+        "disconnected": 0,
+        "unmatched": 580,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-198",
+          "incremental": 3491
+        },
+        {
+          "id": "library-186",
+          "incremental": 3079
+        },
+        {
+          "id": "library-185",
+          "incremental": 2347
+        }
+      ],
+      "baselineMappedSites": 1,
+      "elapsedMs": 187.86534599999868,
+      "replayElapsedMs": 76.7113500000014,
+      "closureCovered": 28438,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 4614,
+            "covered": 3053,
+            "beyond": 1561,
+            "disconnected": 0,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 4614,
+            "covered": 3532,
+            "beyond": 1082,
+            "disconnected": 0,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 93.38629199999923
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 5807,
+            "covered": 2150,
+            "beyond": 3647,
+            "disconnected": 0,
+            "unmatched": 10,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 5807,
+            "covered": 2951,
+            "beyond": 2846,
+            "disconnected": 0,
+            "unmatched": 10,
+            "missingAreas": 0
+          },
+          "elapsedMs": 77.02584099999876
+        }
+      ]
+    },
+    {
+      "county": "24045",
+      "name": "Wicomico County",
+      "graphRevision": "roads-bd0f10b3c89e8f79",
+      "nodes": 27771,
+      "edges": 79192,
+      "areas": 72,
+      "matched": 68,
+      "baseline": {
+        "total": 40470,
+        "covered": 15137,
+        "beyond": 22263,
+        "disconnected": 0,
+        "unmatched": 3070,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 40470,
+        "covered": 15487,
+        "beyond": 21913,
+        "disconnected": 0,
+        "unmatched": 3070,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-196",
+          "incremental": 350
+        }
+      ],
+      "baselineMappedSites": 3,
+      "elapsedMs": 78.62216799999806,
+      "replayElapsedMs": 46.52133899999899,
+      "closureCovered": 15487,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 2293,
+            "covered": 1544,
+            "beyond": 641,
+            "disconnected": 0,
+            "unmatched": 108,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2293,
+            "covered": 1558,
+            "beyond": 627,
+            "disconnected": 0,
+            "unmatched": 108,
+            "missingAreas": 0
+          },
+          "elapsedMs": 45.23345100000006
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 2872,
+            "covered": 1090,
+            "beyond": 1346,
+            "disconnected": 0,
+            "unmatched": 436,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 2872,
+            "covered": 1108,
+            "beyond": 1328,
+            "disconnected": 0,
+            "unmatched": 436,
+            "missingAreas": 0
+          },
+          "elapsedMs": 46.30337899999722
+        }
+      ]
+    },
+    {
+      "county": "24047",
+      "name": "Worcester County",
+      "graphRevision": "roads-aface78b0af17136",
+      "nodes": 29076,
+      "edges": 82025,
+      "areas": 55,
+      "matched": 50,
+      "baseline": {
+        "total": 24136,
+        "covered": 1136,
+        "beyond": 20170,
+        "disconnected": 1510,
+        "unmatched": 1320,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 24136,
+        "covered": 9304,
+        "beyond": 12002,
+        "disconnected": 1510,
+        "unmatched": 1320,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-191",
+          "incremental": 3606
+        },
+        {
+          "id": "library-190",
+          "incremental": 2755
+        },
+        {
+          "id": "library-193",
+          "incremental": 1807
+        }
+      ],
+      "baselineMappedSites": 3,
+      "elapsedMs": 130.46098800000254,
+      "replayElapsedMs": 59.33271800000148,
+      "closureCovered": 9023,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 1433,
+            "covered": 101,
+            "beyond": 1208,
+            "disconnected": 47,
+            "unmatched": 77,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1433,
+            "covered": 570,
+            "beyond": 739,
+            "disconnected": 47,
+            "unmatched": 77,
+            "missingAreas": 0
+          },
+          "elapsedMs": 54.488414000003104
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 1651,
+            "covered": 102,
+            "beyond": 1259,
+            "disconnected": 80,
+            "unmatched": 210,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 1651,
+            "covered": 401,
+            "beyond": 960,
+            "disconnected": 80,
+            "unmatched": 210,
+            "missingAreas": 0
+          },
+          "elapsedMs": 51.02692599999864
+        }
+      ]
+    },
+    {
+      "county": "24510",
+      "name": "Baltimore City",
+      "graphRevision": "roads-85c5625e0a1c3be9",
+      "nodes": 109169,
+      "edges": 305286,
+      "areas": 618,
+      "matched": 617,
+      "baseline": {
+        "total": 255668,
+        "covered": 231421,
+        "beyond": 21309,
+        "disconnected": 2830,
+        "unmatched": 108,
+        "missingAreas": 0
+      },
+      "proposed": {
+        "total": 255668,
+        "covered": 250622,
+        "beyond": 2108,
+        "disconnected": 2830,
+        "unmatched": 108,
+        "missingAreas": 0
+      },
+      "suggested": [
+        {
+          "id": "library-18",
+          "incremental": 16813
+        },
+        {
+          "id": "library-47",
+          "incremental": 1968
+        },
+        {
+          "id": "library-68",
+          "incremental": 420
+        }
+      ],
+      "baselineMappedSites": 13,
+      "elapsedMs": 701.4934539999995,
+      "replayElapsedMs": 229.20917499999996,
+      "closureCovered": 250622,
+      "alternatives": [
+        {
+          "measure": "noVehicle",
+          "baseline": {
+            "total": 68150,
+            "covered": 64938,
+            "beyond": 2760,
+            "disconnected": 452,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 68150,
+            "covered": 67392,
+            "beyond": 306,
+            "disconnected": 452,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 249.07939500000066
+        },
+        {
+          "measure": "noInternet",
+          "baseline": {
+            "total": 24937,
+            "covered": 23297,
+            "beyond": 1495,
+            "disconnected": 145,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "proposed": {
+            "total": 24937,
+            "covered": 24641,
+            "beyond": 151,
+            "disconnected": 145,
+            "unmatched": 0,
+            "missingAreas": 0
+          },
+          "elapsedMs": 232.93336600000112
+        }
+      ]
+    }
+  ],
+  "meaningfulClosure": {
+    "status": "PASS",
+    "dataRevision": "md-outreach-2024-6758eb5373114191",
+    "graphRevision": "roads-85c5625e0a1c3be9",
+    "closedEdgeIds": [
+      245011
+    ],
+    "roadName": "East University Parkway",
+    "roadShape": [
+      [
+        -76.6159923,
+        39.3312654
+      ],
+      [
+        -76.6152957,
+        39.3308568
+      ],
+      [
+        -76.6151694,
+        39.3308306
+      ]
+    ],
+    "before": {
+      "total": 255668,
+      "covered": 250622,
+      "beyond": 2108,
+      "disconnected": 2830,
+      "unmatched": 108,
+      "missingAreas": 0
+    },
+    "after": {
+      "total": 255668,
+      "covered": 250049,
+      "beyond": 2681,
+      "disconnected": 2830,
+      "unmatched": 108,
+      "missingAreas": 0
+    },
+    "coverageLoss": 573,
+    "affectedAreas": [
+      {
+        "geoid": "245102715031",
+        "demand": 573,
+        "baselineMiles": 3.1223861,
+        "proposedMiles": 3.1223861,
+        "hubId": "library-50",
+        "state": "beyond"
+      }
+    ],
+    "reopening": "exact areas and flows restored",
+    "closedEdgeFlows": [],
+    "elapsedMs": 216.66393599999992,
+    "scenario": {
+      "version": 1,
+      "dataRevision": "md-outreach-2024-6758eb5373114191",
+      "graphRevision": "roads-85c5625e0a1c3be9",
+      "county": "24510",
+      "measure": "households",
+      "radiusMiles": 3,
+      "additions": 3,
+      "hubIds": [
+        "library-18",
+        "library-47",
+        "library-68"
+      ],
+      "hypotheticalSites": [],
+      "closedEdgeIds": [
+        245011
+      ]
+    }
+  },
+  "engineSourceSha256": "d77c00af40edce506b19229051920728bb0dbddd386695bdf3891b0b9826f41b"
+}

@@ -1,0 +1,14 @@
+{
+  "catalogSha256": "4e45fa36e36bae3aa67cc544a5a9badd8a3746870f85d12e10dc745f8a09c374",
+  "facilitiesSha256": "59dc856cf8e2976dfe41cfd4877ba684b54caf741820ca3f374d0092b4a919c1",
+  "valuesSha256": "9714c25c03638e036533a20e272d84cf4d7e5e1c0e61807e2ed6a2859425ec22",
+  "rawSha256": "99e5d63fe80828781296b6654a3b2b38040cf89889dd4a884fdd48ce71057253",
+  "revision": "md-outreach-2024-6758eb5373114191",
+  "areaCounts": {
+    "blockGroup": 4079,
+    "tract": 1475,
+    "county": 24
+  },
+  "exactFacilityRecords": 267,
+  "representativeGeoid": "245102708031"
+}

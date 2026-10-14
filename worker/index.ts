@@ -1,5 +1,8 @@
+import { outreach } from './outreach';
+
 export interface Env {
   DB: D1Database;
+  OUTREACH_DB?: D1Database;
   ASSETS: Fetcher;
   ENGAGEMENT?: AnalyticsEngineDataset;
 }
@@ -116,7 +119,27 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
+    if (path.startsWith('/data/outreach/')) {
+      if (request.method !== 'GET' && request.method !== 'HEAD') return error('METHOD_NOT_ALLOWED', 'Map assets accept GET or HEAD.', 405);
+      if (!/^\/data\/outreach\/[A-Za-z0-9_-]{1,100}\/(?:catalog\.json|facilities\.json|roads-manifest\.json|block-groups\.geojson|tracts\.geojson|(?:graphs|commutes)\/24\d{3}\.json)$/.test(path)) {
+        return error('ASSET_NOT_FOUND', 'This published map asset was not found.', 404);
+      }
+      const target = new URL(request.url);
+      target.pathname += '.gz'; target.search = '';
+      const response = await env.ASSETS.fetch(new Request(target, request));
+      if (!response.ok || response.headers.get('Content-Type')?.includes('text/html')) return error('ASSET_NOT_FOUND', 'This release asset is unavailable.', 404);
+      const headers = new Headers(response.headers);
+      headers.set('Content-Type', 'application/json'); headers.set('Content-Encoding', 'gzip');
+      headers.set('Cache-Control', 'public, max-age=31536000, immutable, no-transform');
+      headers.set('X-Content-Type-Options', 'nosniff');
+      // Fetch decodes assets that carry Content-Encoding. Re-encode those;
+      // extension-only gzip assets already contain their encoded bytes.
+      const encodeBody = response.headers.has('Content-Encoding') ? 'automatic' : 'manual';
+      headers.delete('Content-Length');
+      return new Response(request.method === 'HEAD' ? null : response.body, { status: response.status, headers, encodeBody });
+    }
     if (path === '/api/events') return telemetry(request, env);
+    if (path.startsWith('/api/v2/')) return outreach(request, env.OUTREACH_DB);
     if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
     if (request.method !== 'GET') return error('METHOD_NOT_ALLOWED', 'Public data endpoints accept GET requests.', 405);
     if (url.search) return error('UNSUPPORTED_QUERY', 'This snapshot API does not accept query parameters.', 400);

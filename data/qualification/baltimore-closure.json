@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "dataRevision": "md-outreach-2024-6758eb5373114191",
+  "graphRevision": "roads-85c5625e0a1c3be9",
+  "county": "24510",
+  "measure": "households",
+  "radiusMiles": 3,
+  "additions": 3,
+  "hubIds": [
+    "library-18",
+    "library-47",
+    "library-68"
+  ],
+  "hypotheticalSites": [],
+  "closedEdgeIds": [
+    245011
+  ]
+}

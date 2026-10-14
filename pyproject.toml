@@ -8,6 +8,8 @@ dependencies = [
   "pyshp>=2.3.1,<3",
   "pyproj>=3.7.0,<4",
   "goldenmonkey-sentinels @ https://github.com/goldenmonkeyrnd/sentinels/releases/download/v0.2.0/goldenmonkey_sentinels-0.2.0-py3-none-any.whl#sha256=32c601e4efded91cf1d36dddc5a9734e4bc8dc5704df073fbb9f87a38f7ba7c3",
+  "osmium>=4.0,<5",
+  "shapely>=2.1,<3",
 ]
 
 [tool.uv]

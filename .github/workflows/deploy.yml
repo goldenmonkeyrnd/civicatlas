@@ -24,6 +24,8 @@ jobs:
       - run: uv sync --locked
       - run: uv run --locked python -m unittest discover -s tests/python -v
       - run: uv run --locked python -m pipeline.build --check
+      - run: uv run --locked python -m pipeline.outreach_build --check
+      - run: uv run --locked python tools/stage_outreach.py --check
       - run: uv run --locked sentinels check --root . --config sentinels.toml --json
       - run: bun run check
       - run: bun run build
@@ -33,7 +35,7 @@ jobs:
           path: dist/
   deploy:
     needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment: production
     steps:

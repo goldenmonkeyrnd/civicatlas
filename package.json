@@ -6,18 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && vite build",
-    "check": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && bun test tests/worker",
+    "check": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && bun test tests/worker tests/simulation",
     "deploy": "bun run build && wrangler deploy",
     "preview": "vite preview",
     "data:build": "uv run python -m pipeline.build",
     "data:check": "uv run python -m pipeline.build --check",
     "db:local": "wrangler d1 execute civicatlas-prod --local --file=data/processed/seed.sql",
-    "db:import": "wrangler d1 execute civicatlas-prod --remote --file=data/processed/seed.sql"
+    "db:import": "wrangler d1 execute civicatlas-prod --remote --file=data/processed/seed.sql",
+    "db:outreach:local": "wrangler d1 execute civicatlas-outreach-20261014 --local --file=data/outreach/seed.sql",
+    "db:outreach:import": "wrangler d1 execute civicatlas-outreach-20261014 --remote --file=data/outreach/seed.sql"
   },
   "dependencies": {
+    "d3-geo": "3.1.1",
+    "maplibre-gl": "6.14.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "d3-geo": "3.1.1"
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.63.1",
