@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import unittest
 
-from tools.build_roads import PROJECTION, LineString, contract_segments, prune_empty_branches
+from tools.build_roads import PROJECTION, LineString, Point, contract_segments, county_node_ids, prune_empty_branches
 
 
 def segment(u: int, v: int, direction: int = 0, miles: float = 1.0) -> tuple:
@@ -78,6 +78,24 @@ class RoadReductionTests(unittest.TestCase):
     def test_leaf_pruning_never_removes_a_protected_leaf(self) -> None:
         original = [segment(0, 1), segment(1, 2), segment(1, 3)]
         assert prune_empty_branches(original, {0, 2, 3}) == original
+
+    def test_isolated_protected_attachment_survives_published_graph_reduction(self) -> None:
+        coordinates = {0: (-76.6, 39.3), 1: (-76.599, 39.3)}
+        original = [segment(0, 1)]
+        pruned = prune_empty_branches(original, {0})
+        assert pruned == []
+        region = Point(*PROJECTION.transform(*coordinates[0])).buffer(17000)
+        assert county_node_ids(pruned, {0}, coordinates, region) == [0]
+        # Keeping the isolated matched vertex reports disconnected access;
+        # dropping it would incorrectly report a failed source-to-road join.
+
+    def test_county_nodes_exclude_isolated_attachments_outside_the_buffer(self) -> None:
+        coordinates = {0: (-76.6, 39.3), 1: (-76.0, 39.3), 2: (-75.999, 39.3)}
+        region = Point(*PROJECTION.transform(*coordinates[0])).buffer(17000)
+        assert county_node_ids([], {0, 1}, coordinates, region) == [0]
+        # Endpoints of retained corridors remain even when the complete
+        # corridor extends beyond the buffer boundary.
+        assert county_node_ids([segment(1, 2)], {0, 1}, coordinates, region) == [0, 1, 2]
 
 
 if __name__ == "__main__":
