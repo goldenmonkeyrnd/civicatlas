@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
+import mapLibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import type { FeatureCollection, Geometry, LineString, Point } from 'geojson';
 import type { Area, Catalog, CommuteData, Facility, Indicator, RoadGraph, Scenario, SimulationResult } from './outreach';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+// Bundle the module worker and its shared imports for both Vite development and release assets.
+maplibregl.setWorkerUrl(mapLibreWorkerUrl);
 
 const empty: FeatureCollection = { type: 'FeatureCollection', features: [] };
 const integers = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
@@ -79,9 +83,9 @@ export default function OutreachMap(props: OutreachMapProps) {
         instance.on('click', (event) => {
           const p = current.current;
           if (p.addingSite) { p.onLocation(event.lngLat.lng, event.lngLat.lat); return; }
+          if (p.closingRoad) { const roads = instance.queryRenderedFeatures(event.point, { layers: ['road-hit'] }); if (roads[0]) p.onRoad(Number(roads[0].properties?.edgeId)); return; }
           const locations = instance.queryRenderedFeatures(event.point, { layers: ['location-points', 'location-halo'] });
           if (locations[0]) { p.onFacility(String(locations[0].properties?.id)); return; }
-          if (p.closingRoad) { const roads = instance.queryRenderedFeatures(event.point, { layers: ['road-hit'] }); if (roads[0]) p.onRoad(Number(roads[0].properties?.edgeId)); return; }
           const areas = instance.queryRenderedFeatures(event.point, { layers: ['area-fill'] });
           if (areas[0]) p.onArea(String(areas[0].properties?.geoid));
         });
@@ -96,7 +100,7 @@ export default function OutreachMap(props: OutreachMapProps) {
         });
         setReady(true);
       });
-      instance.on('error', (event) => { if (event.error.message.includes('WebGL')) { setMapError('The map needs WebGL. All neighborhood values and scenario controls are available in the tables below.'); current.current.onFailure('The map needs WebGL; use the equivalent tables.'); } });
+      instance.on('error', (event) => { if (!event.error.message.includes('WebGL')) current.current.onFailure(`A map layer could not load: ${event.error.message} Neighborhood records remain available in the tables.`); if (event.error.message.includes('WebGL')) { setMapError('The map needs WebGL. All neighborhood values and scenario controls are available in the tables below.'); current.current.onFailure('The map needs WebGL; use the equivalent tables.'); } });
       return () => { instance.remove(); map.current = null; };
     } catch (error) {
       const message = `The map could not start. ${error instanceof Error ? error.message : ''} Use the neighborhood and facility tables below.`;
