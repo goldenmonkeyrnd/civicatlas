@@ -32,6 +32,7 @@ export interface OutreachMapProps {
   closingRoad: boolean;
   animationPaused: boolean;
   animationEpoch: number;
+  focusRoadEdgeId: number | null;
   onArea: (geoid: string) => void;
   onFacility: (id: string) => void;
   onLocation: (lon: number, lat: number) => void;
@@ -127,6 +128,13 @@ export default function OutreachMap(props: OutreachMapProps) {
     firstFit.current = false;
     return () => window.clearTimeout(timer);
   }, [ready, props.county, props.areas, reduced]);
+  useEffect(() => {
+    if (!ready || !map.current || props.focusRoadEdgeId === null || !props.graph) return;
+    const edge = props.graph.edges[props.focusRoadEdgeId]; if (!edge) return;
+    const shape = props.graph.shapes[props.focusRoadEdgeId] ?? [props.graph.nodes[edge[0]], props.graph.nodes[edge[1]]];
+    const bounds = new maplibregl.LngLatBounds(shape[0], shape[0]); for (const point of shape) bounds.extend(point);
+    map.current.fitBounds(bounds, { padding: 95, maxZoom: 15, duration: reduced ? 0 : 900 });
+  }, [ready, props.graph, props.focusRoadEdgeId, reduced]);
   useEffect(() => {
     if (!ready || !map.current) return;
     const closed = new Set(props.scenario?.closedEdgeIds ?? []);
