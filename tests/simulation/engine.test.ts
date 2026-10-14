@@ -99,3 +99,46 @@ describe('deterministic suggestions and scenario contracts',()=>{
     expect(()=>run({hypotheticalSites:[{id:'hypothetical-far',name:'Far away',lon:-75,lat:38}]})).toThrow('500');
   });
 });
+
+describe('route alternatives and known zero observations',()=>{
+  test('a closed shortest road selects a real detour and reports beyond rather than disconnected',()=>{
+    const detourGraph={...graph,edges:[...graph.edges,[0,4,2] as [number,number,number]]};
+    const result=runSimulation({graph:detourGraph,areas,facilities,scenario:scenario({radiusMiles:3,closedEdgeIds:[0]}),suggest:false});
+    const origin=result.areas.find(a=>a.geoid==='a')!;
+    expect(origin.proposedMiles).toBe(4);
+    expect(origin.state).toBe('beyond');
+    expect(result.proposed.covered).toBe(90);
+    expect(result.flows).toEqual([{edgeId:1,demand:90},{edgeId:3,demand:40}]);
+  });
+  test('equal distance chooses the same named hub regardless of input order',()=>{
+    const tieGraph={...graph,facilityNodes:{...graph.facilityNodes,beta:2}};
+    const input={graph:tieGraph,areas,facilities,scenario:scenario({hubIds:['beta'],radiusMiles:3}),suggest:false};
+    const first=runSimulation(input);
+    const second=runSimulation({...input,facilities:[...facilities].reverse(),areas:[...areas].reverse()});
+    expect(first.areas).toEqual(second.areas);
+    expect(first.areas.find(a=>a.geoid==='a')?.hubId).toBe('baseline');
+  });
+  test('observed zero remains available and is distinct from missing and suppressed',()=>{
+    const zero=area('a',0), suppressed=area('b',50);
+    suppressed.values.households.status='suppressed';
+    const result=runSimulation({graph,areas:[zero,suppressed],facilities,scenario:scenario({radiusMiles:3}),suggest:false});
+    expect(result.areas[0].demand).toBe(0);
+    expect(result.areas[0].state).toBe('covered');
+    expect(result.areas[1].demand).toBeNull();
+    expect(result.areas[1].state).toBe('missing');
+    expect(result.proposed).toEqual({total:0,covered:0,beyond:0,disconnected:0,unmatched:0,missingAreas:1});
+    expect(result.flows).toEqual([]);
+  });
+  test('every directed closure subset on the fixture preserves coverage monotonicity',()=>{
+    const original=run({radiusMiles:3});
+    for(let mask=0;mask<(1<<graph.edges.length);mask++){
+      const closedEdgeIds=graph.edges.map((_,id)=>id).filter(id=>mask&(1<<id));
+      const result=run({radiusMiles:3,closedEdgeIds});
+      expect(result.proposed.covered).toBeLessThanOrEqual(original.proposed.covered);
+      const extended=run({radiusMiles:3,closedEdgeIds,hubIds:['alpha','beta']});
+      expect(extended.proposed.covered).toBeGreaterThanOrEqual(result.proposed.covered);
+      expect(extended.proposed.total).toBe(original.proposed.total);
+      expect(result.flows.every(flow=>!closedEdgeIds.includes(flow.edgeId))).toBe(true);
+    }
+  });
+});
