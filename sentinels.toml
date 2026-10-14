@@ -313,6 +313,46 @@ kind = "contract"
 surface = "pipeline.outreach_build:publish"
 contracts = ["outreach-validation"]
 
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_directories:acquire_directory"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_directories:acquire"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_directories:main"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_correct_libraries:acquire"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_correct_libraries:main"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_dhs:acquire"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_dhs:main"
+reason = "Explicit opt-in institutional evidence acquisition; pinned source hashes, current directory proofs and offline facility policy validate resulting publication."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:directory_content"
+reason = "Primary-content extraction excludes unrelated navigation and footer address echoes; actual current-directory corrections and published facility assertions validate matches."
+
 [[contracts]]
 kind = "connection"
 id = "outreach-validation"

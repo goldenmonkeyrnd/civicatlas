@@ -55,11 +55,31 @@ class OutreachTests(unittest.TestCase):
         self.assertTrue(current['Johnston Square']['candidate'])
         brooklyn=next(f for f in facilities if f['id']=='library-65')
         self.assertEqual(brooklyn['county'],'24003')
-        self.assertFalse(brooklyn['candidate'])
+        self.assertTrue(brooklyn['candidate'])
         for facility in facilities:
             if facility['candidate'] or facility['baseline']:
                 self.assertEqual(facility['status'],'verified')
         self.assertTrue(catalog['assets']['blockGroups'].startswith('/data/outreach/'+catalog['revision']+'/'))
+
+    def test_statewide_candidates_and_current_offices_preserve_exclusions(self) -> None:
+        facilities=json.loads((ROOT/'data/outreach/facilities.json').read_text())
+        catalog=json.loads((ROOT/'data/outreach/catalog.json').read_text())
+        by_id={f['id']:f for f in facilities}
+        counties={c['geoid'] for c in catalog['counties']}
+        self.assertEqual({f['county'] for f in facilities if f['candidate']},counties)
+        self.assertEqual({f['county'] for f in facilities if f['baseline']},counties)
+        self.assertEqual(by_id['library-125']['county'],'24029')
+        self.assertEqual(by_id['library-134']['county'],'24011')
+        self.assertTrue(by_id['library-125']['candidate'])
+        self.assertEqual(by_id['library-75']['address'],'485 Mauldin Avenue, North East, MD 21901')
+        self.assertTrue(by_id['library-75']['candidate'])
+        self.assertEqual(by_id['library-55']['status'],'unresolved')
+        for facility in facilities:
+            if facility['id'].startswith(('dhs-2-','dhs-3-','dhs-5-')):
+                self.assertEqual(facility['status'],'unresolved')
+                self.assertFalse(facility['baseline'])
+        self.assertTrue(any(f['baseline'] and '9780 Patuxent Woods' in f['address'] for f in facilities))
+        self.assertTrue(any(f['baseline'] and '2737 Dorchester Square' in f['address'] for f in facilities))
 
 
 if __name__=='__main__':unittest.main()

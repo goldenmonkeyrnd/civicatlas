@@ -22,7 +22,7 @@ def geocode(address: str) -> dict[str,object]:
     result=json.loads(fetch(url))
     matches=result.get('result',{}).get('addressMatches',[])
     if not matches:return {'address':address,'url':url,'matches':[]}
-    if len(matches)!=1:raise ValueError(f'Ambiguous official geocoder match for {address}')
+    if len(matches)!=1:return {'address':address,'url':url,'reason':'Ambiguous official geocoder matches; no coordinate selected.','result':result}
     match=matches[0];point=match['coordinates']
     return {'address':address,'url':url,'matchedAddress':match['matchedAddress'],'lon':round(point['x'],7),'lat':round(point['y'],7),'result':result}
 

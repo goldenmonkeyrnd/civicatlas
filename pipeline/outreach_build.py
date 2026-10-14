@@ -166,7 +166,15 @@ def text_only(value: str) -> str:
 
 
 def norm(value: str) -> str:
-    return re.sub('[^a-z0-9]','',value.lower().replace('street','st').replace('avenue','ave').replace('road','rd').replace('north','n').replace('east','e').replace('west','w').replace('south','s').replace('boulevard','blvd'))
+    return re.sub('[^a-z0-9]','',value.lower().replace('street','st').replace('avenue','ave').replace('road','rd').replace('north','n').replace('east','e').replace('west','w').replace('south','s').replace('boulevard','blvd').replace('drive','dr').replace('lane','ln').replace('highway','hwy').replace('parkway','pkwy').replace('common','cmn'))
+
+
+def directory_content(document: str) -> str:
+    """Use current primary page content, excluding script/navigation/footer address echoes."""
+    primary=re.search(r'<main\b[^>]*>(.*?)</main>',document,re.I|re.S)
+    content=primary.group(1) if primary else document
+    content=re.sub(r'<(script|style|nav|footer)\b[^>]*>.*?</\1>','',content,flags=re.I|re.S)
+    return text_only(content)
 
 
 def build_facilities(payloads: dict[str,bytes], manifest: dict[str,Any], areas: list[dict[str,Any]]) -> tuple[list[dict[str,Any]],list[dict[str,Any]]]:
@@ -187,6 +195,8 @@ def build_facilities(payloads: dict[str,bytes], manifest: dict[str,Any], areas: 
     coordinate_overrides=json.loads(payloads.get('facility-coordinates',b'{}'))
     from shapely.geometry import Point
     county_shapes={f['id']:shape(f['geometry']) for f in json.loads((ROOT/'data/processed/maryland-counties.geojson').read_text())['features']}
+    directories={entry['id']:entry for entry in manifest['sources'] if entry['id'].startswith('library-directory-')}
+    directory_docs={identifier:[{'url':doc['url'],'text':directory_content(doc['html'])} for doc in json.loads(payloads[identifier]) if 'html' in doc] for identifier in directories}
     used=set()
     for row in rows:
         p=row['properties'];county=counties.get(norm(p['County']))
@@ -218,9 +228,30 @@ def build_facilities(payloads: dict[str,bytes], manifest: dict[str,Any], areas: 
                 elif item['status']=='verified':item['note']='Confirmed in current Pratt directory. '+('Documented SNAP application assistance at scheduled social-worker drop-in hours; geography does not model schedules.' if item['baseline'] else 'Open library; proposed outreach candidate. Benefits assistance is not asserted.')
                 if item['baseline']:item['sourceId']='pratt-assistance'
             else:
-                item['status']='closed';item['note']='Legacy inventory location absent from the current Pratt directory; excluded.'
+                item['status']='unresolved';item['note']='Legacy inventory location absent from the current Pratt directory; excluded. Closure is not asserted.'
+        if county!='24510':
+            identifier_source=f'library-directory-{county}'
+            docs=directory_docs.get(identifier_source,[])
+            street=norm(p['STREETADDR'])
+            nonpublic=bool(re.search(r'(headquarter|administrative|blind|college|technical service)',name,re.I)) or name in ('Eastern Shore Regional Library','Western Maryland Regional Library')
+            matches=[doc for doc in docs if len(street)>6 and street in norm(doc['text'])]
+            if matches and not nonpublic:
+                item.update(status='verified',candidate=True,sourceId=identifier_source,verificationUrl=matches[0]['url'],checkedAt=directories[identifier_source]['retrievedAt'],note='Current public-library directory lists this street address and branch operating hours. Coordinates retain the state inventory point. Proposed outreach candidate; existing benefits assistance is not asserted.')
+            elif nonpublic:
+                item['note']='Administrative, regional-service or specialized library record is not a public branch candidate; excluded. Closure is not asserted.'
+            else:
+                item['note']='Street address does not reconcile with current official public-library directory. It may have moved or changed; excluded pending coordinate/address verification.'
         if item['status']!='verified':report.append({'id':f'exclude-{identifier}','kind':'excluded','label':name,'detail':item['note'],'sourceId':item['sourceId']})
         items.append(item)
+    corrections=json.loads(payloads.get('library-corrections',b'[]'))
+    by_id={item['id']:item for item in items}
+    for correction in corrections:
+        item=by_id.get(correction['id'])
+        if item is None:raise ValueError(f"Correction targets unknown library {correction['id']}")
+        old_address=item['address'];old_county=item['county'];point=correction['point']
+        item.update(name=correction['name'],county=correction['county'],address=correction['address'],sourceId=correction['sourceId'],verificationUrl=correction['verificationUrl'],checkedAt=next(e['retrievedAt'] for e in manifest['sources'] if e['id']=='library-corrections'),status='verified' if 'lon' in point else 'unresolved',candidate='lon' in point,baseline=False,note='Current directory documents this corrected or temporary service location. Coordinates are pinned official Census geocoder matches or explicit branch-publisher map coordinates; these are approximate locations, not observed entrances. Proposed outreach candidate; benefits assistance is not asserted.' if 'lon' in point else 'Current directory address corrected; official geocoder did not resolve its coordinates. Excluded from suggestions.')
+        if 'lon' in point:item.update(lon=point['lon'],lat=point['lat'])
+        report.append({'id':f"directory-correct-{item['id']}",'kind':'corrected','label':item['name'],'detail':f"Current address: {item['address']} (county {item['county']}); inventory: {old_address} (county {old_county}). "+('Official geocoder or explicit publisher coordinate evidence pinned.' if 'lon' in point else 'Coordinates unresolved; excluded.'),'sourceId':correction['sourceId']})
     for key,current in verified.items():
         if key in used:continue
         if key not in coordinate_overrides:
@@ -234,8 +265,10 @@ def build_facilities(payloads: dict[str,bytes], manifest: dict[str,Any], areas: 
     for layer_index,layer in enumerate(webmap['operationalLayers']):
         for sublayer in layer.get('featureCollection',{}).get('layers',[]):
             for feature in sublayer.get('featureSet',{}).get('features',[]):
-                p=feature['attributes'];name=p.get('name','Unnamed DHS location');address=text_only(p.get('desc',''));lat=p.get('lat');lon=p.get('lon')
-                if lat is None or lon is None:continue
+                p=feature['attributes'];name=text_only(p.get('name','Unnamed DHS location'));address=text_only(p.get('desc',''));lat=p.get('lat');lon=p.get('lon');dhs_count+=1
+                if lat is None or lon is None:
+                    record_id=p.get('__OBJECTID',hashlib.sha256(canonical_json(p).encode()).hexdigest()[:8])
+                    report.append({'id':f'dhs-coordinate-unmatched-{layer_index}-{record_id}','kind':'unmatched','label':name,'detail':'Map latitude/longitude attributes absent; excluded from planning. Current public offices are independently verified and geocoded where evidence supports them.','sourceId':'maryland-dhs'});continue
                 county=next((code for code,geom in county_shapes.items() if geom.covers(Point(lon,lat))),None)
                 if not county:continue
                 identifier=f"dhs-{layer_index}-{p['__OBJECTID']}"; title=layer['title'];bad=any(term in (name+' '+title).lower() for term in ['old','no public service','child support only','child support enforcement','state office']) or title=='Varying Services (Please view details)'
@@ -249,16 +282,26 @@ def build_facilities(payloads: dict[str,bytes], manifest: dict[str,Any], areas: 
                 if not match and digits:
                     short=norm(' '.join(street.split()[:4]));match=len(short)>8 and short in norm(evidence)
                 verified_office=match and not bad
-                item={'id':identifier,'name':name,'kind':'benefits','county':county,'address':address,'lon':round(lon,7),'lat':round(lat,7),'status':'verified' if verified_office else 'closed' if bad else 'unresolved','baseline':verified_office,'candidate':False,'sourceId':evidence_id if verified_office else 'maryland-dhs','verificationUrl':f'https://dhs.maryland.gov/local-offices/{county_slug(county,areas)}/','checkedAt':checked,'note':'Public service office address matched to the current DHS county-office directory; location point from DHS map.' if verified_office else 'Excluded: obsolete/non-public/child-support-only record.' if bad else 'Map address could not be reconciled with current DHS directory; excluded from baseline.'}
-                items.append(item);dhs_count+=1
+                item={'id':identifier,'name':name,'kind':'benefits','county':county,'address':address,'lon':round(lon,7),'lat':round(lat,7),'status':'verified' if verified_office else 'unresolved','baseline':verified_office,'candidate':False,'sourceId':evidence_id if verified_office else 'maryland-dhs','verificationUrl':f'https://dhs.maryland.gov/local-offices/{county_slug(county,areas)}/','checkedAt':checked,'note':'Public service office address matched to the current DHS county-office directory; location point from DHS map.' if verified_office else 'Excluded: obsolete/non-public/child-support-only record.' if bad else 'Map address could not be reconciled with current DHS directory; excluded from baseline.'}
+                items.append(item)
                 if not verified_office:report.append({'id':f'exclude-{identifier}','kind':'excluded','label':name,'detail':item['note'],'sourceId':'maryland-dhs'})
     for key,coord in coordinate_overrides.items():
         if not key.startswith('dhs-new-'):continue
         if not coord.get('evidenceId') or coord['evidenceId'] not in payloads:raise ValueError('New DHS site lacks source evidence')
         items.append({'id':key,'name':coord['name'],'kind':'benefits','county':coord['county'],'address':coord['address'],'lon':coord['lon'],'lat':coord['lat'],'status':'verified','baseline':True,'candidate':False,'sourceId':coord['evidenceId'],'verificationUrl':coord['url'],'checkedAt':checked,'note':'Current DHS customer-service office added from directory; coordinates pinned through official address geocoding.'})
         report.append({'id':f'add-{key}','kind':'corrected','label':coord['name'],'detail':'Current public-assistance location missing from older DHS map added using current directory and pinned geocoder response.','sourceId':coord['evidenceId']})
+    for office in json.loads(payloads.get('dhs-current-coordinates',b'[]')):
+        point=office['point']
+        if 'lon' not in point:
+            report.append({'id':f"unmatched-{office['id']}",'kind':'unmatched','label':office['name'],'detail':'Current public-service address verified but official geocoder unresolved; excluded from baseline.','sourceId':office['sourceId']});continue
+        source=next(e for e in manifest['sources'] if e['id']==office['sourceId'])
+        items.append({'id':office['id'],'name':office['name'],'kind':'benefits','county':office['county'],'address':office['address'],'lon':point['lon'],'lat':point['lat'],'status':'verified','baseline':True,'candidate':False,'sourceId':office['sourceId'],'verificationUrl':source['url'],'checkedAt':source['retrievedAt'],'note':'Current official DSS directory lists this public-service location and operating/lobby hours; coordinates pinned through an official Census geocoder match. Geographic modeling does not assert continuous staffing or eligibility.'})
+        report.append({'id':f"current-office-{office['id']}",'kind':'corrected','label':office['name'],'detail':f"Current directory address {office['address']} verified and geocoded independently of excluded obsolete map classifications.",'sourceId':office['sourceId']})
+    for county in FIPS:
+        local=[item for item in items if item['county']==county]
+        report.append({'id':f'facility-coverage-{county}','kind':'coverage','label':next(a['name'] for a in areas if a['geoid']==county)+' verification','detail':f"{sum(item['candidate'] for item in local)} verified public-library candidates; {sum(item['baseline'] for item in local)} verified benefits baseline locations; {sum(item['status']=='unresolved' for item in local)} unresolved or excluded inventory records. Missing verification does not establish absence of service.",'sourceId':'pratt-locations' if county=='24510' else f'library-directory-{county}' if f'library-directory-{county}' in payloads else 'maryland-libraries'})
     items.sort(key=lambda item:item['id'])
-    report.append({'id':'facility-coverage','kind':'coverage','label':'Facility verification coverage','detail':f"{len(rows)} legacy library points and {dhs_count} DHS map points inspected. {sum(i['candidate'] for i in items)} current verified outreach candidates; {sum(i['baseline'] for i in items)} verified benefits-assistance baseline sites. Current library verification focuses on Baltimore City; other inventory points are visible but excluded from automatic suggestions.",'sourceId':'maryland-libraries'})
+    report.append({'id':'facility-coverage','kind':'coverage','label':'Facility verification coverage','detail':f"{len(rows)} legacy library points and {dhs_count} DHS map points inspected. {sum(i['candidate'] for i in items)} current verified outreach candidates; {sum(i['baseline'] for i in items)} verified benefits-assistance baseline sites. All 24 jurisdiction library directories were examined; only reconciled public branch addresses become candidates. Unresolved and specialized/administrative records remain excluded.",'sourceId':'maryland-libraries'})
     return items,sorted(report,key=lambda item:item['id'])
 
 
@@ -300,6 +343,12 @@ def source_metadata(manifest: dict[str,Any]) -> list[dict[str,Any]]:
         elif identifier=='qcew-history':title='Maryland county private-sector employment and nominal pay history';publisher='U.S. Bureau of Labor Statistics';period='2010–2024';transformation='Annual county/private-sector/total-industry rows only (own_code=5, industry_code=10, agglvl_code=71, size_code=0). Employment is workplace jobs; average annual pay is nominal USD, not median or inflation-adjusted. National input SHA-256 values retained in manifest.'
         elif identifier.startswith('lodes'):title='Maryland LODES 2021 home/work relationships' if identifier=='lodes-2021' else 'LODES Census block coordinates';period='2021' if identifier=='lodes-2021' else '2020 Census blocks; 2025 crosswalk revision';transformation='Main Maryland all-jobs OD file aggregated by 12-digit home/work block group. No out-of-state jobs from auxiliary files. Crosswalk points averaged unweighted by block group for relationship visualization only; original input hashes retained.'
         elif identifier=='maryland-libraries':title='Maryland iMAP library inventory';publisher='Maryland iMAP';period='Legacy inventory; checked October 14, 2026';transformation='198 official inventory point records retained with stable source OBJECTID. Current directory verification required before automatic suggestions; unresolved locations excluded.'
+        elif identifier=='dhs-current-coordinates':
+            title='Verified current Maryland DSS public-service office coordinates';publisher='U.S. Census Bureau geocoder and Maryland DHS';period='Checked October 14, 2026';transformation='Nineteen current county DSS/DHHS public service addresses independently matched to pinned official county directory pages, then geocoded using Census Public_AR_Current. Obsolete and non-public map markers remain excluded; current office records have separate identities and source proof.'
+        elif identifier=='library-corrections':
+            title='Verified current Maryland library address corrections';publisher='U.S. Census Bureau geocoder and current library directories';period='Checked October 14, 2026';transformation='Thirty documented current branch addresses independently matched to pinned official directory pages, then geocoded using Census Public_AR_Current benchmark. Explicit publisher coordinate links resolve three geocoder failures or ambiguities. Matched-address responses retained. Geocoder coordinates are interpolation estimates, not observed entrances; unresolved coordinates excluded.'
+        elif identifier.startswith('library-directory-'):
+            title=entry.get('publisher','Maryland public library')+' current branch directory';publisher=entry.get('publisher','Maryland public library');period='Checked October 14, 2026';transformation='Current official directory and linked branch pages pinned with individual source hashes. Public branch street addresses reconciled with state inventory; unresolved, specialized and administrative locations excluded. Normal daily closures are not facility closures.'
         elif identifier.startswith('dhs-office'):title=f'Maryland DHS current county-office directory {identifier[-5:]}';publisher='Maryland Department of Human Services';period='Checked October 14, 2026';transformation='Current official directory supplies public-service address verification. Child-support-only, no-public-service and obsolete map points excluded.'
         elif identifier=='maryland-dhs':title='Maryland DHS office map';publisher='Maryland Department of Human Services';period='Legacy map; checked October 14, 2026';transformation='Official embedded feature-collection points reconciled with current county-office pages. Obsolete, no-public-service and child-support-only markers excluded.'
         elif identifier=='pratt-locations':title='Pratt Library current locations and hours';publisher='Enoch Pratt Free Library';period='Checked October 14, 2026';transformation='Current branch names, addresses and ongoing closures reconcile the older state library inventory. Ordinary outside-hours closed-now status does not imply a facility closure.'
@@ -335,7 +384,10 @@ CREATE INDEX IF NOT EXISTS outreach_areas_tract ON outreach_areas(tract,level);
 CREATE TABLE IF NOT EXISTS outreach_facilities(id TEXT PRIMARY KEY,county TEXT NOT NULL,payload_json TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS outreach_history(county TEXT PRIMARY KEY,payload_json TEXT NOT NULL);
 '''
-    lines=[schema,'DELETE FROM outreach_release;','DELETE FROM outreach_areas;','DELETE FROM outreach_facilities;','DELETE FROM outreach_history;',f"INSERT INTO outreach_release VALUES ('current',{sql_value(canonical_json(catalog))});"]
+    lines=[schema,'DELETE FROM outreach_release;','DELETE FROM outreach_areas;','DELETE FROM outreach_facilities;','DELETE FROM outreach_history;']
+    catalog_json=canonical_json(catalog)
+    for index,offset in enumerate(range(0,len(catalog_json),20000)):
+        lines.append(f"INSERT INTO outreach_release VALUES ('current-{index:05}',{sql_value(catalog_json[offset:offset+20000])});")
     for area in areas:
         fields=[area[k] for k in ('geoid','level','county','tract','name','lon','lat')]+[canonical_json(area['values']),canonical_json(area['raw'])]
         lines.append('INSERT INTO outreach_areas VALUES ('+','.join(sql_value(v) for v in fields)+');')
@@ -344,12 +396,15 @@ CREATE TABLE IF NOT EXISTS outreach_history(county TEXT PRIMARY KEY,payload_json
     sql='\n'.join(lines)+'\n';(out/'seed.sql').write_text(sql)
     con=sqlite3.connect(':memory:');con.executescript(sql);con.executescript(sql)
     if con.execute('SELECT COUNT(*) FROM outreach_areas').fetchone()[0]!=5578:raise ValueError('SQL seed round trip lost geographies')
+    restored=''.join(row[0] for row in con.execute('SELECT catalog_json FROM outreach_release ORDER BY id'))
+    if restored!=catalog_json:raise ValueError('Chunked catalog SQL round trip changed data')
+    if max(len(line.encode()) for line in lines[1:])>=100000:raise ValueError('D1 seed statement exceeds 100 KB limit')
     con.close()
 
 
 def build(raw: Path, out: Path) -> dict[str,Any]:
     manifest,payloads=load_inputs(raw)
-    recipe={'version':1,'metrics':METRICS,'geometryToleranceDegrees':0.00008,'facilityPolicyVersion':1,'commuteTopFlows':120}
+    recipe={'version':1,'metrics':METRICS,'geometryToleranceDegrees':0.00008,'facilityPolicyVersion':3,'commuteTopFlows':120}
     road_source_path=raw/'roads-source.json'
     road_source=json.loads(road_source_path.read_text()) if road_source_path.exists() else None
     if road_source is not None and (road_source.get('id')!='osm-roads' or not re.fullmatch('[0-9a-f]{64}',road_source.get('sha256',''))):
@@ -357,7 +412,7 @@ def build(raw: Path, out: Path) -> dict[str,Any]:
     revision='md-outreach-2024-'+hashlib.sha256(canonical_json({'inputs':manifest,'recipe':recipe,'roads':road_source}).encode()).hexdigest()[:16]
     areas,bg,tracts,indicators=build_areas(payloads);facilities,reconciliation=build_facilities(payloads,manifest,areas)
     reconciliation.extend([{'id':'acs-boundary-coverage','kind':'coverage','label':'ACS boundary reconciliation','detail':'24 county observations, 1,475 tracts and 4,079 block groups joined to matching 2024 geography IDs across all 10 ACS tables; zero unmatched identifiers.','sourceId':'census-geometry-bg'},{'id':'representative-points','kind':'coverage','label':'Representative household locations','detail':'Each block group is represented by its Census internal point. Road snaps and unmatched/disconnected results are reported separately by the graph release. Household distribution within each polygon is not observed.','sourceId':'census-geometry-bg'}])
-    catalog={'version':1,'revision':revision,'title':'CivicAtlas · Maryland Outreach Lab','period':'ACS 2020–2024 · QCEW 2010–2024 · LODES 2021','counties':[{'geoid':county,'name':next(a['name'] for a in areas if a['geoid']==county),'blockGroups':sum(a['level']=='blockGroup' and a['county']==county for a in areas),'tracts':sum(a['level']=='tract' and a['county']==county for a in areas)} for county in FIPS],'indicators':indicators,'sources':source_metadata(manifest),'reconciliation':sorted(reconciliation,key=lambda item:item['id']),'counts':{'blockGroups':4079,'tracts':1475,'facilities':len(facilities)},'assets':{'blockGroups':f'/data/outreach/{revision}/block-groups.geojson','tracts':f'/data/outreach/{revision}/tracts.geojson','graphPattern':f'/data/outreach/{revision}/graphs/{{county}}.json','commutePattern':f'/data/outreach/{revision}/commutes/{{county}}.json'},'limitations':['ACS five-year estimates describe 2020–2024; estimates are not 2026 household counts. Margins of error reflect sampling uncertainty; modeled coverage has additional location uncertainty.','Household conditions overlap. One household measure is used at a time; percent persons below poverty is not a count of eligible households.','Coverage represents block-group internal points within modeled motor-vehicle road distance. It is not attendance, eligibility, transit access or driving directions.','Benefits sites have scheduled hours and finite capacity; geographic reach does not establish service availability.','Current library verification focuses on Baltimore City. Statewide legacy library points remain unresolved and excluded from automated recommendations.','LODES main file covers home/work relationships with both ends in Maryland in 2021. It omits cross-border auxiliary-file relationships; flow lines are not observed routes.','QCEW employment measures private covered workplace jobs; annual pay is average nominal USD, not median household income.']}
+    catalog={'version':1,'revision':revision,'title':'CivicAtlas · Maryland Outreach Lab','period':'ACS 2020–2024 · QCEW 2010–2024 · LODES 2021','counties':[{'geoid':county,'name':next(a['name'] for a in areas if a['geoid']==county),'blockGroups':sum(a['level']=='blockGroup' and a['county']==county for a in areas),'tracts':sum(a['level']=='tract' and a['county']==county for a in areas)} for county in FIPS],'indicators':indicators,'sources':source_metadata(manifest),'reconciliation':sorted(reconciliation,key=lambda item:item['id']),'counts':{'blockGroups':4079,'tracts':1475,'facilities':len(facilities)},'assets':{'blockGroups':f'/data/outreach/{revision}/block-groups.geojson','tracts':f'/data/outreach/{revision}/tracts.geojson','graphPattern':f'/data/outreach/{revision}/graphs/{{county}}.json','commutePattern':f'/data/outreach/{revision}/commutes/{{county}}.json'},'limitations':['ACS five-year estimates describe 2020–2024; estimates are not 2026 household counts. Margins of error reflect sampling uncertainty; modeled coverage has additional location uncertainty.','Household conditions overlap. One household measure is used at a time; percent persons below poverty is not a count of eligible households.','Coverage represents block-group internal points within modeled motor-vehicle road distance. It is not attendance, eligibility, transit access or driving directions.','Benefits sites have scheduled hours and finite capacity; geographic reach does not establish service availability.','All 24 library systems have pinned current-directory evidence. Only matching public branch locations are suggested; unresolved, administrative and obsolete inventory points are excluded. Baseline verification is incomplete: missing verified sites is not evidence that services are absent.','LODES main file covers home/work relationships with both ends in Maryland in 2021. It omits cross-border auxiliary-file relationships; flow lines are not observed routes.','QCEW employment measures private covered workplace jobs; annual pay is average nominal USD, not median household income.']}
     if road_source is not None:catalog['sources'].append(road_source)
     history=build_history(payloads,revision)
     commutes=build_commutes(payloads,revision)
@@ -373,7 +428,8 @@ def publish(out: Path, catalog: dict[str,Any], areas: list[dict[str,Any]], facil
     (out/'commutes').mkdir(exist_ok=True)
     for item in commutes:(out/'commutes'/f"{item['county']}.json").write_text(canonical_json(item)+'\n')
     write_seed(out,catalog,areas,facilities,history)
-    artifacts={str(path.relative_to(out)):{'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'bytes':path.stat().st_size} for path in sorted(out.rglob('*')) if path.is_file() and 'raw' not in path.relative_to(out).parts and path.name!='build-report.json' and 'graphs' not in path.relative_to(out).parts}
+    filenames=['catalog.json','areas.json','facilities.json','block-groups.geojson','tracts.geojson','history.json','seed.sql',*[f'commutes/{county}.json' for county in FIPS]]
+    artifacts={name:{'sha256':hashlib.sha256((out/name).read_bytes()).hexdigest(),'bytes':(out/name).stat().st_size} for name in sorted(filenames)}
     report={'revision':revision,'areaCounts':dict(sorted(Counter(a['level'] for a in areas).items())),'statuses':dict(sorted(Counter(v['status'] for a in areas for v in a['values'].values()).items())),'facilityStatuses':dict(sorted(Counter(f['status'] for f in facilities).items())),'baselineSites':sum(f['baseline'] for f in facilities),'candidateSites':sum(f['candidate'] for f in facilities),'artifacts':artifacts};(out/'build-report.json').write_text(canonical_json(report)+'\n')
     return report
 

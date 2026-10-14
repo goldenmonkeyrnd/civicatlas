@@ -149,6 +149,15 @@
       "url": "https://www2.census.gov/geo/tiger/TIGER2024/TRACT/tl_2024_24_tract.zip"
     },
     {
+      "file": "dhs-current-coordinates.json.gz",
+      "id": "dhs-current-coordinates",
+      "retrievedAt": "2026-10-14T06:39:15+00:00",
+      "rows": 19,
+      "sha256": "146552988fb461b52c5e655e0314fde62638fcdba5c595904e60ab4ce296eb6f",
+      "storedSha256": "f7f34421c81602b22c8bf9e98e376ae8107dcecdeb00410ef02827bd1e69abc3",
+      "url": "https://geocoding.geo.census.gov/geocoder/"
+    },
+    {
       "file": "dhs-office-24001.html.gz",
       "id": "dhs-office-24001",
       "retrievedAt": "2026-10-14T06:08:53+00:00",
@@ -348,6 +357,245 @@
       "sha256": "2b3a9f712e89143689d9bd5f746ae87f84ffef7ed47d093e7b0f5f4c82432237",
       "storedSha256": "eb09340bca4924a2d88c7ca7cda065626864b72f072972e4c9ec4423ff653775",
       "url": "https://geocoding.geo.census.gov/geocoder/"
+    },
+    {
+      "file": "library-corrections.json.gz",
+      "id": "library-corrections",
+      "retrievedAt": "2026-10-14T06:35:07+00:00",
+      "rows": 30,
+      "sha256": "3e4a8d3ecbefd20c409ebb07dd99773f8e9bed7954714916b4a99edc0e08828d",
+      "storedSha256": "aeb0713263458b13f5fcacc5813231d7c8fc2fc9e7be1ec108a6aa1471108f13",
+      "url": "https://geocoding.geo.census.gov/geocoder/"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24001.json.gz",
+      "id": "library-directory-24001",
+      "publisher": "Allegany County Library System",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "cd50c4dccd90a5c1987b53c7c215dd38018d9027f4bb3da0bcd8669799ecc2cd",
+      "storedSha256": "c1a45f7e6860efdd347690af342d5353ad278fa17b195eb6c2be41de4f0729ab",
+      "url": "https://www.alleganycountylibrary.info/locations-and-hours/"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24003.json.gz",
+      "id": "library-directory-24003",
+      "publisher": "Anne Arundel County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "1b85cd291f9a4b315297460063e2dc3614552e491de177a14d8a2c87e55565d2",
+      "storedSha256": "3d0518e5ebb26f321107bc47f1b9e6584cb24650ee644913fb8030320e530f5f",
+      "url": "https://www.aacpl.net/locations"
+    },
+    {
+      "documents": 20,
+      "file": "library-directory-24005.json.gz",
+      "id": "library-directory-24005",
+      "publisher": "Baltimore County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "d4f458eed5f5cc4644662c29f94a3a100399451ccc030ec335e0493e9feecd9a",
+      "storedSha256": "69e5040e2479492ca5f1278b67397c18af98b8852e26bb43a60972745d95e5c4",
+      "url": "https://www.bcpl.info/locations"
+    },
+    {
+      "documents": 12,
+      "file": "library-directory-24009.json.gz",
+      "id": "library-directory-24009",
+      "publisher": "Calvert Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "872ee0f08beff97e718b8905385b0d37dd4dc435844ccdc05db07498b570fa30",
+      "storedSha256": "1675efebba91285405c16efa67a5df7f4465b15e965f633db440c341bcf79bc0",
+      "url": "https://calvertlibrary.info/hours/"
+    },
+    {
+      "documents": 2,
+      "file": "library-directory-24011.json.gz",
+      "id": "library-directory-24011",
+      "publisher": "Caroline County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "df7b7f588102dcaeacf547e53a7d28f4aef1db5ca767a54174ace78e2b8e9ce6",
+      "storedSha256": "b85104621775c0450d28cf970577d4c5a7facabd436c4ffb081d2d78e2f1b1b9",
+      "url": "https://www.carolib.org/hours-and-locations/"
+    },
+    {
+      "documents": 2,
+      "file": "library-directory-24013.json.gz",
+      "id": "library-directory-24013",
+      "publisher": "Carroll County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "b8181439b2f3657b862b2a26cf64b9ccd0c72baef6d081d2723b431f7ee03e51",
+      "storedSha256": "991424d25beec18b3c9d856a2bb5b3438556c777bf8a46b73f722dc239af5da2",
+      "url": "https://library.carr.org/about/locations"
+    },
+    {
+      "documents": 15,
+      "file": "library-directory-24015.json.gz",
+      "id": "library-directory-24015",
+      "publisher": "Cecil County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "8403946419f7540590ca68329a7cde86543f12308ada9922e163a4d2a7903d2d",
+      "storedSha256": "b4178ab299b3906b5adbd0bcf2e08af51c05ecbe5f689eae43e0148330f6f5a2",
+      "url": "https://www.cecilcountylibrary.org/about/hours-locations"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24017.json.gz",
+      "id": "library-directory-24017",
+      "publisher": "Charles County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "4062ec771dc2fb8d67e5b3f89e914c13f9aaf868c65814c68f995382259b4a47",
+      "storedSha256": "a4d1aa8db78105015724a45f0ebc4fb0c5382f384bfde1a590ddf54444098f3f",
+      "url": "https://ccplonline.org/about/library-locations/"
+    },
+    {
+      "documents": 2,
+      "file": "library-directory-24019.json.gz",
+      "id": "library-directory-24019",
+      "publisher": "Dorchester County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "1b7efe6fb409427dea78b0674caca55a2d0960d0502bfa2591dde6d7edf2f91a",
+      "storedSha256": "e6a2544a3283e630a604240e522f4e95fbfeb0379e3da219553101ceb27dd939",
+      "url": "https://www.dorchesterlibrary.org/visit-our-libraries"
+    },
+    {
+      "documents": 10,
+      "file": "library-directory-24021.json.gz",
+      "id": "library-directory-24021",
+      "publisher": "Frederick County Public Libraries",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "ad634c653093608fc97e0153394fe1779bebf79786328b94e630ee331db27f6c",
+      "storedSha256": "55b7d67d170bd12b3418920727e7baf0c335c064f847655cbc60c19ec2b6bfc0",
+      "url": "https://www.fcpl.org/branches-hours"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24023.json.gz",
+      "id": "library-directory-24023",
+      "publisher": "Ruth Enlow Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "a84e537de17ec58fe691c711a50448fc250c432fabbbd4acd7d7d6c34b1b667e",
+      "storedSha256": "5c04c4a32bc94a08850eb80b0396d449781c829045f26a86bac1ab26e0511abd",
+      "url": "https://www.relib.net/locations"
+    },
+    {
+      "documents": 12,
+      "file": "library-directory-24025.json.gz",
+      "id": "library-directory-24025",
+      "publisher": "Harford County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "87e36594e4808ff02c5e238709d5f513ca73ef66fb002c3092865b011746b878",
+      "storedSha256": "179dbadec6bd89e962b807671bf7ee1c9d5c7aad1a56b9f35dfabed905e8640e",
+      "url": "https://www.hcplonline.org/locations.php"
+    },
+    {
+      "documents": 10,
+      "file": "library-directory-24027.json.gz",
+      "id": "library-directory-24027",
+      "publisher": "Howard County Library System",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "da62d95a3c7357839d27fcd22dab07139fbb97305dd3803b60552f8ffe922e35",
+      "storedSha256": "04b8114d4ef0b1196b6f5c4fce1b62437e466b981608e4cc8aaaa2f741c913bb",
+      "url": "https://www.hclibrary.org/locations/"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24029.json.gz",
+      "id": "library-directory-24029",
+      "publisher": "Kent County Public Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "23403db76239044a7454681f7b0149f5c296fd913ccbd9bc272f70c0c296dcea",
+      "storedSha256": "e04a5aaa6a5144d75171db8c4a35545de59d54d680b65c9ea7dcbdd9c32b75dc",
+      "url": "https://kentcountylibrary.org/about-kcpl/operating-info-and-accessibility-features/"
+    },
+    {
+      "documents": 27,
+      "file": "library-directory-24031.json.gz",
+      "id": "library-directory-24031",
+      "publisher": "Montgomery County Public Libraries",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "d4bb082d03694b32154311f5ddf615933a44d1e804ce8869d055aeb76cb2d7df",
+      "storedSha256": "c9779c7cce58ac554e0a1621776f9ed2c41ab7c49f809fd37618184c78139ddd",
+      "url": "https://www.montgomerycountymd.gov/montgomery-county-public-libraries/library-locations"
+    },
+    {
+      "documents": 22,
+      "file": "library-directory-24033.json.gz",
+      "id": "library-directory-24033",
+      "publisher": "Prince George's County Memorial Library System",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "230c0450360bb459bdb4267bea5a9f207c6dc5e5527a1fe9e704085a9d3432df",
+      "storedSha256": "0fd14edfa03cbca5689644d66f999013722887fbb80d23ff284ff099def7d3ca",
+      "url": "https://www.pgcmls.info/map-of-branches"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24035.json.gz",
+      "id": "library-directory-24035",
+      "publisher": "Queen Anne's County Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "ac06ee07468fd741917300e129ccec5761b8b39384509fdf15d78bfdfb96c79e",
+      "storedSha256": "ddee0a453e95b30e239ee5c17d2cd3780fab72d391a0b99dd86c1d5ba8a81721",
+      "url": "https://www.qaclibrary.org/locations"
+    },
+    {
+      "documents": 4,
+      "file": "library-directory-24037.json.gz",
+      "id": "library-directory-24037",
+      "publisher": "St. Mary's County Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "8f65a0d014cf62b87f3e9a2367c3382e6c83ef8983a6eb76978c57b864bdfaa5",
+      "storedSha256": "4286870f43dd6cfd51b7e3aa8f07322885c0d95afb1a7f75a972afc0e4c994cc",
+      "url": "https://www.stmalib.org/about-us/locations-and-hours/"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24039.json.gz",
+      "id": "library-directory-24039",
+      "publisher": "Somerset County Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "ddd3b138897eec5e27caa04aac26c3fd18ce8ad26c69045c8e7146f61027200c",
+      "storedSha256": "eee98d9baa4d0caa251b09e87cee8ed96b5c901257263b753af12ceb602c68bc",
+      "url": "https://www.somelibrary.org/"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24041.json.gz",
+      "id": "library-directory-24041",
+      "publisher": "Talbot County Free Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "8ee781a5c6e3b0697aecda2ae9d165c4f976c853242d1556bcf698cb752a4f37",
+      "storedSha256": "01d54c25bb0a4f8d3c44cba63b9594d537e2c4a7e42ed824eec2fd552adb39f5",
+      "url": "https://www.tcfl.org/visit/?content=locations"
+    },
+    {
+      "documents": 1,
+      "file": "library-directory-24043.json.gz",
+      "id": "library-directory-24043",
+      "publisher": "Washington County Free Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "f3099ad3df943fab0e51a65b47fbd8ede2fc1dedf78b65f29e076c45b93b6457",
+      "storedSha256": "c80bc499439398658ab9d15f26c7799b6c8939057f5cb1db6cfcf4e3ae5d3749",
+      "url": "https://www.washcolibrary.org/using-the-library/locations-hours"
+    },
+    {
+      "documents": 4,
+      "file": "library-directory-24045.json.gz",
+      "id": "library-directory-24045",
+      "publisher": "Wicomico Public Libraries",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "7288edd197bf2f18ac785f0255517cf22bdaa46683af74565e0dc317c3d5e3f5",
+      "storedSha256": "b30070f3170a1608ea532a55364cd41ecbfeb8a89ac678e77e5bf85282836d6b",
+      "url": "https://www.wicomicolibrary.org/hours-locations"
+    },
+    {
+      "documents": 7,
+      "file": "library-directory-24047.json.gz",
+      "id": "library-directory-24047",
+      "publisher": "Worcester County Library",
+      "retrievedAt": "2026-10-14T06:23:31+00:00",
+      "sha256": "0fd540e41cdd23b240f6deafb7de67e11dfa5586f7968e81eb19632d417826d0",
+      "storedSha256": "9db0b6b870ab72f45def609c952af30ffb06bbf8291bc5bf3b82fab7b7c12a17",
+      "url": "https://worcesterlibrary.org/branches/"
     },
     {
       "file": "lodes-flows.json.gz",
