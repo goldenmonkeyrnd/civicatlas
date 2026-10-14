@@ -1,4 +1,6 @@
 version = 2
+# Expanded pipeline inventory exceeds the default 10,000 AST traversal steps.
+max_steps = 100000
 source_roots = ["."]
 excludes = ["tests/**", "tools/**", ".venv/**", "node_modules/**"]
 
@@ -164,3 +166,155 @@ reason = "Internal publication orchestration; the declared main-entry validator 
 kind = "internal"
 surface = "pipeline.validate:SnapshotValidationError"
 reason = "Exception type for rejected data invariants; no connection, handoff or shape requirement is declared for exception construction."
+
+# Outreach data declarations participate in the existing pipeline inventory.
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:fetch"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:entry"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:extract_acs"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:acquire_history"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:acquire_commuting"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:acquire"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_acquire:main"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:load_inputs"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:parse_cell"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:aggregate_cells"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:observation"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:build_geography"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:build_areas"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:text_only"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:norm"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:build_facilities"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:county_slug"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:build_history"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:build_commutes"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:source_metadata"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "contract"
+surface = "pipeline.outreach_build:validate"
+contracts = ["outreach-validation"]
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:write_seed"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:build"
+reason = "Internal deterministic transformation and serialization; outreach validator, statistical assertions, pinned source hashes and byte reproduction check published behavior."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_build:main"
+reason = "CLI selects offline publication or byte-check; mandatory publish validation and execution checks protect the resulting release."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_verify:geocode"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_verify:supplement"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_verify:supplement.<locals>.office"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "internal"
+surface = "pipeline.outreach_verify:main"
+reason = "Explicit opt-in acquisition and current facility verification; offline source hashes, reconciliation and runtime data checks validate outputs."
+
+[[contracts.ledger]]
+kind = "contract"
+surface = "pipeline.outreach_build:publish"
+contracts = ["outreach-validation"]
+
+[[contracts]]
+kind = "connection"
+id = "outreach-validation"
+entry = "pipeline.outreach_build:publish"
+target = "pipeline.outreach_build:validate"

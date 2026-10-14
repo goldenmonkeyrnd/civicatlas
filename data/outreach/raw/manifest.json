@@ -1,0 +1,494 @@
+{
+  "acquiredAt": "2026-10-14T06:02:35+00:00",
+  "sources": [
+    {
+      "file": "acs-B01003.dat.gz",
+      "id": "acs-2024-B01003",
+      "origin": "read-only local library",
+      "originalRetrievedAt": null,
+      "originalSha256": "38d1a992bb058d184009b10b9b34987279aee575e4323165cfb5706c69b6ca90",
+      "retrievalNote": "retrievedAt is the Maryland extraction date; original local download timestamp was not universally recorded.",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "db65df5556a3858f3719e3cbf00878768302a9105566cae1210e14ba82587336",
+      "storedSha256": "59b9be6331d1c48524674363fc5a70dad0d008286438cfb89d4322653f09bdd9",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b01003.dat"
+    },
+    {
+      "file": "acs-B11001.dat.gz",
+      "id": "acs-2024-B11001",
+      "origin": "read-only local library",
+      "originalRetrievedAt": null,
+      "originalSha256": "77200c3d9c0d99773bc7f78208bc96f25170e5d4d175a5de320620b478ceaff5",
+      "retrievalNote": "retrievedAt is the Maryland extraction date; original local download timestamp was not universally recorded.",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "842954eaf478585ad82b8e3fae465a9b5bad3d0acde712e5212980d1754793e8",
+      "storedSha256": "bb02325808b77e63ab1672a45e31a6f0bbc3671315c448b320c766defbd5fffc",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b11001.dat"
+    },
+    {
+      "file": "acs-B11002.dat.gz",
+      "id": "acs-2024-B11002",
+      "origin": "read-only local library",
+      "originalRetrievedAt": null,
+      "originalSha256": "84dd1165671a943f4adeae3a585dae764fb0f5a19791858a79ff8578f7b6ca80",
+      "retrievalNote": "retrievedAt is the Maryland extraction date; original local download timestamp was not universally recorded.",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "067458e1c158345825dfed1ccd739830cdfa6ae1dbf0171277b6579186e33fce",
+      "storedSha256": "b733150b9cd039200e200c7aed9491a1507e404bb1374959d1cf0e6420770a42",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b11002.dat"
+    },
+    {
+      "file": "acs-B19001.dat.gz",
+      "id": "acs-2024-B19001",
+      "origin": "read-only local library",
+      "originalRetrievedAt": null,
+      "originalSha256": "1af421b3b9d0f85dbd938cd518ad5d01c693fa2870f24e1089552ea5c1e6683f",
+      "retrievalNote": "retrievedAt is the Maryland extraction date; original local download timestamp was not universally recorded.",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "afe0021d26e21fd9fa0ff0fa7c211f19e306941725a7800d6beeeaf9b282dc09",
+      "storedSha256": "01a154272823c0840b0b2e8d3dfac31258d4c4ac020a06c13dbeeecb922b9cda",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b19001.dat"
+    },
+    {
+      "file": "acs-B19051.dat.gz",
+      "id": "acs-2024-B19051",
+      "origin": "read-only local library",
+      "originalRetrievedAt": null,
+      "originalSha256": "2de0986d1715a88d95637af4e48ac2edded4ff3b283f6360cd55455afa0dd90e",
+      "retrievalNote": "retrievedAt is the Maryland extraction date; original local download timestamp was not universally recorded.",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "9c3fe0feb269c1d50c0e940e3682ec18ea91feabe5eba50d51a7252cec74899c",
+      "storedSha256": "593c4f1d9b1059154845bf9edb262d1df7b68b26e9ec543554afdfc9bf4308ec",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b19051.dat"
+    },
+    {
+      "file": "acs-B23025.dat.gz",
+      "id": "acs-2024-B23025",
+      "origin": "read-only local library",
+      "originalRetrievedAt": null,
+      "originalSha256": "264a5bd9367c5f58d9773fa4966fa94fe1e02f9c7106bc2ab39168d6de7c3e4a",
+      "retrievalNote": "retrievedAt is the Maryland extraction date; original local download timestamp was not universally recorded.",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "641f9190c8de189a51f7aee324e0fedc84c8f8500f7c2d1cbb689a220c67374e",
+      "storedSha256": "61b81394add492f78fd1ed5a8fa23d6bcec732f8d966043a69ec794cc551b7e4",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b23025.dat"
+    },
+    {
+      "file": "acs-B25044.dat.gz",
+      "id": "acs-2024-B25044",
+      "origin": "official bulk download",
+      "originalSha256": "db636e7d249d1f5c83aae67589b47f199827e2969ba6128cae101ac0d1c3e86e",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "0c98ef8c501a620549de425c59558029f35e52188a89032c72c66d05fc6e61bb",
+      "storedSha256": "1cfc887379b10d33f7bba659804a1e0429f87a79644b2783b21cd092361cfcdf",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25044.dat"
+    },
+    {
+      "file": "acs-B25070.dat.gz",
+      "id": "acs-2024-B25070",
+      "origin": "official bulk download",
+      "originalSha256": "862ccc17d913305d11e6f802ce4518d76b30585ea0b05b251cd8cf21f8661386",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "a13c53396cd0cc73a5418fd2c8eb9dc5b47aa15acbaa8d9552c941914eb07ecf",
+      "storedSha256": "a2ed6e7d50275637b883c81c261083bcf4633ebcdda535ef4f78cf915c2cea2a",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b25070.dat"
+    },
+    {
+      "file": "acs-B28002.dat.gz",
+      "id": "acs-2024-B28002",
+      "origin": "official bulk download",
+      "originalSha256": "12446ff0691b8818f5908cdc398817361772c5b3078c506d0409adc9c841840b",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "be4dc7b4a4831d754d164e18906b9e4adf8544d00bcf429854d96a461b1b1395",
+      "storedSha256": "7c4bb4794acbbbbaef826626dffed15d476903d3e49918a109906c1eae1fb06d",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-b28002.dat"
+    },
+    {
+      "file": "acs-C17002.dat.gz",
+      "id": "acs-2024-C17002",
+      "origin": "official bulk download",
+      "originalSha256": "dc3dc675113683ec3ff2a0e29a840f43e03268151d7f14b922658d7306da5187",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 5578,
+      "sha256": "c2e0b325a3d19e3585178a54b60eecc01259645135d852d672ac286eefb9dd94",
+      "storedSha256": "dc835549926a2d2d6eac6da64f6e7be3485bff8a33e0b24f9f8c95d33b6c26ee",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/5YRData/acsdt5y2024-c17002.dat"
+    },
+    {
+      "file": "acs-table-shells.txt.gz",
+      "id": "acs-table-shells",
+      "originalSha256": "5b46f4af873744a415c4974204010db976e2a61ff916674732f81c496a6b517d",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "sha256": "b531844db68c8f2850c9d0dacc3deb9affcb9c51a4403cbfe31035f1469c3ea5",
+      "storedSha256": "247eda8234c7b092174fbc93e2900f33c128b19c716c8a9b2dd9300bce83d327",
+      "url": "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/documentation/ACS20245YR_Table_Shells.txt"
+    },
+    {
+      "file": "tl_2024_24_bg.zip",
+      "id": "census-geometry-bg",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "sha256": "2d3179a6b1ca7faee6bdf186b3ceceb44fc2e1eefb6b0f118411cfb88e8b0160",
+      "storedSha256": "2d3179a6b1ca7faee6bdf186b3ceceb44fc2e1eefb6b0f118411cfb88e8b0160",
+      "url": "https://www2.census.gov/geo/tiger/TIGER2024/BG/tl_2024_24_bg.zip"
+    },
+    {
+      "file": "tl_2024_24_tract.zip",
+      "id": "census-geometry-tract",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "sha256": "2024640aeb94cf9cc999cb611e8493a2e58562d0e2df413fde46d6b85d3fda51",
+      "storedSha256": "2024640aeb94cf9cc999cb611e8493a2e58562d0e2df413fde46d6b85d3fda51",
+      "url": "https://www2.census.gov/geo/tiger/TIGER2024/TRACT/tl_2024_24_tract.zip"
+    },
+    {
+      "file": "dhs-office-24001.html.gz",
+      "id": "dhs-office-24001",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "9c256ed8b0145f12171b75952a279e65b57f8e19fd62c16a77c9a83488bdb412",
+      "storedSha256": "ca30d7c128a051e74ee9a9a4f68a3ec40709265b3cb559a8849e1d2be3306159",
+      "url": "https://dhs.maryland.gov/local-offices/allegany-county/"
+    },
+    {
+      "file": "dhs-office-24003.html.gz",
+      "id": "dhs-office-24003",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "58bfb295d7de7746ffca429d3d4d293bc7c083e0d98669a691d0a0c176c48b0d",
+      "storedSha256": "0ba2f4a05e4ab9237f8328ab1ae9e4b383170c4e174736219d3d17f4fe06f009",
+      "url": "https://dhs.maryland.gov/local-offices/anne-arundel-county/"
+    },
+    {
+      "file": "dhs-office-24005.html.gz",
+      "id": "dhs-office-24005",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "e3a588171c03282d724992a16b59efb2ce09aaf4015fc47837117764d2ce920d",
+      "storedSha256": "db367011e91ed2b704a4e906c0dd54a505dd245135db2642701d567b831037a9",
+      "url": "https://dhs.maryland.gov/local-offices/baltimore-county/"
+    },
+    {
+      "file": "dhs-office-24009.html.gz",
+      "id": "dhs-office-24009",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "b3d05807ca9fdee2c5141f3c60ff259e648ea8336dec5509894ee884b29dcf67",
+      "storedSha256": "60e7e508ca3afb86c3d1cb85cd7e941d95ab1c37477cc3e5a38825bdf50474f5",
+      "url": "https://dhs.maryland.gov/local-offices/calvert-county/"
+    },
+    {
+      "file": "dhs-office-24011.html.gz",
+      "id": "dhs-office-24011",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "9da3acbcff1c170528cfde41cd5bfb336b63f1419ecdd12e66df28d504b7d1dd",
+      "storedSha256": "65cbf008a1ca30c1ca6c9c2de734ae89e0d3a5a802b4c93ca099d991e48d67a5",
+      "url": "https://dhs.maryland.gov/local-offices/caroline-county/"
+    },
+    {
+      "file": "dhs-office-24013.html.gz",
+      "id": "dhs-office-24013",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "941c323c28e45a2b890a9c2a881b9a181eb3c339e440b7bbbd5fab33301515e7",
+      "storedSha256": "958ba746ae635155603548159c18da8ca8c9a66095cc4568609cc244b04a477c",
+      "url": "https://dhs.maryland.gov/local-offices/carroll-county/"
+    },
+    {
+      "file": "dhs-office-24015.html.gz",
+      "id": "dhs-office-24015",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "aebbea0a0caf907737a719a80b9f3e0ae7270915452805e59575e5ca5066b938",
+      "storedSha256": "0843d2caa64e0ad14d8ac2c4ddd8cbb44e2ba5fca5d5caa0cd59bdfbd1d6ab64",
+      "url": "https://dhs.maryland.gov/local-offices/cecil-county/"
+    },
+    {
+      "file": "dhs-office-24017.html.gz",
+      "id": "dhs-office-24017",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "f01913730c6d9b0db21eedfbbb8e8bfcbdf3cbbeee46ce0a6933121cc2a34602",
+      "storedSha256": "4add13fed1de5af9bfe0e8e2c10f6eb7f75ae8ff5bd3b22e0ac133ffe713ad09",
+      "url": "https://dhs.maryland.gov/local-offices/charles-county/"
+    },
+    {
+      "file": "dhs-office-24019.html.gz",
+      "id": "dhs-office-24019",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "e69e17f07d9b69e77ead98c59d6bb5829a968e15e5716c261e87510b340a5ee4",
+      "storedSha256": "5552b8b375bf4d08161e2934b4eb2cb8d0a531b7df4337d8e0c973bc15c64693",
+      "url": "https://dhs.maryland.gov/local-offices/dorchester-county/"
+    },
+    {
+      "file": "dhs-office-24021.html.gz",
+      "id": "dhs-office-24021",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "2c44654c7417bf136c8ff6d444f27b1d79e39897a5b6b8cdef26057568beb96d",
+      "storedSha256": "dd9eee3ef21370ce7611b2dfd5fa8a1837663ef8e0c318bc66fde60ebe2450b5",
+      "url": "https://dhs.maryland.gov/local-offices/frederick-county/"
+    },
+    {
+      "file": "dhs-office-24023.html.gz",
+      "id": "dhs-office-24023",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "0f7498b113efda2d481e89d38e063000a7e37d880335c58c99b928b647700128",
+      "storedSha256": "072aea7df727119aea1d5639ed6dce3778c7c5d5ddbcaa4e4c3d11ffa957240e",
+      "url": "https://dhs.maryland.gov/local-offices/garrett-county/"
+    },
+    {
+      "file": "dhs-office-24025.html.gz",
+      "id": "dhs-office-24025",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "cefa727fed77db17e467b579f310e7662e13cf0cc401aa6ca6e4bda0d8f9dd3f",
+      "storedSha256": "213cbe43505bc13c8b3846d89a3daf4557eda14fc14782bce957506ac76f94ae",
+      "url": "https://dhs.maryland.gov/local-offices/harford-county/"
+    },
+    {
+      "file": "dhs-office-24027.html.gz",
+      "id": "dhs-office-24027",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "735492fb5389814a3d482c37c9ccddd908659ad26ae0cc0875f637fd5942e809",
+      "storedSha256": "395ba64b7723e04bc850507febe30141c18adc608b9edc2439e191d6012b7b05",
+      "url": "https://dhs.maryland.gov/local-offices/howard-county/"
+    },
+    {
+      "file": "dhs-office-24029.html.gz",
+      "id": "dhs-office-24029",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "1436d98c465d6fea64dc67b4727e619fb5e9bd993164a8f7c51849a4e8fc9438",
+      "storedSha256": "5457c9b7d22b98436e61a0f0b2cac7a6256a68d5840a853f399624c51d780833",
+      "url": "https://dhs.maryland.gov/local-offices/kent-county/"
+    },
+    {
+      "file": "dhs-office-24031.html.gz",
+      "id": "dhs-office-24031",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "23692a42418f6fbb9c301d3e5fc7e6977697a8971d8eb198ae83bbbb1db18be7",
+      "storedSha256": "3d71605327a62e0b7553ab3b1236cb824fcd1c7834f7dcffb685857c27f12ca8",
+      "url": "https://dhs.maryland.gov/local-offices/montgomery-county/"
+    },
+    {
+      "file": "dhs-office-24033.html.gz",
+      "id": "dhs-office-24033",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "7b8aa3a5d9c2ccc0225c41a58c1420a579d84e09e7cf09ed2c58a80dbb367261",
+      "storedSha256": "88a1f59e963ff8fbf35e5552fa411b5da06d39dcc31cf743f2bcdee20a733d6b",
+      "url": "https://dhs.maryland.gov/local-offices/prince-georges-county/"
+    },
+    {
+      "file": "dhs-office-24035.html.gz",
+      "id": "dhs-office-24035",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "321f64bd96f534bce75f7a567d389f80b6d74e1a4c2da11a8621793f53101f25",
+      "storedSha256": "252eefb0a30b7c092e66fd4494de85872190bd5255b104ff8d43b17997585a9b",
+      "url": "https://dhs.maryland.gov/local-offices/queen-annes-county/"
+    },
+    {
+      "file": "dhs-office-24037.html.gz",
+      "id": "dhs-office-24037",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "841ae23cbe67f15a4ed513aa5e39201c6fe19ca3d034a616c1dacb2585997568",
+      "storedSha256": "0b5596b5d8bc4663e4c7049c448be8a8857c7b0f0fc2e0565bf454ffaac614b9",
+      "url": "https://dhs.maryland.gov/local-offices/st-marys-county/"
+    },
+    {
+      "file": "dhs-office-24039.html.gz",
+      "id": "dhs-office-24039",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "9e9eef7ab38575c8a24d4b3bb5d27612ed2fd377da7cfac517993c14159f6a02",
+      "storedSha256": "cb06dc2f5ae655032e0af06aec369edd8a440095e0642f5d5c6eedb9a0defc31",
+      "url": "https://dhs.maryland.gov/local-offices/somerset-county/"
+    },
+    {
+      "file": "dhs-office-24041.html.gz",
+      "id": "dhs-office-24041",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "d8bfc586739a35c8ce086b1ca73c8dd34277800330197c97cf13fb242d0e8c1f",
+      "storedSha256": "db30456fbf5fc048cde13b0ac8c36f0e87541aac3433276a3d87d41844a752db",
+      "url": "https://dhs.maryland.gov/local-offices/talbot-county/"
+    },
+    {
+      "file": "dhs-office-24043.html.gz",
+      "id": "dhs-office-24043",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "a3b8993cb1e6b1b1e8728138acdfa5a123dd58e35b373251b1ac3986c996ae43",
+      "storedSha256": "f6adb3671fec6440e336c236106d13a1c3f78f86d060bf8308acafc57f27fba8",
+      "url": "https://dhs.maryland.gov/local-offices/washington-county/"
+    },
+    {
+      "file": "dhs-office-24045.html.gz",
+      "id": "dhs-office-24045",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "7fdd339dc1c03880abb3cab9100a977779d7ef628ff6e5004a9ff7925925d0e8",
+      "storedSha256": "18569665d4e0d9a0051e33779517e0609875a8a8c20833fd1057d1017efa9568",
+      "url": "https://dhs.maryland.gov/local-offices/wicomico-county/"
+    },
+    {
+      "file": "dhs-office-24047.html.gz",
+      "id": "dhs-office-24047",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "0b8b550a58277633e3eb9f1c44d1fa89e26e8f454a42bcee01f29b4bd2d10de9",
+      "storedSha256": "7b22d5ff14ec6c6a8553a587d6b27845f59b8da85166ca8158582161ccaf31b4",
+      "url": "https://dhs.maryland.gov/local-offices/worcester-county/"
+    },
+    {
+      "file": "dhs-office-24510.html.gz",
+      "id": "dhs-office-24510",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "sha256": "df83249ff2fda58a2985b94d91e6438a22bc1686e651e6d7f13438e74f167e8f",
+      "storedSha256": "b0c7dfe8f1d9cbbe2b9995178cfb889ff8c13915a31d5c5350cd77f286db203b",
+      "url": "https://dhs.maryland.gov/local-offices/baltimore-city/"
+    },
+    {
+      "file": "facility-coordinates.json.gz",
+      "id": "facility-coordinates",
+      "retrievedAt": "2026-10-14T06:08:53+00:00",
+      "rows": 26,
+      "sha256": "2b3a9f712e89143689d9bd5f746ae87f84ffef7ed47d093e7b0f5f4c82432237",
+      "storedSha256": "eb09340bca4924a2d88c7ca7cda065626864b72f072972e4c9ec4423ff653775",
+      "url": "https://geocoding.geo.census.gov/geocoder/"
+    },
+    {
+      "file": "lodes-flows.json.gz",
+      "id": "lodes-2021",
+      "originalSha256": "6d7150956df1883e4b61c53140520ee4b9df17dd107e45509504fec8859293bf",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 1032565,
+      "sha256": "89101851c8dc515ce3dcae127b2a0e4d6d9a8ef7e1f0975ec14d45a39322d70c",
+      "storedSha256": "7681f450aa0e8d34a31cbe0adfe4340823ef5de9d07f74ee71ab35de962c93fe",
+      "url": "https://lehd.ces.census.gov/data/lodes/LODES8/md/od/md_od_main_JT00_2021.csv.gz"
+    },
+    {
+      "file": "lodes-coordinates.json.gz",
+      "id": "lodes-xwalk",
+      "originalSha256": "16638ceb1e99575f3ccd3ef15bf8d5752607923ec42c58aaa512537e61d7b462",
+      "originalUrl": "https://lehd.ces.census.gov/data/lodes/LODES8/us_xwalk.csv.gz",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 4079,
+      "sha256": "a92c2a4a68a06c0829fbcb6b11ae7b8d0cb66a2b136ad959607a9249fcd470e1",
+      "storedSha256": "04967280882c1c95df17bd4158daf023d5ea9faf867ff41ddc68682f75db02e3",
+      "url": "https://lehd.ces.census.gov/data/lodes/LODES8/md/md_xwalk.csv.gz"
+    },
+    {
+      "file": "dhs-webmap.json.gz",
+      "id": "maryland-dhs",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "sha256": "10d3213210721a34864c5af4689579785b3cf96387a02ffdbe4ec7d86fac0478",
+      "storedSha256": "2c6a319c93d4a16540562d8ff829396f21ca51ebcec3323812e1779077c53ea9",
+      "url": "https://www.arcgis.com/sharing/rest/content/items/677d0b906a6e48f0b611ca71964e9faf/data?f=json"
+    },
+    {
+      "file": "libraries.geojson.gz",
+      "id": "maryland-libraries",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 198,
+      "sha256": "4cafdeceeea26d0abe33e7f010b4d3f004da9840c4a5cc5dc455bddeb8cc88f5",
+      "storedSha256": "0f3fbc7ae6c01571c4bf579e8d55c572e8685e12e14f8e40a67228a08159d275",
+      "url": "https://mdgeodata.md.gov/imap/rest/services/Education/MD_Libraries/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson"
+    },
+    {
+      "file": "pratt-assistance.html.gz",
+      "id": "pratt-assistance",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "sha256": "6b8da24429aa2b574caede6f47bb801fe01a540089d140d8182792a78b21be5b",
+      "storedSha256": "b605efa26f8b8fa480a7f5eb07d7c8b0f8decef4a2f594f716676707677c5f48",
+      "url": "https://www.prattlibrary.org/services/social-impact-programs/social-worker-in-the-library"
+    },
+    {
+      "file": "pratt-locations.html.gz",
+      "id": "pratt-locations",
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "sha256": "c532d00c4168ce0db25940bb06eee9255542fb64b7090d62e01ac1e04a3f0fc5",
+      "storedSha256": "d5d6ca3dae3dd56bcac142f535209326e7c657dd569e081dc96362f0b93c36c8",
+      "url": "https://www.prattlibrary.org/locations"
+    },
+    {
+      "file": "qcew-history.json.gz",
+      "id": "qcew-history",
+      "originals": [
+        {
+          "sha256": "24cf74e2a02ddbd7f4c6ee9c92e8fca1908160a28854265768d7915d2573f743",
+          "url": "https://data.bls.gov/cew/data/files/2010/csv/2010_annual_singlefile.zip",
+          "year": 2010
+        },
+        {
+          "sha256": "606e5497d73f1f6f1341de047a42e31f550e6dd9c8a6cd3fc22795322fcab174",
+          "url": "https://data.bls.gov/cew/data/files/2011/csv/2011_annual_singlefile.zip",
+          "year": 2011
+        },
+        {
+          "sha256": "e561a15b2682a010f29f81e2971b5f16b201ac2a676fb843a68d37576cdee81b",
+          "url": "https://data.bls.gov/cew/data/files/2012/csv/2012_annual_singlefile.zip",
+          "year": 2012
+        },
+        {
+          "sha256": "8872d9f799dcea1b9cef974c3e1a42091895252406abba7ef0b2b908d9e78371",
+          "url": "https://data.bls.gov/cew/data/files/2013/csv/2013_annual_singlefile.zip",
+          "year": 2013
+        },
+        {
+          "sha256": "e3b96d392091ddd68be7562a68d6a09cd47846d402c0d84a57ca9096ed08b5cc",
+          "url": "https://data.bls.gov/cew/data/files/2014/csv/2014_annual_singlefile.zip",
+          "year": 2014
+        },
+        {
+          "sha256": "1ee8e5b9f29e98b0faafb104612fc1f73238ae21ed176ef43e74d15d2493e3ff",
+          "url": "https://data.bls.gov/cew/data/files/2015/csv/2015_annual_singlefile.zip",
+          "year": 2015
+        },
+        {
+          "sha256": "711362831d044368d888662de0fca361c09f4fe04c70885ece0e64ef02330a9e",
+          "url": "https://data.bls.gov/cew/data/files/2016/csv/2016_annual_singlefile.zip",
+          "year": 2016
+        },
+        {
+          "sha256": "6c77f4ab288e4914521ccfc53b6f7453815a13d9362246607d1ed671d1e16ec3",
+          "url": "https://data.bls.gov/cew/data/files/2017/csv/2017_annual_singlefile.zip",
+          "year": 2017
+        },
+        {
+          "sha256": "1e32657c3c212c89bdf9b758f9d6c7e226c9d1f84d8be9a989d6be881d829545",
+          "url": "https://data.bls.gov/cew/data/files/2018/csv/2018_annual_singlefile.zip",
+          "year": 2018
+        },
+        {
+          "sha256": "ed022e0d1968c6a209001affbd8b329e03bc5ec74a4ce5f324d8c472e9aff622",
+          "url": "https://data.bls.gov/cew/data/files/2019/csv/2019_annual_singlefile.zip",
+          "year": 2019
+        },
+        {
+          "sha256": "376b20f3eb358ea55583a8b2eea5c74367bdf20227d029d0b651f66dff97b0f9",
+          "url": "https://data.bls.gov/cew/data/files/2020/csv/2020_annual_singlefile.zip",
+          "year": 2020
+        },
+        {
+          "sha256": "ce613fd1bc89efce55e89f2b259ac4e6c1e7b80b339bc5e4b3f0030cf71d9222",
+          "url": "https://data.bls.gov/cew/data/files/2021/csv/2021_annual_singlefile.zip",
+          "year": 2021
+        },
+        {
+          "sha256": "c0b4895c157ca3f9edfab1366458d677ebe511972359b6bd4eabe22840e50927",
+          "url": "https://data.bls.gov/cew/data/files/2022/csv/2022_annual_singlefile.zip",
+          "year": 2022
+        },
+        {
+          "sha256": "fe2918648aaa57b0b6ab3ddf35fa41027a3a4aef9451652068e0382b063bc026",
+          "url": "https://data.bls.gov/cew/data/files/2023/csv/2023_annual_singlefile.zip",
+          "year": 2023
+        },
+        {
+          "sha256": "e54de6fd8b12470afb18c30f02014039501faa0bf2a053be2faf1fa9e358db52",
+          "url": "https://data.bls.gov/cew/data/files/2024/csv/2024_annual_singlefile.zip",
+          "year": 2024
+        }
+      ],
+      "retrievedAt": "2026-10-14T06:02:35+00:00",
+      "rows": 360,
+      "sha256": "d6de02e6f0f159364884b3ed4cf8235d7c6126105c090c820e347e2b8f6d11d2",
+      "storedSha256": "e222d9f400d9c9eae1d466eebd3084c8feaa277c1ccfc57ff91431163602fa46",
+      "url": "https://www.bls.gov/cew/downloadable-data-files.htm"
+    }
+  ],
+  "version": 1
+}

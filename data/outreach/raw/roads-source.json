@@ -1,0 +1,11 @@
+{
+  "id": "osm-roads",
+  "license": "OpenStreetMap \u00a9 contributors, Open Database License 1.0. Derived graph data and corresponding source manifest published with the release.",
+  "period": "Pinned October 14, 2026 extraction; provider timestamps recorded in roads-manifest.json",
+  "publisher": "OpenStreetMap contributors / Geofabrik",
+  "retrievedAt": "2026-10-14T06:14:00.123623+00:00",
+  "sha256": "2f9130de74962533878f729ae8bf8b62dd75b2a9110a9b0eddcc3e0776c6ac48",
+  "title": "Maryland and adjoining-state OpenStreetMap motor-road graph",
+  "transformation": "Six raw PBF files (Maryland, Pennsylvania, Virginia, West Virginia, Delaware, District of Columbia) pinned individually in roads-manifest.json. Keep motor roads; obey motor access and one-way tags, shared OSM-node junctions, 17 km county buffers, Census internal points snapped within 500 m. Distances approximate motor-road proximity; no turn restrictions or travel time. The source hash here identifies the canonical parent-file hash list, not one PBF.",
+  "url": "https://download.geofabrik.de/north-america/us/maryland.html"
+}
